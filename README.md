@@ -1,4 +1,4 @@
-ArenaToolBox
+BSATool
 ============
 
-Tools to edit various files in TES1: Arena
+Part of the ArenaToolBox
