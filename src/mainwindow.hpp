@@ -27,8 +27,12 @@ private:
     void extractHeader();
     //=======================================================================================================
 
-    // Contains the last loaded bsa directory
+    // Contains the last loaded/saved bsa directory
     QString lastBSADirectory;
+    // Contains the last open/save file directory
+    QString lastOpenSaveFileDirectory;
+    // Contains the last open/save col file directory
+    QString lastColDirectory;
 
     // Set to true during clearing only to not allow an info update while clearing
     bool clearing;
@@ -124,6 +128,9 @@ private slots:
 
     // Open archive file
     void openArchiveSlot();
+
+    // Save settings to file
+    void saveSettings();
 
     // Update window according to the current file extension and state (new, updated or delete file)
     void updateWindowSlot(QListWidgetItem *item);

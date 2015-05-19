@@ -1845,7 +1845,7 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             if (compressionFlag == 0x00)
             {
                 inputFileStream->read(reinterpret_cast<char*>(uncompressedFrameData), width*height);
-                paletteName = "CHARSHT.COL";
+                paletteName = "PAL.COL";
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
@@ -1859,7 +1859,7 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             {
                 inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize);
                 Compression::image04Decompression(compressedFrameData, uncompressedFrameData, frameDataSize);
-                paletteName = "CHARSHT.COL";
+                paletteName = "PAL.COL";
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
@@ -1873,7 +1873,7 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             {
                 inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize - 2);
                 Compression::image08Decompression(compressedFrameData, uncompressedFrameData, frameDataSize-2, uncompressedFrameDataSize);
-                paletteName = "CHARSHT.COL";
+                paletteName = "PAL.COL";
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];

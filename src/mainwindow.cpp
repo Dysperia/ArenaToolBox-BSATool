@@ -29,6 +29,8 @@ MainWindow::MainWindow() : clearing(false), previewUpdate(false), isAnimationPla
 {
     // Setting up lastBSADirectory
     lastBSADirectory ="";
+    lastOpenSaveFileDirectory ="";
+    lastColDirectory = "";
 
     // Initializing image data and pixmap list to one frame
     imageData.resize(1);
@@ -38,9 +40,15 @@ MainWindow::MainWindow() : clearing(false), previewUpdate(false), isAnimationPla
     prefStream.open("data/settings");
     if (prefStream.is_open())
     {
-        std::string lastDir;
-        prefStream >> lastDir;
-        lastBSADirectory = QString::fromStdString(lastDir);
+        std::string lastBSADir = new char[300];
+        std::string lastOpenSaveDir = new char[300];
+        std::string lastColDir = new char[300];
+        std::getline(prefStream, lastBSADir);
+        std::getline(prefStream, lastOpenSaveDir);
+        std::getline(prefStream, lastColDir);
+        lastBSADirectory = QString::fromStdString(lastBSADir);
+        lastOpenSaveFileDirectory = QString::fromStdString(lastOpenSaveDir);
+        lastColDirectory = QString::fromStdString(lastColDir);
     }
 
     // Menu bar
@@ -272,6 +280,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
                 animationThread.join();
             }
             event->accept();
+            saveSettings();
         }
         else
         {
@@ -286,6 +295,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
             animationThread.join();
         }
         event->accept();
+        saveSettings();
     }
 }
 
@@ -387,12 +397,12 @@ void MainWindow::openArchiveSlot()
     }
     if (!BSAFile::getInstance()->getIsOpened() || reloading == true)
     {
-        QString BSADir(QDir::homePath());
+        QString BSADirectory(QDir::homePath());
         if (lastBSADirectory != "")
         {
-            BSADir = lastBSADirectory;
+            BSADirectory = lastBSADirectory;
         }
-        QString archiveFileName = QFileDialog::getOpenFileName(this, "Open File", BSADir, "BSA archives (*.bsa)");
+        QString archiveFileName = QFileDialog::getOpenFileName(this, "Open File", BSADirectory, "BSA archives (*.bsa)");
         if (archiveFileName != NULL)
         {
             if (reloading == true)
@@ -414,14 +424,7 @@ void MainWindow::openArchiveSlot()
                 statusBar()->showMessage("BSA archive has been successfully loaded.");
                 std::string BSAPath = BSAFile::getInstance()->getArchiveFilePath();
                 int fileNamePos = BSAPath.find_last_of("/\\");
-                std::string BSADir = BSAPath.substr(0, fileNamePos + 1);
-                std::ofstream prefStream;
-                prefStream.open("data/settings", std::ios_base::out | std::ios_base::trunc);
-                if (prefStream.is_open())
-                {
-                    prefStream << BSADir;
-                    lastBSADirectory = QString::fromStdString(BSADir);
-                }
+                lastBSADirectory = QString::fromStdString(BSAPath.substr(0, fileNamePos));
                 break;
             }
             case 1:
@@ -438,6 +441,19 @@ void MainWindow::openArchiveSlot()
             }
             }
         }
+    }
+}
+
+// Save settings to file
+void MainWindow::saveSettings()
+{
+    std::ofstream prefStream;
+    prefStream.open("data/settings", std::ios_base::out | std::ios_base::trunc);
+    if (prefStream.is_open())
+    {
+        prefStream << lastBSADirectory.toStdString() << std::endl;
+        prefStream << lastOpenSaveFileDirectory.toStdString() << std::endl;
+        prefStream << lastColDirectory.toStdString() << std::endl;
     }
 }
 
@@ -785,9 +801,12 @@ void MainWindow::extractRawFileSlot()
     }
     else
     {
-        QString filePath = QFileDialog::getSaveFileName( this, "Choose save directory", QDir::homePath() + "/" + qfileName);
+        QString filePath = QFileDialog::getSaveFileName( this, "Choose save directory", lastOpenSaveFileDirectory + "/" + qfileName);
         if (filePath != NULL)
         {
+            std::string cFilePath = filePath.toStdString();
+            int fileNamePos = cFilePath.find_last_of("/\\");
+            lastOpenSaveFileDirectory = QString::fromStdString(cFilePath.substr(0, fileNamePos));
             int ret = BSAFile::getInstance()->extractFile(filePath.toStdString(), index);
             switch (ret)
             {
@@ -812,9 +831,10 @@ void MainWindow::extractRawAllFilteredFilesSlot()
 {
     int success(0);
     QStringList fileList = mapFilteredList[fileFilter->currentText()];
-    QString dirPath = QFileDialog::getExistingDirectory(this, "Choose extraction directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
+    QString dirPath = QFileDialog::getExistingDirectory(this, "Choose extraction directory", lastOpenSaveFileDirectory, QFileDialog::ShowDirsOnly);
     if (dirPath != NULL)
     {
+        lastOpenSaveFileDirectory = dirPath;
         statusBar()->clearMessage();
         for (int i(0); i < fileList.size(); i++)
         {
@@ -992,10 +1012,12 @@ void MainWindow::extractDecompressImageSlot()
 {
     QListWidgetItem *item = archiveFileList->currentItem();
     QString fileName = item->text();
-    QString filePath = QFileDialog::getSaveFileName( this, "Choose save directory", QDir::homePath() + "/" + fileName);
+    QString filePath = QFileDialog::getSaveFileName( this, "Choose save directory", lastOpenSaveFileDirectory + "/" + fileName);
     if (filePath != NULL)
     {
         std::string cfilePath = filePath.toStdString();
+        int fileNamePos = cfilePath.find_last_of("/\\");
+        lastOpenSaveFileDirectory = QString::fromStdString(cfilePath.substr(0, fileNamePos));
         int index = BSAFile::getInstance()->getIndex(fileName.toStdString());
         if (BSAFile::getInstance()->getIsFileNew(index) == false)
         {
@@ -1043,9 +1065,10 @@ void MainWindow::extractDecompressAllImageSlot()
             atLeastOneSET = true;
         }
     }
-    QString dirPath = QFileDialog::getExistingDirectory(this, "Choose IMG/SET extraction directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
+    QString dirPath = QFileDialog::getExistingDirectory(this, "Choose IMG/SET extraction directory", lastOpenSaveFileDirectory, QFileDialog::ShowDirsOnly);
     if (dirPath != NULL)
     {
+        lastOpenSaveFileDirectory = dirPath;
         QDir QdirPath(dirPath);
         if (atLeastOneIMG)
         {
@@ -1240,10 +1263,12 @@ void MainWindow::extractDecompressConvertImageSlot()
     int pos = fileName.find_last_of(".");
     std::string saveFileName(fileName);
     saveFileName.replace(pos, fileName.size()-pos, ".PNG");
-    QString filePath = QFileDialog::getSaveFileName( this, "Choose save directory", QDir::homePath() + "/" + QString::fromStdString(saveFileName), "png image (*.png)");
+    QString filePath = QFileDialog::getSaveFileName( this, "Choose save directory", lastOpenSaveFileDirectory + "/" + QString::fromStdString(saveFileName), "png image (*.png)");
     if (filePath != NULL)
     {
         std::string cfilePath = filePath.toStdString();
+        int fileNamePos = cfilePath.find_last_of("/\\");
+        lastOpenSaveFileDirectory = QString::fromStdString(cfilePath.substr(0, fileNamePos));
         int index = BSAFile::getInstance()->getIndex(fileName);
         if (BSAFile::getInstance()->getIsFileNew(index) == false)
         {
@@ -1292,9 +1317,10 @@ void MainWindow::extractDecompressConvertAllImageSlot()
             atLeastOneSET = true;
         }
     }
-    QString dirPath = QFileDialog::getExistingDirectory(this, "Choose IMG/SET extraction directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
+    QString dirPath = QFileDialog::getExistingDirectory(this, "Choose IMG/SET extraction directory", lastOpenSaveFileDirectory, QFileDialog::ShowDirsOnly);
     if (dirPath != NULL)
     {
+        lastOpenSaveFileDirectory = dirPath;
         QDir QdirPath(dirPath);
         if (atLeastOneIMG)
         {
@@ -1491,7 +1517,7 @@ void MainWindow::extractDecompressConvertAllImageSlot()
 void MainWindow::decompressExternalIMGSlot()
 {
     bool success(true), error(false), noHeadOrNotComp(false), unknownHead(false), notIMG(false);
-    QStringList sourceFilesPath = QFileDialog::getOpenFileNames(this, "Choose IMG file(s) to open", QDir::homePath(), "IMG files (*.img)");
+    QStringList sourceFilesPath = QFileDialog::getOpenFileNames(this, "Choose IMG file(s) to open", lastOpenSaveFileDirectory, "IMG files (*.img)");
     if (sourceFilesPath.size() != 0)
     {
         int nbrOfIMGs = sourceFilesPath.size();
@@ -1499,6 +1525,7 @@ void MainWindow::decompressExternalIMGSlot()
         {
             std::string filePath = sourceFilesPath[i].toStdString();
             int fileNamePos = filePath.find_last_of("/\\");
+            lastOpenSaveFileDirectory = QString::fromStdString(filePath.substr(0, fileNamePos));
             std::string fileName = filePath.substr(fileNamePos + 1);
             int ret = image.decompressExternalIMG(fileName, filePath);
             switch (ret)
@@ -1574,7 +1601,7 @@ void MainWindow::decompressExternalIMGSlot()
 // View an external IMG/SET file
 void MainWindow::viewExternalIMGSlot()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, "Choose IMG/SET file to open", QDir::homePath(), "IMG/SET files (*.img *.set)");
+    QString filePath = QFileDialog::getOpenFileName(this, "Choose IMG/SET file to open", lastOpenSaveFileDirectory, "IMG/SET files (*.img *.set)");
     if (filePath != NULL)
     {
         ImageViewer *externalViewer = new ImageViewer(filePath, "External viewer");
@@ -1620,7 +1647,7 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
     bool setAll(false);
     std::string choice("PAL.COL");
     QVector<QRgb> customPalette;
-    QStringList sourceFilesPath = QFileDialog::getOpenFileNames(this, "Choose IMG/SET file(s) to open", QDir::homePath(), "IMG/SET files (*.img *.set)");
+    QStringList sourceFilesPath = QFileDialog::getOpenFileNames(this, "Choose IMG/SET file(s) to open", lastOpenSaveFileDirectory, "IMG/SET files (*.img *.set)");
     int nbrOfIMGs = sourceFilesPath.size();
     for (int i(0); i<nbrOfIMGs; i++)
     {
@@ -1629,6 +1656,7 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
         if (Img.size() != QSize(0, 0))
         {
             int fileNamePos = filePath.find_last_of("/\\");
+            lastOpenSaveFileDirectory = QString::fromStdString(filePath.substr(0, fileNamePos));
             std::string fileName = filePath.substr(fileNamePos + 1);
             int extPos = filePath.find_last_of(".");
             std::string ext = filePath.substr(extPos + 1);
@@ -1656,8 +1684,10 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
                     else if (askForPalette->clickedButton() == customButton)
                     {
                         std::ifstream paletteStream;
-                        QString qPalettePath = QFileDialog::getOpenFileName(this, "Choose a palette file to open", QDir::homePath(), "COL files (*.col)");
+                        QString qPalettePath = QFileDialog::getOpenFileName(this, "Choose a palette file to open", lastColDirectory, "COL files (*.col)");
                         std::string palettePath = qPalettePath.toStdString();
+                        int fileNamePos = palettePath.find_last_of("/\\");
+                        lastColDirectory = QString::fromStdString(palettePath.substr(0, fileNamePos));
                         paletteStream.open(palettePath, std::ios_base::in | std::ios_base::binary);
                         if (paletteStream.is_open())
                         {
@@ -1735,8 +1765,10 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
                             setAll = true;
                         }
                         std::ifstream paletteStream;
-                        QString qPalettePath = QFileDialog::getOpenFileName(this, "Choose a palette file to open", QDir::homePath(), "COL files (*.col)");
+                        QString qPalettePath = QFileDialog::getOpenFileName(this, "Choose a palette file to open", lastColDirectory, "COL files (*.col)");
                         std::string palettePath = qPalettePath.toStdString();
+                        int fileNamePos = palettePath.find_last_of("/\\");
+                        lastColDirectory = QString::fromStdString(palettePath.substr(0, fileNamePos));
                         paletteStream.open(palettePath, std::ios_base::in | std::ios_base::binary);
                         if (paletteStream.is_open())
                         {
@@ -1801,7 +1833,7 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
 // Convert external PNG(s) to IMG/SET
 void MainWindow::convertPNGToIMGSETSlot()
 {
-    QStringList sourceFilesPath = QFileDialog::getOpenFileNames(this, "Choose PNG file(s) to convert", QDir::homePath(), "PNG files (*.png)");
+    QStringList sourceFilesPath = QFileDialog::getOpenFileNames(this, "Choose PNG file(s) to convert", lastOpenSaveFileDirectory, "PNG files (*.png)");
     int pngNbr = sourceFilesPath.size();    
 
     // For use with non native conversion
@@ -1816,6 +1848,7 @@ void MainWindow::convertPNGToIMGSETSlot()
         // Building some filenames and paths (PNG, IMG and SET)
         std::string sourceFilePath = sourceFilesPath[i].toStdString();
         int fileNamePos = sourceFilePath.find_last_of("/\\");
+        lastOpenSaveFileDirectory = QString::fromStdString(sourceFilePath.substr(0, fileNamePos));
         std::string sourceFileName = sourceFilePath.substr(fileNamePos + 1);
         int extPos = sourceFilePath.find_last_of(".");
         std::string ext = sourceFilePath.substr(extPos + 1);
@@ -2380,7 +2413,7 @@ void MainWindow::convertPNGToIMGSETSlot()
 // Update file(s) in archive data with other(s)
 void MainWindow::updateFileSlot()
 {
-    QStringList filesPath = QFileDialog::getOpenFileNames(this, "Choose update file(s)", QDir::homePath());
+    QStringList filesPath = QFileDialog::getOpenFileNames(this, "Choose update file(s)", lastOpenSaveFileDirectory);
     for (int i(0); i<filesPath.size(); i++)
     {
         std::string sourceFilePath = filesPath[i].toStdString();
@@ -2427,7 +2460,7 @@ void MainWindow::deleteFileSlot()
 // Add file(s) to archive data
 void MainWindow::addFileSlot()
 {
-    QStringList filesPath = QFileDialog::getOpenFileNames(this, "Choose file(s) to add", QDir::homePath());
+    QStringList filesPath = QFileDialog::getOpenFileNames(this, "Choose file(s) to add", lastOpenSaveFileDirectory);
     for (int i(0); i<filesPath.size(); i++)
     {
         std::string sourceFilePath = filesPath[i].toStdString();
@@ -2574,7 +2607,7 @@ void MainWindow::cancelUpdateFileSlot()
 // Save changes in a BSA archive
 void MainWindow::saveBSASlot()
 {
-    QString saveFilePath = QFileDialog::getSaveFileName(this, "Save BSA", QDir::homePath(), "BSA archives (*.bsa)");
+    QString saveFilePath = QFileDialog::getSaveFileName(this, "Save BSA", lastBSADirectory, "BSA archives (*.bsa)");
     QString currentFilter = fileFilter->currentText();
     if (saveFilePath != NULL)
     {
@@ -2582,7 +2615,9 @@ void MainWindow::saveBSASlot()
         int ret;
         if (saveFilePath.toStdString() == currentBSAFilePath)
         {
-            std::string tempSaveFilePath = saveFilePath.toStdString() + "temp";
+            std::string tempSaveFilePath = saveFilePath.toStdString() + ".temp";
+            int fileNamePos = tempSaveFilePath.find_last_of("/\\");
+            lastOpenSaveFileDirectory = QString::fromStdString(tempSaveFilePath.substr(0, fileNamePos));
             int tempSaveFileDirPos = tempSaveFilePath.find_last_of("/\\");
             std::string tempSaveFileDir = tempSaveFilePath.substr(0, tempSaveFileDirPos + 1);
             ret = BSAFile::getInstance()->saveArchiveToBSA(tempSaveFilePath);
@@ -2664,7 +2699,7 @@ void MainWindow::saveBSASlot()
 // Decrypt or encrypt INF text file
 void MainWindow::encryptDecryptINFSlot()
 {
-    QStringList filesPath = QFileDialog::getOpenFileNames(this, "Choose INF to crypt/decrypt", QDir::homePath(), "INF files (*.inf)");
+    QStringList filesPath = QFileDialog::getOpenFileNames(this, "Choose INF to crypt/decrypt", lastOpenSaveFileDirectory, "INF files (*.inf)");
     for (int i(0); i<filesPath.size(); i++)
     {
         std::string filePath = filesPath[i].toStdString();
