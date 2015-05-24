@@ -2,10 +2,14 @@
 #define VARIOUS_HPP
 
 #include <string.h>
+#include <stdint.h>
 
 class Compression
 {
 public:
+
+    // Decompress the image data compressed in 02
+    static void image02Decompression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height);
 
     // Decompress the image data compressed in 04
     static void image04Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedLengh);

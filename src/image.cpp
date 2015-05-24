@@ -1052,6 +1052,69 @@ Image::Image() : hasTransparency(false)
         nativeIMGsList[946] = {"TITLE.IMG", "Integrated", "1"};
     }
 
+    // Setting up native Arena CIF list
+    {
+        nativeCIFsList[0] = {"0EQUIP.CIF", "CHARSHT.COL"};
+        nativeCIFsList[1] = {"1EQUIP.CIF", "CHARSHT.COL"};
+        nativeCIFsList[2] = {"ARROWS.CIF", "PAL.COL"};
+        nativeCIFsList[3] = {"AXE.CIF", "PAL.COL"};
+        nativeCIFsList[4] = {"BRASS.CIF", "PAL.COL"};
+        nativeCIFsList[5] = {"BRASS2.CIF", "PAL.COL"};
+        nativeCIFsList[6] = {"CHAIN.CIF", "PAL.COL"};
+        nativeCIFsList[7] = {"FACES00.CIF", "PAL.COL"};
+        nativeCIFsList[8] = {"FACES01.CIF", "PAL.COL"};
+        nativeCIFsList[9] = {"FACES02.CIF", "PAL.COL"};
+        nativeCIFsList[10] = {"FACES03.CIF", "PAL.COL"};
+        nativeCIFsList[11] = {"FACES04.CIF", "PAL.COL"};
+        nativeCIFsList[12] = {"FACES05.CIF", "PAL.COL"};
+        nativeCIFsList[13] = {"FACES06.CIF", "PAL.COL"};
+        nativeCIFsList[14] = {"FACES07.CIF", "PAL.COL"};
+        nativeCIFsList[15] = {"FACES10.CIF", "CHARSHT.COL"};
+        nativeCIFsList[16] = {"FACES11.CIF", "CHARSHT.COL"};
+        nativeCIFsList[17] = {"FACES12.CIF", "CHARSHT.COL"};
+        nativeCIFsList[18] = {"FACES13.CIF", "CHARSHT.COL"};
+        nativeCIFsList[19] = {"FACES14.CIF", "CHARSHT.COL"};
+        nativeCIFsList[20] = {"FACES15.CIF", "CHARSHT.COL"};
+        nativeCIFsList[21] = {"FACES16.CIF", "CHARSHT.COL"};
+        nativeCIFsList[22] = {"FACES17.CIF", "CHARSHT.COL"};
+        nativeCIFsList[23] = {"FACESF00.CIF", "PAL.COL"};
+        nativeCIFsList[24] = {"FACESF00.CIF", "PAL.COL"};
+        nativeCIFsList[25] = {"FACESF01.CIF", "PAL.COL"};
+        nativeCIFsList[26] = {"FACESF02.CIF", "PAL.COL"};
+        nativeCIFsList[27] = {"FACESF03.CIF", "PAL.COL"};
+        nativeCIFsList[28] = {"FACESF04.CIF", "PAL.COL"};
+        nativeCIFsList[29] = {"FACESF05.CIF", "PAL.COL"};
+        nativeCIFsList[30] = {"FACESF06.CIF", "PAL.COL"};
+        nativeCIFsList[31] = {"FACESF07.CIF", "PAL.COL"};
+        nativeCIFsList[32] = {"FACESF10.CIF", "CHARSHT.COL"};
+        nativeCIFsList[33] = {"FACESF11.CIF", "CHARSHT.COL"};
+        nativeCIFsList[34] = {"FACESF12.CIF", "CHARSHT.COL"};
+        nativeCIFsList[35] = {"FACESF13.CIF", "CHARSHT.COL"};
+        nativeCIFsList[36] = {"FACESF14.CIF", "CHARSHT.COL"};
+        nativeCIFsList[37] = {"FACESF15.CIF", "CHARSHT.COL"};
+        nativeCIFsList[38] = {"FACESF16.CIF", "CHARSHT.COL"};
+        nativeCIFsList[39] = {"FACESF17.CIF", "CHARSHT.COL"};
+        nativeCIFsList[40] = {"HAMMER.CIF", "PAL.COL"};
+        nativeCIFsList[41] = {"HAND.CIF", "PAL.COL"};
+        nativeCIFsList[42] = {"HARBOUR.CIF", "PAL.COL"};
+        nativeCIFsList[43] = {"KEYS.CIF", "PAL.COL"};
+        nativeCIFsList[44] = {"MACE.CIF", "PAL.COL"};
+        nativeCIFsList[45] = {"MAPBLINK.CIF", "VALNWOOD.IMG"};
+        nativeCIFsList[46] = {"MAPOUT.CIF", "VALNWOOD.IMG"};
+        nativeCIFsList[47] = {"MARBLE.CIF", "PAL.COL"};
+        nativeCIFsList[48] = {"MARBLE2.CIF", "PAL.COL"};
+        nativeCIFsList[49] = {"OUTPROV.CIF", "VALNWOOD.IMG"};
+        nativeCIFsList[50] = {"PARCH.CIF", "STARTGAM.MNU"};
+        nativeCIFsList[51] = {"PLATE.CIF", "PAL.COL"};
+        nativeCIFsList[52] = {"SCROLL.CIF", "TAMRIEL.MNU"};
+        nativeCIFsList[53] = {"STAFDUNG.CIF", "VALNWOOD.IMG"};
+        nativeCIFsList[54] = {"STAFF.CIF", "PAL.COL"};
+        nativeCIFsList[55] = {"STAR.CIF", "PAL.COL"};
+        nativeCIFsList[56] = {"STATUS.CIF", "PAL.COL"};
+        nativeCIFsList[57] = {"SWORD.CIF", "PAL.COL"};
+        nativeCIFsList[58] = {"VILLAGE.CIF", "PAL.COL"};
+    }
+
     // List of all Arena native SET files and their dimensions
     {
         nativeSETsList[0] = {"CASA.SET", 64, 256};
@@ -1304,7 +1367,7 @@ QImage Image::buildQImage(int index, std::string extension)
     // If file is a IMG file
     else if (extension == "IMG")
     {
-        // first check if IMG with has no header and size 64x64
+        // first check if IMG with no header and size 64x64
         if (BSAFile::getInstance()->getFileSize(index) == 4096)
         {
             width = 64;
@@ -1821,6 +1884,13 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
     else
     {
         animationData.clear();
+        for (int i(0); i<59; i++)
+        {
+            if (nativeCIFsList[i].fileName == fileName)
+            {
+                paletteName = nativeCIFsList[i].paletteName;
+            }
+        }
         while (byteProcessed < fileSize)
         {
             animationData.resize(animationData.size() + 1);
@@ -1845,7 +1915,6 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             if (compressionFlag == 0x00)
             {
                 inputFileStream->read(reinterpret_cast<char*>(uncompressedFrameData), width*height);
-                paletteName = "PAL.COL";
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
@@ -1854,12 +1923,24 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
                 frame.imageQImage.setColorTable(frame.imagePalette);
                 byteProcessed += width*height;
             }
+            // IMG compressed in 02
+            else if (compressionFlag == 0x02)
+            {
+                inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize);
+                Compression::image02Decompression(compressedFrameData, uncompressedFrameData, width, height);
+                frame.hasTransparency = false;
+                frame.imagePaletteName = paletteName;
+                frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
+                QImage img = QImage(uncompressedFrameData, width, height, width, QImage::Format_Indexed8);
+                frame.imageQImage = img;
+                frame.imageQImage.setColorTable(frame.imagePalette);
+                byteProcessed += 12 + frameDataSize;
+            }
             // IMG compressed in 04
             else if (compressionFlag == 0x04)
             {
                 inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize);
                 Compression::image04Decompression(compressedFrameData, uncompressedFrameData, frameDataSize);
-                paletteName = "PAL.COL";
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
@@ -1873,7 +1954,6 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             {
                 inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize - 2);
                 Compression::image08Decompression(compressedFrameData, uncompressedFrameData, frameDataSize-2, uncompressedFrameDataSize);
-                paletteName = "PAL.COL";
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
@@ -1886,7 +1966,6 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             else
             {
                 inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize);
-                paletteName = "PAL.COL";
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = palettesMap[frame.imagePaletteName];

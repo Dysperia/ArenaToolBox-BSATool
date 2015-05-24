@@ -71,6 +71,16 @@ private:
     // Table of native Arena SET file and their dimensions
     natSET nativeSETsList[180];
 
+    // Structure for table of native Arena CIF files and their palette
+    struct natCIF
+    {
+        std::string fileName;
+        std::string paletteName;
+    };
+
+    // Table of native Arena CIF files and their palette
+    natCIF nativeCIFsList[59];
+
     // structure for table of image with no header and dimensions to set manually
     struct noH
     {

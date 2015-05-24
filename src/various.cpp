@@ -1,7 +1,48 @@
 #include "various.hpp"
-#include <stdint.h>
 #include <iostream>
 #include <vector>
+
+// Decompress the image data compressed in 02
+// can store up to 128 same color in 2 byte or up to 127 following color
+// Type of RLE compression
+void Compression::image02Decompression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height)
+{
+    uint16_t bytesProcessed(0);
+    uint16_t uncompDataPosition(0);
+    uint8_t counter(0), color(0);
+    for (int i(0); i<height; i++)
+    {
+        uint16_t lineByteProcessed = width;
+        while (lineByteProcessed > 0)
+        {
+            counter = compressedData[bytesProcessed];
+            bytesProcessed ++;
+            if (counter >= 0x80)
+            {
+                counter = counter & 0x7F;
+                counter ++;
+                color = compressedData[bytesProcessed];
+                bytesProcessed ++;
+                for (int j(0); j<counter; j++)
+                {
+                    decompressedData[uncompDataPosition] = color;
+                    uncompDataPosition ++;
+                }
+            }
+            else
+            {
+                counter ++;
+                for (int j(0); j<counter; j++)
+                {
+                    decompressedData[uncompDataPosition] = compressedData[bytesProcessed];
+                    bytesProcessed ++;
+                    uncompDataPosition ++;
+                }
+            }
+            lineByteProcessed -= counter;
+        }
+    }
+}
 
 // Decompress the image data compressed in 04
 void Compression::image04Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedLengh)
@@ -162,7 +203,8 @@ void Compression::image08Decompression(unsigned char *compressedData, unsigned c
             variable2 = buffer2[variable2 + local1];
         }
         variable2 -= 0x0273;
-/*        if (buffer3[0x0272] == 0x8000)
+/*
+        if (buffer3[0x0272] == 0x8000)
         {
             // sub_31_60D start
             int16_t local1 = 0x0000;
@@ -258,7 +300,8 @@ void Compression::image08Decompression(unsigned char *compressedData, unsigned c
             }
             // sub_31_60D end
        }
-*/        uint16_t variable3 = buffer1[variable2 + 0x0273];
+*/
+        uint16_t variable3 = buffer1[variable2 + 0x0273];
         do
         {
             buffer3[variable3] += 1;
