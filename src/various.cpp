@@ -3,8 +3,6 @@
 #include <vector>
 
 // Decompress the image data compressed in 02
-// can store up to 128 same color in 2 byte or up to 127 following color
-// Type of RLE compression
 void Compression::image02Decompression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height)
 {
     uint16_t bytesProcessed(0);
@@ -12,8 +10,8 @@ void Compression::image02Decompression(unsigned char *compressedData, unsigned c
     uint8_t counter(0), color(0);
     for (int i(0); i<height; i++)
     {
-        uint16_t lineByteProcessed = width;
-        while (lineByteProcessed > 0)
+        uint16_t lineByteRemaining = width;
+        while (lineByteRemaining > 0)
         {
             counter = compressedData[bytesProcessed];
             bytesProcessed ++;
@@ -39,9 +37,63 @@ void Compression::image02Decompression(unsigned char *compressedData, unsigned c
                     uncompDataPosition ++;
                 }
             }
-            lineByteProcessed -= counter;
+            lineByteRemaining -= counter;
         }
     }
+}
+
+// Compress the image data in 02 compression
+size_t Compression::image02Compression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height)
+{
+    uint16_t compDataPosition(0), unCompDataPosition(0);
+    for (int i(0); i<height; i++)
+    {
+        uint16_t lineByteProcessed = 0;
+        while (lineByteProcessed < width)
+        {
+            uint8_t color(0), counter(0);
+            color = decompressedData[unCompDataPosition];
+            if (decompressedData[unCompDataPosition+1] != color)
+            {
+                while (counter < 0x7F &&
+                       lineByteProcessed + counter < width &&
+                       decompressedData[unCompDataPosition + counter] != decompressedData[unCompDataPosition + counter+1])
+                {
+                    counter ++;
+                }
+                // In case stop at width-1 because last color same as first next line
+                if (lineByteProcessed+counter == width-1)
+                {
+                    counter ++;
+                }
+                compressedData[compDataPosition] = counter - 1;
+                compDataPosition ++;
+                for (int j(0); j<counter; j++)
+                {
+                    compressedData[compDataPosition] = decompressedData[unCompDataPosition];
+                    compDataPosition ++;
+                    unCompDataPosition ++;
+                }
+                lineByteProcessed += counter;
+            }
+            else
+            {
+                while (counter < 0x7E &&
+                       lineByteProcessed + counter +1 < width &&
+                       decompressedData[unCompDataPosition + counter] == decompressedData[unCompDataPosition + counter+1])
+                {
+                    counter ++;
+                }
+                compressedData[compDataPosition] = counter | 0x80;
+                compDataPosition ++;
+                compressedData[compDataPosition] = color;
+                compDataPosition ++;
+                unCompDataPosition += counter+1;
+                lineByteProcessed += counter+1;
+            }
+        }
+    }
+    return compDataPosition;
 }
 
 // Decompress the image data compressed in 04

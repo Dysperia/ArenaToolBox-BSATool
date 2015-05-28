@@ -990,6 +990,7 @@ void MainWindow::aboutSlot()
                             "Application created by Dysperia under Qt 5 with QtCreator 3<br><br>"
                             "If you find any bug, please, send an french/english email to<br>"
                             "<font color = #9C00FF>softwatermermaid@hotmail.fr</font>");
+   this->test();
 }
 
 // Show the palette used by the current preview image
@@ -2725,6 +2726,41 @@ void MainWindow::encryptDecryptINFSlot()
         }
     }
 }
+
+//=======================================================================================================
+// Test
+void MainWindow::test()
+{
+    std::ifstream ifstream;
+    ifstream.open("/home/dysperia/Desktop/TESTSOURCE.IMG", std::ios_base::in | std::ios_base::binary);
+    ifstream.seekg(0, std::ios_base::beg);
+    uint16_t offsetX, offsetY, width, height, flags, dataSize;
+    ifstream.read(reinterpret_cast<char*>(&offsetX), 2);
+    ifstream.read(reinterpret_cast<char*>(&offsetY), 2);
+    ifstream.read(reinterpret_cast<char*>(&width), 2);
+    ifstream.read(reinterpret_cast<char*>(&height), 2);
+    ifstream.read(reinterpret_cast<char*>(&flags), 2);
+    ifstream.read(reinterpret_cast<char*>(&dataSize), 2);
+    uchar *sourceCompData = new uchar[64000];
+    uchar *sourceUncompData = new uchar[64000];
+    uchar *newCompData = new uchar[64000];
+    ifstream.read(reinterpret_cast<char*>(sourceCompData), dataSize);
+    Compression::image02Decompression(sourceCompData, sourceUncompData, width, height);
+    uint16_t newDataSize = Compression::image02Compression(newCompData, sourceUncompData, width, height);
+    std::ofstream ofstream;
+    ofstream.open("/home/dysperia/Desktop/TESTNEW.IMG", std::ios_base::out | std::ios_base::binary);
+    ofstream.write(reinterpret_cast<char*>(&offsetX), 2);
+    ofstream.write(reinterpret_cast<char*>(&offsetY), 2);
+    ofstream.write(reinterpret_cast<char*>(&width), 2);
+    ofstream.write(reinterpret_cast<char*>(&height), 2);
+    ofstream.write(reinterpret_cast<char*>(&flags), 2);
+    ofstream.write(reinterpret_cast<char*>(&dataSize), 2);
+    ofstream.write(reinterpret_cast<char*>(newCompData), newDataSize);
+    delete[] sourceCompData;
+    delete[] sourceUncompData;
+    delete[] newCompData;
+}
+//=======================================================================================================
 
 //=======================================================================================================
 // Extract header under conditions
