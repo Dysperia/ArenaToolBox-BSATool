@@ -41,7 +41,6 @@ void Compression::image02Decompression(unsigned char *compressedData, unsigned c
         }
     }
 }
-
 // Compress the image data in 02 compression
 size_t Compression::image02Compression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height)
 {
@@ -464,40 +463,6 @@ void Compression::image08Decompression(unsigned char *compressedData, unsigned c
         }
     }
     delete[] colorBuffer;
-}
-
-// Decompress the data compressed in RLE
-void Compression::rleDecompression(unsigned char *compressedData, unsigned char *decompressedData, size_t length)
-{
-    unsigned int i(0), o(0);
-    unsigned char countByte;
-    unsigned char valueByte;
-    while (i < length)
-    {
-        countByte = compressedData[i];
-        if (countByte > 0x7F)
-        {
-            unsigned int count = countByte - 0x7F;
-            for (unsigned int j(0); j < count; j++)
-            {
-                valueByte = compressedData[i+1];
-                decompressedData[o] = valueByte;
-                i++;
-                o++;
-            }
-        }
-        else
-        {
-            valueByte = compressedData[i+1];
-            unsigned int count = countByte + 1;
-            for (unsigned int j(0); j < count; j++)
-            {
-                decompressedData[o] = valueByte;
-                o++;
-            }
-            i+=2;
-        }
-    }
 }
 
 // Decrypt encrypt Arena inf file
