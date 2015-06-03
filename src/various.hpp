@@ -17,6 +17,8 @@ public:
     // Sort of LZ algo
     // Decompress the image data compressed in 04
     static void image04Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedLengh);
+    // Compress the image data in 04
+    static size_t image04Compression(unsigned char *compressedData, unsigned char *decompressedData, size_t decompressedLengh);
 
     // Decompress the image data compressed in 08
     static void image08Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedSize, size_t decompressedSize);

@@ -151,6 +151,106 @@ void Compression::image04Decompression(unsigned char *compressedData, unsigned c
     delete[] uncompBuffer;
 }
 
+// Compress the image data in 04
+size_t Compression::image04Compression(unsigned char *compressedData, unsigned char *decompressedData, size_t decompressedLengh)
+{
+    unsigned char *compBuffer = new unsigned char[4096];
+    for (int i(0); i<0xFEE; i++)
+    {
+        compBuffer[i] = 0x20;
+    }
+    uint16_t decompDataPosition = 0;
+    uint16_t compBufferPosition = 0x0FEE;
+    uint16_t compDataPosition = 0x0000;
+    uint8_t bitmask(0), counter(0), tempCounter(0);
+    uint16_t bufferPos(0), bufferPosToCopy(0);
+    std::vector<uint8_t> tempData;
+    int tempDataNb(0);
+    while (decompDataPosition < decompressedLengh)
+    {
+        // if tempData full, only 8 operation max
+        if (tempDataNb == 8)
+        {
+            // Writting data to compressed data
+            compressedData[compDataPosition] = bitmask;
+            compDataPosition ++;
+            for (unsigned int i(0); i<tempData.size(); i++)
+            {
+                compressedData[compDataPosition] = tempData[i];
+                compDataPosition ++;
+            }
+            bitmask = 0;
+            tempData.clear();
+            tempDataNb = 0;
+        }
+        // Search through buffer
+        while (bufferPos <= 0x0FFF)
+        {
+            if (decompressedData[decompDataPosition] == compBuffer[bufferPos])
+            {
+                tempCounter = 0;
+                while (decompressedData[decompDataPosition + tempCounter] == compBuffer[bufferPos + tempCounter] &&
+                       tempCounter < 17 &&
+                       decompDataPosition + tempCounter < decompressedLengh)
+                {
+                    tempCounter ++;
+                }
+                if (tempCounter > counter)
+                {
+                    counter = tempCounter;
+                    bufferPosToCopy = bufferPos;
+                }
+            }
+            bufferPos ++;
+        }
+        // Writting tempData
+        if (counter > 1)
+        {
+            bitmask = bitmask << 1;
+            uint8_t byte1 = bufferPosToCopy & 0x00FF;
+            uint8_t byte2 = ((bufferPosToCopy & 0x0F00) >> 4) | (counter);
+            tempData.push_back(byte1);
+            tempData.push_back(byte2);
+            tempDataNb ++;
+            for (int i(0); i<counter; i++)
+            {
+                compBuffer[compBufferPosition] = decompressedData[decompDataPosition];
+                decompDataPosition ++;
+                compBufferPosition = (compBufferPosition + 1) & 0x0FFF;
+            }
+        }
+        else
+        {
+            bitmask = (bitmask << 1) | 0x01;
+            tempData.push_back(decompressedData[decompDataPosition]);
+            tempDataNb ++;
+            compBuffer[compBufferPosition] = decompressedData[decompDataPosition];
+            decompDataPosition ++;
+            compBufferPosition = (compBufferPosition + 1) & 0x0FFF;
+        }
+        counter = 0;
+        bufferPos = 0;
+        bufferPosToCopy = 0;
+    }
+    // If less than 8 operation because end of file
+    if (tempDataNb != 0)
+    {
+        // Writting data to compressed data
+        compressedData[compDataPosition] = bitmask;
+        compDataPosition ++;
+        for (unsigned int i(0); i<tempData.size(); i++)
+        {
+            compressedData[compDataPosition] = tempData[i];
+            compDataPosition ++;
+        }
+        bitmask = 0;
+        tempData.clear();
+        tempDataNb = 0;
+    }
+    delete[] compBuffer;
+    return compDataPosition;
+}
+
 // Decompress the image data compressed in 08
 void Compression::image08Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedSize, size_t decompressedSize)
 {

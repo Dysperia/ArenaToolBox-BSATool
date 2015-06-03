@@ -2745,8 +2745,8 @@ void MainWindow::test()
     uchar *sourceUncompData = new uchar[64000];
     uchar *newCompData = new uchar[64000];
     ifstream.read(reinterpret_cast<char*>(sourceCompData), dataSize);
-    Compression::image02Decompression(sourceCompData, sourceUncompData, width, height);
-    uint16_t newDataSize = Compression::image02Compression(newCompData, sourceUncompData, width, height);
+    Compression::image04Decompression(sourceCompData, sourceUncompData, dataSize);
+    uint16_t newDataSize = Compression::image04Compression(newCompData, sourceUncompData, width*height);
     std::ofstream ofstream;
     ofstream.open("/home/dysperia/Desktop/TESTNEW.IMG", std::ios_base::out | std::ios_base::binary);
     ofstream.write(reinterpret_cast<char*>(&offsetX), 2);
