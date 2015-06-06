@@ -40,9 +40,9 @@ MainWindow::MainWindow() : clearing(false), previewUpdate(false), isAnimationPla
     prefStream.open("data/settings");
     if (prefStream.is_open())
     {
-        std::string lastBSADir = new char[300];
-        std::string lastOpenSaveDir = new char[300];
-        std::string lastColDir = new char[300];
+        std::string lastBSADir;
+        std::string lastOpenSaveDir;
+        std::string lastColDir;
         std::getline(prefStream, lastBSADir);
         std::getline(prefStream, lastOpenSaveDir);
         std::getline(prefStream, lastColDir);
@@ -2744,7 +2744,9 @@ void MainWindow::test()
     uchar *sourceCompData = new uchar[64000];
     uchar *sourceUncompData = new uchar[64000];
     uchar *newCompData = new uchar[64000];
+    uchar *palette = new uchar[768];
     ifstream.read(reinterpret_cast<char*>(sourceCompData), dataSize);
+    ifstream.read(reinterpret_cast<char*>(palette), 768);
     Compression::image04Decompression(sourceCompData, sourceUncompData, dataSize);
     uint16_t newDataSize = Compression::image04Compression(newCompData, sourceUncompData, width*height);
     std::ofstream ofstream;
@@ -2754,11 +2756,13 @@ void MainWindow::test()
     ofstream.write(reinterpret_cast<char*>(&width), 2);
     ofstream.write(reinterpret_cast<char*>(&height), 2);
     ofstream.write(reinterpret_cast<char*>(&flags), 2);
-    ofstream.write(reinterpret_cast<char*>(&dataSize), 2);
+    ofstream.write(reinterpret_cast<char*>(&newDataSize), 2);
     ofstream.write(reinterpret_cast<char*>(newCompData), newDataSize);
+    ofstream.write(reinterpret_cast<char*>(palette), 768);
     delete[] sourceCompData;
     delete[] sourceUncompData;
     delete[] newCompData;
+    delete[] palette;
 }
 //=======================================================================================================
 
