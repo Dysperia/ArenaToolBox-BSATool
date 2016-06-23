@@ -159,22 +159,20 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
     {
         compBuffer[i] = 0x20;
     }
-    uint16_t decompDataPosition = 0;
-    uint16_t compBufferPosition = 0x0FEE;
-    uint16_t compDataPosition = 0x0000;
-    uint8_t bitmask(0), counter(0), tempCounter(0);
+    uint16_t decompDataPosition(0), compBufferPosition(0x0FEE), compDataPosition(0);
     uint16_t bufferPos(0), bufferPosToCopy(0);
+    uint8_t bitmask(0), counter(0), tempCounter(0);
     std::vector<uint8_t> tempData;
     int tempDataNb(0);
     while (decompDataPosition < decompressedLengh)
     {
-        // if tempData full, only 8 operation max
+        // if tempData full: 8 operations done
         if (tempDataNb == 8)
         {
             // Writting data to compressed data
             compressedData[compDataPosition] = bitmask;
             compDataPosition ++;
-            for (unsigned int i(0); i<tempData.size(); i++)
+            for (size_t i(0); i<tempData.size(); i++)
             {
                 compressedData[compDataPosition] = tempData[i];
                 compDataPosition ++;
@@ -183,35 +181,58 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
             tempData.clear();
             tempDataNb = 0;
         }
-        // Search through buffer
-        while (bufferPos <= 0x0FFF)
+        counter = 0;
+        bufferPosToCopy = 0;
+        // if serie of same value and buffer has value at pos - 1 -> hot copy
+        if (decompressedData[decompDataPosition] == compBuffer[(compBufferPosition - 1) & 0x0FFF])
         {
-            if (decompressedData[decompDataPosition] == compBuffer[bufferPos])
+            tempCounter = 0;
+            while (decompressedData[decompDataPosition] == decompressedData[decompDataPosition + tempCounter] &&
+                   tempCounter < 18 &&
+                   decompDataPosition + tempCounter < decompressedLengh)
             {
-                tempCounter = 0;
-                while (decompressedData[decompDataPosition + tempCounter] == compBuffer[bufferPos + tempCounter] &&
-                       tempCounter < 17 &&
-                       decompDataPosition + tempCounter < decompressedLengh)
-                {
-                    tempCounter ++;
-                }
-                if (tempCounter > counter)
-                {
-                    counter = tempCounter;
-                    bufferPosToCopy = bufferPos;
-                }
+                tempCounter ++;
             }
-            bufferPos ++;
+            if (tempCounter > counter)
+            {
+                counter = tempCounter;
+                bufferPosToCopy = (compBufferPosition - 1) & 0x0FFF;
+            }
+        }
+        // Search through buffer if needed
+        if (counter < 18) // optimisation: if not found the longest to copy
+        {
+            bufferPos = (compBufferPosition + 0x12) & 0x0FFF;
+            while (bufferPos != compBufferPosition && counter < 18)
+            {
+                if (decompressedData[decompDataPosition] == compBuffer[bufferPos])
+                {
+                    tempCounter = 0;
+                    while (decompressedData[decompDataPosition + tempCounter] == compBuffer[(bufferPos + tempCounter) & 0x0FFF] &&
+                           tempCounter < 18 &&
+                           decompDataPosition + tempCounter < decompressedLengh &&
+                           ((bufferPos + tempCounter) & 0x0FFF) != compBufferPosition)
+                    {
+                        tempCounter ++;
+                    }
+                    if (tempCounter > counter)
+                    {
+                        counter = tempCounter;
+                        bufferPosToCopy = bufferPos;
+                    }
+                }
+                bufferPos = (bufferPos + 1) & 0x0FFF;
+            }
         }
         // Writting tempData
-        if (counter > 1)
+        if (counter > 2)
         {
-            bitmask = bitmask << 1;
+            bitmask = bitmask >> 1;
+            tempDataNb ++;
             uint8_t byte1 = bufferPosToCopy & 0x00FF;
-            uint8_t byte2 = ((bufferPosToCopy & 0x0F00) >> 4) | (counter);
+            uint8_t byte2 = ((bufferPosToCopy & 0x0F00) >> 4) | (counter - 3);
             tempData.push_back(byte1);
             tempData.push_back(byte2);
-            tempDataNb ++;
             for (int i(0); i<counter; i++)
             {
                 compBuffer[compBufferPosition] = decompressedData[decompDataPosition];
@@ -221,24 +242,22 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
         }
         else
         {
-            bitmask = (bitmask << 1) | 0x01;
-            tempData.push_back(decompressedData[decompDataPosition]);
+            bitmask = (bitmask >> 1) | 0x80;
             tempDataNb ++;
+            tempData.push_back(decompressedData[decompDataPosition]);
             compBuffer[compBufferPosition] = decompressedData[decompDataPosition];
             decompDataPosition ++;
             compBufferPosition = (compBufferPosition + 1) & 0x0FFF;
         }
-        counter = 0;
-        bufferPos = 0;
-        bufferPosToCopy = 0;
     }
-    // If less than 8 operation because end of file
-    if (tempDataNb != 0)
+    // If less than 8 operations because end of file
+    if (tempDataNb > 0)
     {
+        bitmask = bitmask >> (8-tempDataNb);
         // Writting data to compressed data
         compressedData[compDataPosition] = bitmask;
         compDataPosition ++;
-        for (unsigned int i(0); i<tempData.size(); i++)
+        for (size_t i(0); i<tempData.size(); i++)
         {
             compressedData[compDataPosition] = tempData[i];
             compDataPosition ++;
