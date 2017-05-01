@@ -16,7 +16,7 @@ BSATool was created by David Aussourd alias Dysperia (softwatermermaid@hotmail.f
 [PFA Wiki](http://www.projet-french-arena.org/wiki/ "PFA Wiki") - [PFA forum](http://www.projet-french-arena.org/forum/ "PFA Forum")
 
 ## ArenaToolBox download from the PFA
-Be aware that the template editor is in development and some bugs have been found while using it in Turkey. The BSATool should be working for everyone.
+Be aware that the template editor is working but in testing phase and some localization bugs have been found while using it in Turkey. The BSATool should be working for everyone.
 [ArenaToolBox](http://www.projet-french-arena.org/files/ArenaToolBox_win32bit.zip "ArenaToolBox")
 
 # Historic
