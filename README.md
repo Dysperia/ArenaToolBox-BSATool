@@ -9,8 +9,7 @@ BSATool was created by David Aussourd alias Dysperia (softwatermermaid@hotmail.f
 
 # ArenaToolBox parts :
 * [BSATool](https://github.com/Dysperia/ArenaToolBox-BSATool "BSATool")
-* [TemplateEditor (old version)](https://github.com/Dysperia/TemplateEditor "TemplateEditor")
-* [TemplateEditor (new version, currently on development)](https://github.com/Dysperia/ArenaToolBox-TemplateEditor "TemplateEditor")
+* [TemplateEditor](https://github.com/Dysperia/ArenaToolBox-TemplateEditor "TemplateEditor")
 
 # Various links
 ## French translation project (PFA)
