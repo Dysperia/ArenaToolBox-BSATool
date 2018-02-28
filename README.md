@@ -20,6 +20,11 @@ Be aware that the template editor is working but in testing phase and some local
 [ArenaToolBox](http://www.projet-french-arena.org/files/ArenaToolBox_win32bit.zip "ArenaToolBox")
 
 # Historic
+________________________V1.2________________________
+
+* Added compression algorithms for some of the uncompression used by Arena (02 and 04, not yet 08)
+* First release of the tool
+
 ________________________V1.1b_______________________
 
 as of september 04, 2014
