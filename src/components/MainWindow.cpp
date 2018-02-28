@@ -1,31 +1,21 @@
-#include "mainwindow.hpp"
-#include "previewpalette.hpp"
-#include "imageviewer.hpp"
-#include "askuserwindow.hpp"
-#include "various.hpp"
-#include <string>
-#include <QApplication>
-#include <QWidget>
-#include <QMenuBar>
-#include <QAction>
-#include <QStatusBar>
-#include <QToolBar>
+#include "MainWindow.h"
+#include "../previewpalette.hpp"
+#include "../imageviewer.hpp"
+#include "../askuserwindow.hpp"
+#include "../various.hpp"
+#include "ToolBar.h"
+#include <QToolButton>
 #include <QGridLayout>
-#include <QListWidget>
-#include <QLabel>
-#include <QComboBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QFileDialog>
 #include <QMessageBox>
-#include <QToolButton>
-#include <QAbstractButton>
-#include <QPushButton>
 #include <QCloseEvent>
+#include <QFileDialog>
+#include <QStatusBar>
 #include <QPlainTextEdit>
 
-// Constructor
-MainWindow::MainWindow() : clearing(false), previewUpdate(false), isAnimationPlayed(false)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+    clearing(false), previewUpdate(false), isAnimationPlayed(false)
 {
     // Setting up lastBSADirectory
     lastBSADirectory ="";
@@ -52,172 +42,38 @@ MainWindow::MainWindow() : clearing(false), previewUpdate(false), isAnimationPla
     }
 
     // Menu bar
-    QMenuBar *menuBar = new QMenuBar;
+    menuBar = new MenuBar;
     setMenuBar(menuBar);
-    QMenu *fileMenu = menuBar->addMenu("File");
-    QAction *newBSAFile = new QAction("New BSA file", this);
-    fileMenu->addAction(newBSAFile);
-    newBSAFile->setIcon(QIcon("icon/new_bsa.png"));
-    connect(newBSAFile, SIGNAL(triggered()),this, SLOT(newBsaSlot()));
-    QAction *openBSAFile = new QAction("Open BSA file", this);
-    fileMenu->addAction(openBSAFile);
-    openBSAFile->setIcon(QIcon("icon/open_bsa.png"));
-    connect(openBSAFile, SIGNAL(triggered()),this, SLOT(openArchiveSlot()));
-    saveBSAFile = new QAction("Save BSA file", this);
-    fileMenu->addAction(saveBSAFile);
-    saveBSAFile->setIcon(QIcon("icon/save_bsa.png"));
-    connect(saveBSAFile, SIGNAL(triggered()), this, SLOT(saveBSASlot()));
-    addFile = new QAction("Add file", this);
-    fileMenu->addAction(addFile);
-    addFile->setIcon(QIcon("icon/add_file.png"));
-    connect(addFile, SIGNAL(triggered()),this, SLOT(addFileSlot()));
-    updateFile = new QAction("Update file(s)", this);
-    fileMenu->addAction(updateFile);
-    updateFile->setIcon(QIcon("icon/update_file.png"));
-    connect(updateFile, SIGNAL(triggered()),this, SLOT(updateFileSlot()));
-    deleteFile = new QAction("Delete file", this);
-    fileMenu->addAction(deleteFile);
-    deleteFile->setIcon(QIcon("icon/delete_file.png"));
-    connect(deleteFile, SIGNAL(triggered()),this, SLOT(deleteFileSlot()));
-    QMenu *cancelDeleteUpdateMenu = fileMenu->addMenu("Cancel delete/update file");
-    cancelDeleteFile = new QAction("Cancel delete file", this);
-    connect(cancelDeleteFile, SIGNAL(triggered()), this, SLOT(cancelDeleteFileSlot()));
-    cancelUpdateFile = new QAction("Cancel update file", this);
-    connect(cancelUpdateFile, SIGNAL(triggered()), this, SLOT(cancelUpdateFileSlot()));
-    cancelDeleteUpdateMenu->addAction(cancelUpdateFile);
-    cancelDeleteUpdateMenu->addAction(cancelDeleteFile);
-    QAction *quitAction = new QAction("Quit", this);
-    fileMenu->addAction(quitAction);
-    quitAction->setIcon(QIcon("icon/exit.png"));
-    connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
-
-    QMenu *viewMenu = menuBar->addMenu("View");
-    extendedPreview = new QAction("Extended preview", this);
-    viewMenu->addAction(extendedPreview);
-    connect(extendedPreview, SIGNAL(triggered()), this, SLOT(viewExtendedPreviewSlot()));
-    QAction *updatePreviewOverDefault = viewMenu->addAction("Use update file over default for image preview");
-    updatePreviewOverDefault->setCheckable(true);
-    connect(updatePreviewOverDefault, SIGNAL(toggled(bool)), this, SLOT(setUseUpdatePreviewSlot(bool)));
-
-    QMenu *extractMenu = menuBar->addMenu("Extract");
-    QMenu *extractAsRawMenu = extractMenu->addMenu("Extract as raw");
-    extractRawFile = new QAction("Extract file", this);
-    extractAsRawMenu->addAction(extractRawFile);
-    connect(extractRawFile, SIGNAL(triggered()), this, SLOT(extractRawFileSlot()));
-    extractRawAllFilteredFiles = new QAction("Extract all filtered files", this);
-    extractAsRawMenu->addAction(extractRawAllFilteredFiles);
-    connect(extractRawAllFilteredFiles, SIGNAL(triggered()), this, SLOT(extractRawAllFilteredFilesSlot()));
-    QMenu *extractImageMenu = extractMenu->addMenu("Extract image");
-    extractDecompressImage = new QAction("Extract and decompress IMG/SET", this);
-    extractImageMenu->addAction(extractDecompressImage);
-    connect(extractDecompressImage, SIGNAL(triggered()), this, SLOT(extractDecompressImageSlot()));
-    extractDecompressAllImage = new QAction("Extract and decompress all IMG/SET", this);
-    extractImageMenu->addAction(extractDecompressAllImage);
-    connect(extractDecompressAllImage, SIGNAL(triggered()), this, SLOT(extractDecompressAllImageSlot()));
-    extractDecompressConvertImage = new QAction("Extract, decompress and convert IMG/SET to PNG", this);
-    extractImageMenu->addAction(extractDecompressConvertImage);
-    connect(extractDecompressConvertImage, SIGNAL(triggered()), this, SLOT(extractDecompressConvertImageSlot()));
-    extractDecompressConvertAllImage = new QAction("Extract, decompress and convert all IMG/SET to PNG", this);
-    extractImageMenu->addAction(extractDecompressConvertAllImage);
-    connect(extractDecompressConvertAllImage, SIGNAL(triggered()), this, SLOT(extractDecompressConvertAllImageSlot()));
-    QMenu *extractAnimationMenu = extractMenu->addMenu("Extract animation");
-    extractConvertAnimation = new QAction("Extract and convert DFA/CFA/CIF to GIF", this);
-    extractAnimationMenu->addAction(extractConvertAnimation);
-    extractConvertAllAnimation = new QAction("Extract and convert all DFA/CFA/CIF to GIF", this);
-    extractAnimationMenu->addAction(extractConvertAllAnimation);
-    QMenu *extractSoundMenu = extractMenu->addMenu("Extract sound");
-    extractConvertSound = new QAction("Extract and convert VOC/XFM/XMI to WAV", this);
-    extractSoundMenu->addAction(extractConvertSound);
-    extractConvertAllSound = new QAction("Extract and convert all VOC/XFM/XMI to WAV", this);
-    extractSoundMenu->addAction(extractConvertAllSound);
-
-    QMenu *paletteMenu = menuBar->addMenu("Palette");
-    viewPalette = new QAction("View palette", this);
-    paletteMenu->addAction(viewPalette);
-    viewPalette->setIcon(QIcon("icon/view_palette.png"));
-    connect(viewPalette, SIGNAL(triggered()), this, SLOT(showPreviewPaletteSlot()));
-
-    QMenu *toolMenu = menuBar->addMenu("Tool");
-    QAction *encryptDecryptInf = new QAction("Encrypt/Decrypt INF file", this);
-    toolMenu->addAction(encryptDecryptInf);
-    connect(encryptDecryptInf, SIGNAL(triggered()), this, SLOT(encryptDecryptINFSlot()));
-    QAction *decompressExternalIMG = new QAction("Decompress external IMG(s)", this);
-    toolMenu->addAction(decompressExternalIMG);
-    connect(decompressExternalIMG, SIGNAL(triggered()), this, SLOT(decompressExternalIMGSlot()));
-    QAction *decompressExternalIMGsToPNGs = new QAction("Decompress and convert external IMG(s)/SET(s) to PNG(s)", this);
-    toolMenu->addAction(decompressExternalIMGsToPNGs);
-    connect(decompressExternalIMGsToPNGs, SIGNAL(triggered()), this, SLOT(decompressConvertExternalIMGSETSlot()));
-    QAction *convertPNGsToIMGsSETs = new QAction("Convert external PNG(s) to IMG/SET", this);
-    toolMenu->addAction(convertPNGsToIMGsSETs);
-    connect(convertPNGsToIMGsSETs, SIGNAL(triggered()), this, SLOT(convertPNGToIMGSETSlot()));
-    QAction *viewExternalIMG = new QAction("View an external IMG/SET", this);
-    toolMenu->addAction(viewExternalIMG);
-    connect(viewExternalIMG, SIGNAL(triggered()), this, SLOT(viewExternalIMGSlot()));
-    QAction *viewExternalCFADFACIF = new QAction("View an external CFA/DFA/CIF", this);
-    toolMenu->addAction(viewExternalCFADFACIF);
-
-    QMenu *aboutMenu = menuBar->addMenu("About");
-    QAction *about = new QAction("About", this);
-    aboutMenu->addAction(about);
-    about->setIcon(QIcon("icon/about.png"));
-    connect(about, SIGNAL(triggered()), this, SLOT(aboutSlot()));
-
-
-
-    // Delete when implemented
-    viewExternalCFADFACIF->setDisabled(true);
-
-
 
     // Toolbar
-    QToolBar *toolBar = new QToolBar;
-    toolBar->setMovable(false);
-    toolBar->setFloatable(false);
-    toolBar->setWindowTitle("Toolbar");
-    toolBar->addAction(newBSAFile);
-    toolBar->addAction(openBSAFile);
-    toolBar->addAction(saveBSAFile);
-    toolBar->addSeparator();
-    toolBar->addAction(addFile);
-    toolBar->addAction(deleteFile);
-    toolBar->addAction(updateFile);
-    QToolButton *cancelDeleteUpdateButton = new QToolButton;
-    cancelDeleteUpdateButton->setPopupMode(QToolButton::InstantPopup);
-    cancelDeleteUpdateButton->setIcon(QIcon("icon/cancel_deleteUpdate.png"));
-    cancelDeleteUpdateButton->setMenu(cancelDeleteUpdateMenu);
-    toolBar->addWidget(cancelDeleteUpdateButton);
-    toolBar->addSeparator();
-    toolBar->addAction(viewPalette);
-    toolBar->addSeparator();
-    QToolButton *rawToolButton = new QToolButton;
-    rawToolButton->setPopupMode(QToolButton::InstantPopup);
-    rawToolButton->setIcon(QIcon("icon/raw.png"));
-    rawToolButton->setMenu(extractAsRawMenu);
-    toolBar->addWidget(rawToolButton);
-    QToolButton *imageToolButton = new QToolButton;
-    imageToolButton->setPopupMode(QToolButton::InstantPopup);
-    imageToolButton->setIcon(QIcon("icon/image.png"));
-    imageToolButton->setMenu(extractImageMenu);
-    toolBar->addWidget(imageToolButton);
-    QToolButton *animationToolButton = new QToolButton;
-    animationToolButton->setPopupMode(QToolButton::InstantPopup);
-    animationToolButton->setIcon(QIcon("icon/animation.png"));
-    animationToolButton->setMenu(extractAnimationMenu);
-    toolBar->addWidget(animationToolButton);
-    QToolButton *soundToolButton = new QToolButton;
-    soundToolButton->setPopupMode(QToolButton::InstantPopup);
-    soundToolButton->setIcon(QIcon("icon/sound.png"));
-    soundToolButton->setMenu(extractSoundMenu);
-    toolBar->addWidget(soundToolButton);
-    QToolButton *toolToolButton = new QToolButton;
-    toolToolButton->setPopupMode(QToolButton::InstantPopup);
-    toolToolButton->setIcon(QIcon("icon/tool.png"));
-    toolToolButton->setMenu(toolMenu);
-    toolBar->addWidget(toolToolButton);
-    toolBar->setIconSize(QSize(36, 36));
+    ToolBar* toolBar = new ToolBar(menuBar);
     addToolBar(toolBar);
 
-    viewMenu->addAction(toolBar->toggleViewAction());
+    // Connecting MenuBar/ToolBar actions
+    connect(menuBar->getNewBSAFileAction(), SIGNAL(triggered()),this, SLOT(newBsaSlot()));
+    connect(menuBar->getOpenBSAFileAction(), SIGNAL(triggered()),this, SLOT(openArchiveSlot()));
+    connect(menuBar->getSaveBSAFileAction(), SIGNAL(triggered()), this, SLOT(saveBSASlot()));
+    connect(menuBar->getAddFileAction(), SIGNAL(triggered()),this, SLOT(addFileSlot()));
+    connect(menuBar->getUpdateFileAction(), SIGNAL(triggered()),this, SLOT(updateFileSlot()));
+    connect(menuBar->getDeleteFileAction(), SIGNAL(triggered()),this, SLOT(deleteFileSlot()));
+    connect(menuBar->getCancelDeleteFileAction(), SIGNAL(triggered()), this, SLOT(cancelDeleteFileSlot()));
+    connect(menuBar->getCancelUpdateFileAction(), SIGNAL(triggered()), this, SLOT(cancelUpdateFileSlot()));
+    connect(menuBar->getQuitAction(), SIGNAL(triggered()), this, SLOT(close()));
+    connect(menuBar->getExtendedPreviewAction(), SIGNAL(triggered()), this, SLOT(viewExtendedPreviewSlot()));
+    connect(menuBar->getUpdatePreviewOverDefaultAction(), SIGNAL(toggled(bool)), this, SLOT(setUseUpdatePreviewSlot(bool)));
+    connect(menuBar->getExtractRawFileAction(), SIGNAL(triggered()), this, SLOT(extractRawFileSlot()));
+    connect(menuBar->getExtractRawAllFilteredFilesAction(), SIGNAL(triggered()), this, SLOT(extractRawAllFilteredFilesSlot()));
+    connect(menuBar->getExtractDecompressImageAction(), SIGNAL(triggered()), this, SLOT(extractDecompressImageSlot()));
+    connect(menuBar->getExtractDecompressAllImageAction(), SIGNAL(triggered()), this, SLOT(extractDecompressAllImageSlot()));
+    connect(menuBar->getExtractDecompressConvertImageAction(), SIGNAL(triggered()), this, SLOT(extractDecompressConvertImageSlot()));
+    connect(menuBar->getExtractDecompressConvertAllImageAction(), SIGNAL(triggered()), this, SLOT(extractDecompressConvertAllImageSlot()));
+    connect(menuBar->getViewPaletteAction(), SIGNAL(triggered()), this, SLOT(showPreviewPaletteSlot()));
+    connect(menuBar->getEncryptDecryptInfAction(), SIGNAL(triggered()), this, SLOT(encryptDecryptINFSlot()));
+    connect(menuBar->getDecompressExternalIMGAction(), SIGNAL(triggered()), this, SLOT(decompressExternalIMGSlot()));
+    connect(menuBar->getDecompressExternalIMGsToPNGsAction(), SIGNAL(triggered()), this, SLOT(decompressConvertExternalIMGSETSlot()));
+    connect(menuBar->getConvertPNGsToIMGsSETsAction(), SIGNAL(triggered()), this, SLOT(convertPNGToIMGSETSlot()));
+    connect(menuBar->getViewExternalIMGAction(), SIGNAL(triggered()), this, SLOT(viewExternalIMGSlot()));
+    connect(menuBar->getAboutAction(), SIGNAL(triggered()), this, SLOT(aboutSlot()));
 
     // Central widget
     QWidget *mainZone = new QWidget;
@@ -351,20 +207,16 @@ void MainWindow::setUseUpdatePreviewSlot(bool useUpdate)
 // Clearing function
 void MainWindow::clear()
 {
-    extractRawFile->setDisabled(true);
-    extractRawAllFilteredFiles->setDisabled(true);
-    saveBSAFile->setDisabled(true);
-    addFile->setDisabled(true);
-    updateFile->setDisabled(true);
-    deleteFile->setDisabled(true);
-    extractDecompressImage->setDisabled(true);
-    extractDecompressAllImage->setDisabled(true);
-    extractDecompressConvertImage->setDisabled(true);
-    extractDecompressConvertAllImage->setDisabled(true);
-    extractConvertAnimation->setDisabled(true);
-    extractConvertAllAnimation->setDisabled(true);
-    extractConvertSound->setDisabled(true);
-    extractConvertAllSound->setDisabled(true);
+    menuBar->getExtractRawFileAction()->setDisabled(true);
+    menuBar->getExtractRawAllFilteredFilesAction()->setDisabled(true);
+    menuBar->getSaveBSAFileAction()->setDisabled(true);
+    menuBar->getAddFileAction()->setDisabled(true);
+    menuBar->getUpdateFileAction()->setDisabled(true);
+    menuBar->getDeleteFileAction()->setDisabled(true);
+    menuBar->getExtractDecompressImageAction()->setDisabled(true);
+    menuBar->getExtractDecompressAllImageAction()->setDisabled(true);
+    menuBar->getExtractDecompressConvertImageAction()->setDisabled(true);
+    menuBar->getExtractDecompressConvertAllImageAction()->setDisabled(true);
 
     imageData.clear();
     imageData.resize(1);
@@ -686,102 +538,82 @@ void MainWindow::updateQActionsState(QListWidgetItem *item)
             isUpdated = BSAFile::getInstance()->getIsFileUpdated(index);
         }
 
-        extractDecompressImage->setDisabled(true);
-        extractDecompressAllImage->setDisabled(true);
-        extractDecompressConvertImage->setDisabled(true);
-        extractDecompressConvertAllImage->setDisabled(true);
-        extractConvertAnimation->setDisabled(true);
-        extractConvertAllAnimation->setDisabled(true);
-        extractConvertSound->setDisabled(true);
-        extractConvertAllSound->setDisabled(true);
+        menuBar->getExtractDecompressImageAction()->setDisabled(true);
+        menuBar->getExtractDecompressAllImageAction()->setDisabled(true);
+        menuBar->getExtractDecompressConvertImageAction()->setDisabled(true);
+        menuBar->getExtractDecompressConvertAllImageAction()->setDisabled(true);
         if (isDeleted)
         {
-            cancelDeleteFile->setDisabled(false);
+            menuBar->getCancelDeleteFileAction()->setDisabled(false);
         }
         else
         {
-            cancelDeleteFile->setDisabled(true);
+            menuBar->getCancelDeleteFileAction()->setDisabled(true);
         }
         if (isUpdated)
         {
-            cancelUpdateFile->setDisabled(false);
+            menuBar->getCancelUpdateFileAction()->setDisabled(false);
         }
         else
         {
-            cancelUpdateFile->setDisabled(true);
+            menuBar->getCancelUpdateFileAction()->setDisabled(true);
         }
         if (previewLabel->pixmap() != 0 && !isAnimationPlayed)
         {
-            viewPalette->setDisabled(false);
-            extendedPreview->setDisabled(false);
+            menuBar->getViewPaletteAction()->setDisabled(false);
+            menuBar->getExtendedPreviewAction()->setDisabled(false);
         }
         else if (extension == "INF")
         {
-            extendedPreview->setDisabled(false);
+            menuBar->getExtendedPreviewAction()->setDisabled(false);
         }
         else
         {
-            viewPalette->setDisabled(true);
-            extendedPreview->setDisabled(true);
+            menuBar->getViewPaletteAction()->setDisabled(true);
+            menuBar->getExtendedPreviewAction()->setDisabled(true);
         }
         if (BSAFile::getInstance()->getIsOpened())
         {
-            addFile->setDisabled(false);
+            menuBar->getAddFileAction()->setDisabled(false);
         }
         else
         {
-            addFile->setDisabled(true);
+            menuBar->getAddFileAction()->setDisabled(true);
         }
         if (BSAFile::getInstance()->getIsOpened() == true && BSAFile::getInstance()->getFileNumber() != 0)
         {
-            extractRawFile->setDisabled(false);
-            extractRawAllFilteredFiles->setDisabled(false);
-            updateFile->setDisabled(false);
-            deleteFile->setDisabled(false);
+            menuBar->getExtractRawFileAction()->setDisabled(false);
+            menuBar->getExtractRawAllFilteredFilesAction()->setDisabled(false);
+            menuBar->getUpdateFileAction()->setDisabled(false);
+            menuBar->getDeleteFileAction()->setDisabled(false);
         }
         else
         {
-            extractRawFile->setDisabled(true);
-            extractRawAllFilteredFiles->setDisabled(true);
-            updateFile->setDisabled(true);
-            deleteFile->setDisabled(true);
+            menuBar->getExtractRawFileAction()->setDisabled(true);
+            menuBar->getExtractRawAllFilteredFilesAction()->setDisabled(true);
+            menuBar->getUpdateFileAction()->setDisabled(true);
+            menuBar->getDeleteFileAction()->setDisabled(true);
         }
         if (BSAFile::getInstance()->getIsModified() == true && BSAFile::getInstance()->getIsSaved() == false)
         {
-            saveBSAFile->setDisabled(false);
+            menuBar->getSaveBSAFileAction()->setDisabled(false);
         }
         else
         {
-            saveBSAFile->setDisabled(true);
+            menuBar->getSaveBSAFileAction()->setDisabled(true);
         }
         if (extension == "IMG" || extension == "SET")
         {
-            extractDecompressImage->setDisabled(false);
-            extractDecompressConvertImage->setDisabled(false);
-        }
-        if (extension == "DFA" || extension == "CFA" || extension == "CIF")
-        {
-    //        extractConvertAnimation->setDisabled(false);
-        }
-        if (extension == "VOC" || extension == "XFM" || extension == "XMI")
-        {
-    //        extractConvertSound->setDisabled(false);
+            menuBar->getExtractDecompressImageAction()->setDisabled(false);
+            menuBar->getExtractDecompressConvertImageAction()->setDisabled(false);
         }
         int nbrOfFilters = FileFilterList.size();
         for ( int i(0); i < nbrOfFilters; i++)
         {
             if (FileFilterList[i] == "IMG" || FileFilterList[i] == "SET")
             {
-                extractDecompressAllImage->setDisabled(false);
-                extractDecompressConvertAllImage->setDisabled(false);
-            }
-            if (FileFilterList[i] == "DFA" || FileFilterList[i] == "CFA" || FileFilterList[i] == "CIF")
-            {
-    //            extractConvertAllAnimation->setDisabled(false);
-            }
-            if (FileFilterList[i] == "VOC" || FileFilterList[i] == "XFM" || FileFilterList[i] == "XMI")
-            {
-    //            extractConvertAllSound->setDisabled(false);
+                menuBar->getExtractDecompressAllImageAction()->setDisabled(false);
+                menuBar->getExtractDecompressConvertAllImageAction()->setDisabled(false);
             }
         }
     }
@@ -1673,8 +1505,8 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
                     askForPalette->setText(QString::fromStdString(fileName) + " is a Arena native IMG file but has not the integrated palette it should have.\n"
                                            "This program default is to set the palette to PAL.COL, but you can choose an other one.\n\n"
                                            "What do you want to do?");
-                    QAbstractButton *PALButton = askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
-                    QAbstractButton *customButton = askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
+                    QAbstractButton* PALButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
+                    QAbstractButton* customButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
                     askForPalette->exec();
                     if (askForPalette->clickedButton() == PALButton)
                     {
@@ -1739,10 +1571,10 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
                     askForPalette->setText(QString::fromStdString(fileName) + " is not an Arena native IMG file and has no integrated palette.\n"
                                            "This program default is to set the palette to PAL.COL, but you can choose an other one.\n\n"
                                            "What do you want to do?");
-                    QAbstractButton *PALButton = askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
-                    QAbstractButton *PALForAllButton = askForPalette->addButton(QString("Use PAL.COL for All"), QMessageBox::AcceptRole);
-                    QAbstractButton *customButton = askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
-                    QAbstractButton *customForAllButton = askForPalette->addButton(QString("Use an other for All"), QMessageBox::RejectRole);
+                    QAbstractButton* PALButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
+                    QAbstractButton* PALForAllButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL for All"), QMessageBox::AcceptRole);
+                    QAbstractButton* customButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
+                    QAbstractButton* customForAllButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other for All"), QMessageBox::RejectRole);
                     if (nbrOfIMGs <= 1)
                     {
                         askForPalette->removeButton(PALForAllButton);
@@ -1835,7 +1667,7 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
 void MainWindow::convertPNGToIMGSETSlot()
 {
     QStringList sourceFilesPath = QFileDialog::getOpenFileNames(this, "Choose PNG file(s) to convert", lastOpenSaveFileDirectory, "PNG files (*.png)");
-    int pngNbr = sourceFilesPath.size();    
+    int pngNbr = sourceFilesPath.size();
 
     // For use with non native conversion
     QString fileType = "IMG";

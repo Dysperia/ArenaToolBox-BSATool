@@ -6,7 +6,6 @@
 class PreviewPalette : public QWidget
 {
 public:
-
     PreviewPalette(const QVector<QRgb> palette, QWidget *parent = 0);
 };
 

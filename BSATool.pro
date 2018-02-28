@@ -12,15 +12,18 @@ TARGET = BSATool
 TEMPLATE = app
 
 
-SOURCES += src/main.cpp \
+SOURCES += \
     src/askuserwindow.cpp \
     src/bsafile.cpp \
     src/globalImage.cpp \
     src/image.cpp \
     src/imageviewer.cpp \
-    src/mainwindow.cpp \
     src/previewpalette.cpp \
-    src/various.cpp
+    src/various.cpp \
+    src/main/main.cpp \
+    src/components/MenuBar.cpp \
+    src/components/ToolBar.cpp \
+    src/components/MainWindow.cpp
 
 HEADERS  += \ 
     src/askuserwindow.hpp \
@@ -28,8 +31,10 @@ HEADERS  += \
     src/globalImage.hpp \
     src/image.hpp \
     src/imageviewer.hpp \
-    src/mainwindow.hpp \
     src/previewpalette.hpp \
-    src/various.hpp
+    src/various.hpp \
+    src/components/MenuBar.h \
+    src/components/ToolBar.h \
+    src/components/MainWindow.h
 
 FORMS    +=

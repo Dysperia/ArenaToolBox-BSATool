@@ -1,27 +1,28 @@
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-#include "bsafile.hpp"
-#include "globalImage.hpp"
 #include <QMainWindow>
-#include <QString>
-#include <QStringList>
 #include <QComboBox>
 #include <QListWidget>
 #include <QLabel>
-#include <map>
-#include <QVector>
-#include <QRgb>
 #include <thread>
+
+#include "../globalImage.hpp"
+#include "MenuBar.h"
 
 extern Image image;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+public:
+    explicit MainWindow(QWidget *parent = nullptr);
+
+signals:
+
+public slots:
 
 private:
-
     //=======================================================================================================
     // Extract header under conditions
     void extractHeader();
@@ -52,24 +53,7 @@ private:
     QListWidget *archiveFileList;
     QLabel *previewLabel;
     QLabel *infoLabel;
-    QAction *saveBSAFile;
-    QAction *addFile;
-    QAction *updateFile;
-    QAction *deleteFile;
-    QAction *extractRawFile;
-    QAction *extractRawAllFilteredFiles;
-    QAction *extractDecompressImage;
-    QAction *extractDecompressAllImage;
-    QAction *extractDecompressConvertImage;
-    QAction *extractDecompressConvertAllImage;
-    QAction *extractConvertAnimation;
-    QAction *extractConvertAllAnimation;
-    QAction *extractConvertSound;
-    QAction *extractConvertAllSound;
-    QAction *viewPalette;
-    QAction *extendedPreview;
-    QAction *cancelDeleteFile;
-    QAction *cancelUpdateFile;
+    MenuBar* menuBar;
 
     // Qstring containing info on file for use in infoLabel
     QString infoText;
@@ -201,11 +185,6 @@ private slots:
 
     // Decrypt or encrypt INF text file
     void encryptDecryptINFSlot();
-
-public:
-
-    // Contructor
-    MainWindow();
 };
 
-#endif // MAINWINDOW_HPP
+#endif // MAINWINDOW_H
