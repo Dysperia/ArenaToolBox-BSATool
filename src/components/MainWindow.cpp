@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     setMenuBar(menuBar);
 
     // Toolbar
-    ToolBar* toolBar = new ToolBar(menuBar);
+    ToolBar *toolBar = new ToolBar(menuBar);
     addToolBar(toolBar);
 
     // Connecting MenuBar/ToolBar actions
@@ -323,7 +323,7 @@ void MainWindow::updateWindowSlot(QListWidgetItem *item)
 }
 
 // Update the info displayed when a file is selected
-void MainWindow::updateInfoLabel(QListWidgetItem* item)
+void MainWindow::updateInfoLabel(QListWidgetItem *item)
 {
     if (!clearing)
     {
@@ -1505,8 +1505,8 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
                     askForPalette->setText(QString::fromStdString(fileName) + " is a Arena native IMG file but has not the integrated palette it should have.\n"
                                            "This program default is to set the palette to PAL.COL, but you can choose an other one.\n\n"
                                            "What do you want to do?");
-                    QAbstractButton* PALButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
-                    QAbstractButton* customButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
+                    QAbstractButton *PALButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
+                    QAbstractButton *customButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
                     askForPalette->exec();
                     if (askForPalette->clickedButton() == PALButton)
                     {
@@ -1571,10 +1571,10 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
                     askForPalette->setText(QString::fromStdString(fileName) + " is not an Arena native IMG file and has no integrated palette.\n"
                                            "This program default is to set the palette to PAL.COL, but you can choose an other one.\n\n"
                                            "What do you want to do?");
-                    QAbstractButton* PALButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
-                    QAbstractButton* PALForAllButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL for All"), QMessageBox::AcceptRole);
-                    QAbstractButton* customButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
-                    QAbstractButton* customForAllButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other for All"), QMessageBox::RejectRole);
+                    QAbstractButton *PALButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
+                    QAbstractButton *PALForAllButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL for All"), QMessageBox::AcceptRole);
+                    QAbstractButton *customButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
+                    QAbstractButton *customForAllButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other for All"), QMessageBox::RejectRole);
                     if (nbrOfIMGs <= 1)
                     {
                         askForPalette->removeButton(PALForAllButton);

@@ -1,7 +1,7 @@
 #include "ToolBar.h"
 #include <QToolButton>
 
-ToolBar::ToolBar(MenuBar* menuBar)
+ToolBar::ToolBar(MenuBar *menuBar)
 {
     setWindowTitle("Toolbar");
     setMovable(false);
@@ -13,7 +13,7 @@ ToolBar::ToolBar(MenuBar* menuBar)
     addAction(menuBar->getAddFileAction());
     addAction(menuBar->getDeleteFileAction());
     addAction(menuBar->getUpdateFileAction());
-    QToolButton* cancelDeleteUpdateButton = new QToolButton;
+    QToolButton *cancelDeleteUpdateButton = new QToolButton;
     cancelDeleteUpdateButton->setPopupMode(QToolButton::InstantPopup);
     cancelDeleteUpdateButton->setIcon(QIcon("icon/cancel_deleteUpdate.png"));
     cancelDeleteUpdateButton->setMenu(menuBar->getCancelDeleteUpdateMenu());

@@ -8,7 +8,7 @@ class ToolBar : public QToolBar
 {
 public:
     // Constructors
-    ToolBar(MenuBar* menuBar);
+    ToolBar(MenuBar *menuBar);
 };
 
 #endif // TOOLBAR_H
