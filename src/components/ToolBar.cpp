@@ -1,6 +1,9 @@
 #include "ToolBar.h"
 #include <QToolButton>
 
+//******************************************************************************
+// Constructors
+//******************************************************************************
 ToolBar::ToolBar(MenuBar *menuBar)
 {
     setWindowTitle("Toolbar");

@@ -23,7 +23,9 @@ SOURCES += \
     src/main/main.cpp \
     src/components/MenuBar.cpp \
     src/components/ToolBar.cpp \
-    src/components/MainWindow.cpp
+    src/components/MainWindow.cpp \
+    src/bsa/BsaArchive.cpp \
+    src/bsa/BsaFile.cpp
 
 HEADERS  += \ 
     src/askuserwindow.hpp \
@@ -35,6 +37,8 @@ HEADERS  += \
     src/various.hpp \
     src/components/MenuBar.h \
     src/components/ToolBar.h \
-    src/components/MainWindow.h
+    src/components/MainWindow.h \
+    src/bsa/BsaArchive.h \
+    src/bsa/BsaFile.h
 
 FORMS    +=

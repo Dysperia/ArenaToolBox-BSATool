@@ -3,11 +3,25 @@
 
 #include <QMenuBar>
 
+/**
+ * @brief The MenuBar class
+ */
 class MenuBar : public QMenuBar
 {
 public:
+    //**************************************************************************
     // Constructors
+    //**************************************************************************
+    /**
+     * @brief Default constructor
+     *
+     * build the menu and the QActions associated with it
+     */
     MenuBar();
+
+    //**************************************************************************
+    // Getters/setters
+    //**************************************************************************
     // Getters menus
     QMenu *getFileMenu();
     QMenu *getCancelDeleteUpdateMenu();
@@ -45,6 +59,9 @@ public:
     QAction *getAboutAction();
 
 private:
+    //**************************************************************************
+    // Attributes
+    //**************************************************************************
     // Menus
     QMenu *mFileMenu;
     QMenu *mCancelDeleteUpdateMenu;

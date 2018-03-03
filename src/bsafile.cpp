@@ -25,7 +25,7 @@ BSAFile::BSAFile() : modifiedSize(0), isOpened(false), isModified(false), isSave
 }
 
 //================================================================================
-// Return 0 all goog, 1 bad bsa format or corrupted bsa, 2 error while opening
+// Return 0 all good, 1 bad bsa format or corrupted bsa, 2 error while opening
 int BSAFile::openArchive(const std::string &filePath)
 {
     // Open the archive for reading

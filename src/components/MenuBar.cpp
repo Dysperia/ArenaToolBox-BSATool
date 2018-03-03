@@ -1,6 +1,8 @@
 #include "MenuBar.h"
 
+//******************************************************************************
 // Constructors
+//******************************************************************************
 MenuBar::MenuBar()
 {
     mFileMenu = addMenu("File");
@@ -76,6 +78,9 @@ MenuBar::MenuBar()
     mAboutAction->setIcon(QIcon("icon/about.png"));
 }
 
+//******************************************************************************
+// Getters/setters
+//******************************************************************************
 // Getters menus
 QMenu *MenuBar::getFileMenu() {
     return mFileMenu;
