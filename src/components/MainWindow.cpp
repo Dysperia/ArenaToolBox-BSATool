@@ -4,6 +4,7 @@
 #include "../askuserwindow.hpp"
 #include "../various.hpp"
 #include "ToolBar.h"
+#include "ConsoleDock.h"
 #include <QToolButton>
 #include <QGridLayout>
 #include <QVBoxLayout>
@@ -13,6 +14,7 @@
 #include <QFileDialog>
 #include <QStatusBar>
 #include <QPlainTextEdit>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     clearing(false), previewUpdate(false), isAnimationPlayed(false)
@@ -115,6 +117,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     // Status bar
     statusBar();
+
+    // Console
+    this->addDockWidget(Qt::BottomDockWidgetArea, new ConsoleDock(this));
 
     // Setting up some QActions activation state
     updateQActionsState();
@@ -1505,8 +1510,8 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
                     askForPalette->setText(QString::fromStdString(fileName) + " is a Arena native IMG file but has not the integrated palette it should have.\n"
                                            "This program default is to set the palette to PAL.COL, but you can choose an other one.\n\n"
                                            "What do you want to do?");
-                    QAbstractButton *PALButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
-                    QAbstractButton *customButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
+                    QAbstractButton *PALButton = askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
+                    QAbstractButton *customButton = askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
                     askForPalette->exec();
                     if (askForPalette->clickedButton() == PALButton)
                     {
@@ -1571,10 +1576,10 @@ void MainWindow::decompressConvertExternalIMGSETSlot()
                     askForPalette->setText(QString::fromStdString(fileName) + " is not an Arena native IMG file and has no integrated palette.\n"
                                            "This program default is to set the palette to PAL.COL, but you can choose an other one.\n\n"
                                            "What do you want to do?");
-                    QAbstractButton *PALButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
-                    QAbstractButton *PALForAllButton = (QAbstractButton*) askForPalette->addButton(QString("Use PAL.COL for All"), QMessageBox::AcceptRole);
-                    QAbstractButton *customButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
-                    QAbstractButton *customForAllButton = (QAbstractButton*) askForPalette->addButton(QString("Use an other for All"), QMessageBox::RejectRole);
+                    QAbstractButton *PALButton = askForPalette->addButton(QString("Use PAL.COL"), QMessageBox::AcceptRole);
+                    QAbstractButton *PALForAllButton = askForPalette->addButton(QString("Use PAL.COL for All"), QMessageBox::AcceptRole);
+                    QAbstractButton *customButton = askForPalette->addButton(QString("Use an other"), QMessageBox::RejectRole);
+                    QAbstractButton *customForAllButton = askForPalette->addButton(QString("Use an other for All"), QMessageBox::RejectRole);
                     if (nbrOfIMGs <= 1)
                     {
                         askForPalette->removeButton(PALForAllButton);

@@ -25,7 +25,13 @@ SOURCES += \
     src/components/ToolBar.cpp \
     src/components/MainWindow.cpp \
     src/bsa/BsaArchive.cpp \
-    src/bsa/BsaFile.cpp
+    src/bsa/BsaFile.cpp \
+    src/assets/Palette.cpp \
+    src/configuration/ApplicationConfiguration.cpp \
+    src/configuration/ArchiveConfiguration.cpp \
+    src/utils/Compression.cpp \
+    src/log/Logger.cpp \
+    src/components/ConsoleDock.cpp
 
 HEADERS  += \ 
     src/askuserwindow.hpp \
@@ -39,6 +45,13 @@ HEADERS  += \
     src/components/ToolBar.h \
     src/components/MainWindow.h \
     src/bsa/BsaArchive.h \
-    src/bsa/BsaFile.h
+    src/bsa/BsaFile.h \
+    src/assets/Palette.h \
+    src/configuration/ApplicationConfiguration.h \
+    src/configuration/ArchiveConfiguration.h \
+    src/utils/Compression.h \
+    src/log/Logger.h \
+    src/designpatterns/Singleton.h \
+    src/components/ConsoleDock.h
 
 FORMS    +=
