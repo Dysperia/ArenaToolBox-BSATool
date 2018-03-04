@@ -39,9 +39,6 @@ private:
     // Map for getting index from filename
     std::map<std::string, int> fileMap;
 
-    // Map for getting the file type of a given extension
-    std::map<std::string, std::string> fileTypeMap;
-
     bool isOpened;
     bool isModified;
     bool isSaved;
@@ -81,9 +78,6 @@ public:
 
     // Return an upper file extension
     std::string getFileExtension(int index);
-
-    // Get file type associated with a given file extension
-    std::string getFileType(const std::string &ext);
 
     // Get the index number of a given file name
     int getIndex(const std::string &fileName);

@@ -5,12 +5,24 @@
 //******************************************************************************
 BsaFile::BsaFile(const uint32_t &size,
            const size_t &startOffsetInArchive,
-           const std::string fileName) :
-    mSize(size),
-    mStartOffsetInArchive(startOffsetInArchive),
-    mFileName(fileName)
+           const std::string fileName,
+           const size_t &index) :
+    mSize(size), mStartOffsetInArchive(startOffsetInArchive),
+    mFileName(fileName), mIndex(index)
 {
 
+}
+
+BsaFile::BsaFile(const BsaFile &bsaFile)
+{
+    BsaFile(bsaFile.mSize, bsaFile.mStartOffsetInArchive, bsaFile.mFileName,
+            bsaFile.mIndex);
+    mIsNew = bsaFile.mIsNew;
+    mToDeleted = bsaFile.mToDeleted;
+    mUpdated = bsaFile.mUpdated;
+    mUpdateFileSize = bsaFile.mUpdateFileSize;
+    mUpdateFilePath = bsaFile.mUpdateFilePath;
+    mNewFilePath = bsaFile.mNewFilePath;
 }
 
 //******************************************************************************
@@ -26,9 +38,14 @@ size_t BsaFile::startOffsetInArchive() const
     return mStartOffsetInArchive;
 }
 
-const std::string BsaFile::fileName() const
+std::string BsaFile::fileName() const
 {
     return mFileName;
+}
+
+size_t BsaFile::index() const
+{
+    return mIndex;
 }
 
 bool BsaFile::isNew() const

@@ -2,6 +2,7 @@
 #define ARCHIVE_H
 
 #include "BsaFile.h"
+#include "../error/Error.h"
 #include <vector>
 #include <map>
 #include <fstream>
@@ -26,14 +27,6 @@ public:
      * @brief Archive constructor
      */
     BsaArchive();
-    /**
-     * @brief Archive constructor
-     *
-     * This constructor will try to open the given archive
-     * @param filePath the filepath to the archive
-     */
-    //TODO implements
-    BsaArchive(const std::string &filePath);
 
     //**************************************************************************
     // Getters/setters
@@ -52,11 +45,20 @@ public:
     /**
      * @brief open the given archive
      * @param filePath the filepath to the archive
-     * @return 0 all good, 1 bad bsa format or corrupted bsa, 2 error while opening
+     * @return the status of the operation
      */
-    // TODO implements
-    int openArchive(const std::string &filePath);
-    //FIXME add other methods needed
+    Error openArchive(const std::string &filePath);
+    void clear();
+    Error extractFile(const std::string &destinationFolder,
+                      const BsaFile &file);
+    BsaFile updateFile(const std::string &updateFilePath,
+                    const BsaFile &file);
+    BsaFile deleteFile(const BsaFile &file);
+    BsaFile addFile(const std::string &filePath);
+    BsaFile cancelDeleteFile(const BsaFile &file);
+    BsaFile cancelUpdateFile(const BsaFile &file);
+    void createNewArchive();
+    Error saveArchive(const std::string &filePath);
 
 private:
     //**************************************************************************
@@ -65,39 +67,35 @@ private:
     /**
      * @brief complete archive path with filename
      */
-    std::string archiveFilePath;
+    std::string mArchiveFilePath{};
     /**
      * @brief fileNumber (bytes 1 to 2 of the archive)
      */
-    uint16_t fileNumber;
+    uint16_t mFileNumber{0};
     /**
      * @brief archive total size
      */
-    size_t bsaSize;
+    size_t mBsaSize{0};
     /**
      * @brief archive total size including all current modifications
      */
-    int modifiedSize;
+    int mModifiedSize{0};
     /**
      * @brief List of the archive files
      */
-    std::vector<BsaFile> files;
+    std::vector<BsaFile> mFiles{};
     /**
      * @brief file stream reading the archive file
      */
-    std::ifstream archiveReadingStream;
-    /**
-     * @brief Map allowing the retreave a file index from its filename
-     */
-    std::map<std::string, std::string> fileTypeMap;
+    std::ifstream mArchiveReadingStream{};
     /**
      * @brief true if an archive is opened
      */
-    bool opened;
+    bool mOpened{false};
     /**
      * @brief true if the opened archive has been modified
      */
-    bool modified;
+    bool mModified{false};
 };
 
 #endif // ARCHIVE_H

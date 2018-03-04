@@ -6,7 +6,7 @@
 /**
  * @brief The File class
  *
- * Describe the
+ * Describe an archive file
  */
 class BsaFile
 {
@@ -23,14 +23,20 @@ public:
      */
     BsaFile(const uint32_t &size,
          const size_t &startOffsetInArchive,
-         const std::string fileName);
+         const std::string fileName,
+         const size_t &index);
+    /**
+     * @brief copy construtor
+     */
+    BsaFile(const BsaFile &bsaFile);
 
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
     uint32_t size() const;
     size_t startOffsetInArchive() const;
-    const std::string fileName() const;
+    std::string fileName() const;
+    size_t index() const;
     bool isNew() const;
     void setIsNew(bool isNew);
     bool toDeleted() const;
@@ -51,39 +57,43 @@ private:
     /**
      * @brief file size
      */
-    const uint32_t mSize;
+    const uint32_t mSize{0};
     /**
      * @brief start offset of the file data in archive
      */
-    const size_t mStartOffsetInArchive;
+    const size_t mStartOffsetInArchive{0};
     /**
      * @brief file name
      */
-    const std::string mFileName;
+    const std::string mFileName{};
+    /**
+     * @brief index of the in archive
+     */
+    const size_t mIndex{0};
     /**
      * @brief true if the file is new and to add to the archive
      */
-    bool mIsNew;
+    bool mIsNew{false};
     /**
      * @brief true if the file is to be remove of the archive
      */
-    bool mToDeleted;
+    bool mToDeleted{false};
     /**
      * @brief true if the file is to be updated with a new version
      */
-    bool mUpdated;
+    bool mUpdated{false};
     /**
      * @brief the size of the update file
      */
-    int mUpdateFileSize;
+    int mUpdateFileSize{0};
     /**
      * @brief the complete path to the update file
      */
-    std::string mUpdateFilePath;
+    std::string mUpdateFilePath{};
     /**
      * @brief the complete path to the new file
      */
-    std::string mNewFilePath;
+    std::string mNewFilePath{};
 };
 
 #endif // ENTRY_H

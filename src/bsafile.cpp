@@ -11,17 +11,7 @@ BSAFile *BSAFile::getInstance()
 //================================================================================
 BSAFile::BSAFile() : modifiedSize(0), isOpened(false), isModified(false), isSaved(false)
 {
-    this->fileTypeMap["CFA"] = "Animation";
-    this->fileTypeMap["IMG"] = "Single image";
-    this->fileTypeMap["CIF"] = "Animation";
-    this->fileTypeMap["INF"] = "Encrypted text";
-    this->fileTypeMap["XFM"] = "Low quality Midi audio";
-    this->fileTypeMap["XMI"] = "High quality Midi audio";
-    this->fileTypeMap["VOC"] = "Audio";
-    this->fileTypeMap["DFA"] = "Image partly animated";
-    this->fileTypeMap["MIF"] = "Interior map";
-    this->fileTypeMap["SET"] = "Texture set";
-    this->fileTypeMap["RMD"] = "Exterior map";
+
 }
 
 //================================================================================
@@ -185,23 +175,6 @@ std::string BSAFile::getFileExtension(int index)
         std::transform(ext.begin(), ext.end(), upperExt.begin(), toupper);
         return upperExt;
     }
-}
-
-//================================================================================
-// Get file type associated with a given file extension
-std::string BSAFile::getFileType(const std::string &ext)
-{
-    for (std::map<std::string, std::string>::iterator it=fileTypeMap.begin(); it!=fileTypeMap.end(); ++it)
-    {
-        std::string upperExt(ext);
-        std::transform(ext.begin(), ext.end(), upperExt.begin(), toupper);
-        if (upperExt == it->first)
-        {
-            return it->second;
-        }
-    }
-    std::string ret = "Unknown file type";
-    return ret;
 }
 
 //================================================================================

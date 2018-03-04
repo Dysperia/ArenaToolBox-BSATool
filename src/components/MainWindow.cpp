@@ -3,6 +3,7 @@
 #include "../imageviewer.hpp"
 #include "../askuserwindow.hpp"
 #include "../various.hpp"
+#include "../assets/FileType.h"
 #include "ToolBar.h"
 #include "ConsoleDock.h"
 #include <QToolButton>
@@ -460,7 +461,7 @@ void MainWindow::generateInfoText(const std::string &fileName)
         std::string ext = BSAFile::getInstance()->getFileExtension(index);
         tempstr += QString::fromStdString(ext);
         tempstr += " (";
-        tempstr += QString::fromStdString(BSAFile::getInstance()->getFileType(ext));
+        tempstr += FileType::getDescriptionFromExtension(QString::fromStdString(ext));
         // If file is a IMG or SET and preview image has been built and displayed
         if ((BSAFile::getInstance()->getFileExtension(index) == "IMG" && previewLabel->pixmap() != 0) ||
                 (BSAFile::getInstance()->getFileExtension(index) == "SET" && previewLabel->pixmap() != 0))

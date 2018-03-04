@@ -31,7 +31,9 @@ SOURCES += \
     src/configuration/ArchiveConfiguration.cpp \
     src/utils/Compression.cpp \
     src/log/Logger.cpp \
-    src/components/ConsoleDock.cpp
+    src/components/ConsoleDock.cpp \
+    src/error/Error.cpp \
+    src/assets/FileType.cpp
 
 HEADERS  += \ 
     src/askuserwindow.hpp \
@@ -52,6 +54,8 @@ HEADERS  += \
     src/utils/Compression.h \
     src/log/Logger.h \
     src/designpatterns/Singleton.h \
-    src/components/ConsoleDock.h
+    src/components/ConsoleDock.h \
+    src/error/Error.h \
+    src/assets/FileType.h
 
 FORMS    +=
