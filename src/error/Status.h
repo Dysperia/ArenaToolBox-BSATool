@@ -1,5 +1,5 @@
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef STATUS_H
+#define STATUS_H
 
 #include <QString>
 
@@ -10,12 +10,12 @@
  * error occured, any other int indicates an error). In case the status is not
  * zero, the message should be set to detail what happened)
  */
-class Error {
+class Status {
 public:
     //**************************************************************************
     // Constructors
     //**************************************************************************
-    Error(const int &status, const QString &message = "");
+    Status(const int &status, const QString &message = "");
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
@@ -36,4 +36,4 @@ private:
     QString mMessage;
 };
 
-#endif // ERROR_H
+#endif // STATUS_H

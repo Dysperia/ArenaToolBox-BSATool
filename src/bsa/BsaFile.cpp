@@ -3,47 +3,41 @@
 //******************************************************************************
 // Constructors
 //******************************************************************************
-BsaFile::BsaFile(const uint32_t &size,
-           const size_t &startOffsetInArchive,
-           const std::string fileName,
-           const size_t &index) :
+
+BsaFile::BsaFile()
+{
+
+}
+
+BsaFile::BsaFile(const quint32 &size,
+                 const qint64 &startOffsetInArchive,
+                 const QString fileName,
+                 const quint16 &index):
     mSize(size), mStartOffsetInArchive(startOffsetInArchive),
     mFileName(fileName), mIndex(index)
 {
 
 }
 
-BsaFile::BsaFile(const BsaFile &bsaFile)
-{
-    BsaFile(bsaFile.mSize, bsaFile.mStartOffsetInArchive, bsaFile.mFileName,
-            bsaFile.mIndex);
-    mIsNew = bsaFile.mIsNew;
-    mToDeleted = bsaFile.mToDeleted;
-    mUpdated = bsaFile.mUpdated;
-    mUpdateFileSize = bsaFile.mUpdateFileSize;
-    mUpdateFilePath = bsaFile.mUpdateFilePath;
-    mNewFilePath = bsaFile.mNewFilePath;
-}
-
 //******************************************************************************
 // Getters/setters
 //******************************************************************************
-uint32_t BsaFile::size() const
+quint32 BsaFile::size() const
 {
     return mSize;
 }
 
-size_t BsaFile::startOffsetInArchive() const
+qint64 BsaFile::startOffsetInArchive() const
 {
     return mStartOffsetInArchive;
 }
 
-std::string BsaFile::fileName() const
+QString BsaFile::fileName() const
 {
     return mFileName;
 }
 
-size_t BsaFile::index() const
+quint16 BsaFile::index() const
 {
     return mIndex;
 }
@@ -78,32 +72,32 @@ void BsaFile::setUpdated(bool updated)
     mUpdated = updated;
 }
 
-int BsaFile::updateFileSize() const
+quint32 BsaFile::updateFileSize() const
 {
     return mUpdateFileSize;
 }
 
-void BsaFile::setUpdateFileSize(int updateFileSize)
+void BsaFile::setUpdateFileSize(quint32 updateFileSize)
 {
     mUpdateFileSize = updateFileSize;
 }
 
-std::string BsaFile::updateFilePath() const
+QString BsaFile::updateFilePath() const
 {
     return mUpdateFilePath;
 }
 
-void BsaFile::setUpdateFilePath(const std::string &updateFilePath)
+void BsaFile::setUpdateFilePath(const QString &updateFilePath)
 {
     mUpdateFilePath = updateFilePath;
 }
 
-std::string BsaFile::newFilePath() const
+QString BsaFile::newFilePath() const
 {
     return mNewFilePath;
 }
 
-void BsaFile::setNewFilePath(const std::string &newFilePath)
+void BsaFile::setNewFilePath(const QString &newFilePath)
 {
     mNewFilePath = newFilePath;
 }

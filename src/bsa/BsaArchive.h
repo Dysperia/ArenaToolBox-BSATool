@@ -2,10 +2,10 @@
 #define ARCHIVE_H
 
 #include "BsaFile.h"
-#include "../error/Error.h"
-#include <vector>
-#include <map>
-#include <fstream>
+#include "../error/Status.h"
+#include <QVector>
+#include <QDataStream>
+#include <QFile>
 
 /**
  * @brief Describe a BSA archive
@@ -16,6 +16,8 @@
  * - File table: 18 bytes for each
  *   - 14 bytes for the name
  *   - 4 bytes for the file size
+ *
+ * All data are written in little endian
  */
 class BsaArchive
 {
@@ -27,15 +29,19 @@ public:
      * @brief Archive constructor
      */
     BsaArchive();
+    /**
+     * @brief Archive destructor
+     */
+    ~BsaArchive();
 
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
-    std::string getArchiveFilePath() const;
-    uint16_t getFileNumber() const;
-    size_t getBsaSize() const;
-    int getModifiedSize() const;
-    std::vector<BsaFile> getFiles() const;
+    QString getArchiveFilePath() const;
+    quint16 getFileNumber() const;
+    qint64 getSize() const;
+    qint64 getModifiedSize() const;
+    QVector<BsaFile> getFiles() const;
     bool isOpened() const;
     bool isModified() const;
 
@@ -47,18 +53,19 @@ public:
      * @param filePath the filepath to the archive
      * @return the status of the operation
      */
-    Error openArchive(const std::string &filePath);
-    void clear();
-    Error extractFile(const std::string &destinationFolder,
+    Status openArchive(const QString &filePath);
+    //TODO documentation
+    void closeArchive();
+    Status extractFile(const QString &destinationFolder,
                       const BsaFile &file);
-    BsaFile updateFile(const std::string &updateFilePath,
+    BsaFile updateFile(const QString &updateFilePath,
                     const BsaFile &file);
     BsaFile deleteFile(const BsaFile &file);
-    BsaFile addFile(const std::string &filePath);
+    BsaFile addFile(const QString &filePath);
     BsaFile cancelDeleteFile(const BsaFile &file);
     BsaFile cancelUpdateFile(const BsaFile &file);
     void createNewArchive();
-    Error saveArchive(const std::string &filePath);
+    Status saveArchive(const QString &filePath);
 
 private:
     //**************************************************************************
@@ -67,27 +74,27 @@ private:
     /**
      * @brief complete archive path with filename
      */
-    std::string mArchiveFilePath{};
+    QFile mArchiveFile{};
     /**
      * @brief fileNumber (bytes 1 to 2 of the archive)
      */
-    uint16_t mFileNumber{0};
+    quint16 mFileNumber{0};
     /**
      * @brief archive total size
      */
-    size_t mBsaSize{0};
+    qint64 mSize{0};
     /**
      * @brief archive total size including all current modifications
      */
-    int mModifiedSize{0};
+    qint64 mModifiedSize{0};
     /**
      * @brief List of the archive files
      */
-    std::vector<BsaFile> mFiles{};
+    QVector<BsaFile> mFiles{};
     /**
      * @brief file stream reading the archive file
      */
-    std::ifstream mArchiveReadingStream{};
+    QDataStream mReadingStream{};
     /**
      * @brief true if an archive is opened
      */

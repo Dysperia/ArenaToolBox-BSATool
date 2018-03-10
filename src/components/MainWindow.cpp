@@ -4,6 +4,8 @@
 #include "../askuserwindow.hpp"
 #include "../various.hpp"
 #include "../assets/FileType.h"
+#include "../bsa/BsaArchive.h"
+#include "../log/Logger.h"
 #include "ToolBar.h"
 #include "ConsoleDock.h"
 #include <QToolButton>
@@ -120,7 +122,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     statusBar();
 
     // Console
-    this->addDockWidget(Qt::BottomDockWidgetArea, new ConsoleDock(this));
+    QDockWidget *consoleDock = new ConsoleDock(this);
+    this->addDockWidget(Qt::BottomDockWidgetArea, consoleDock);
+    menuBar->getViewMenu()->addAction(consoleDock->toggleViewAction());
 
     // Setting up some QActions activation state
     updateQActionsState();
@@ -270,6 +274,15 @@ void MainWindow::openArchiveSlot()
                 BSAFile::getInstance()->clear();
                 clearing = false;
                 reloading = false;
+            }
+            BsaArchive archive;
+            Status status = archive.openArchive(archiveFileName);
+            if (status.status() != 0) {
+                Logger::getInstance().log(Logger::ERROR, status.message());
+            }
+            else {
+                Logger::getInstance().log(Logger::INFO, QString("Archive opened : %1")
+                                          .arg(archiveFileName));
             }
             int ret = BSAFile::getInstance()->openArchive(archiveFileName.toStdString());
             switch (ret)

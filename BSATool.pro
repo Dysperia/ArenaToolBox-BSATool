@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,8 +32,8 @@ SOURCES += \
     src/utils/Compression.cpp \
     src/log/Logger.cpp \
     src/components/ConsoleDock.cpp \
-    src/error/Error.cpp \
-    src/assets/FileType.cpp
+    src/assets/FileType.cpp \
+    src/error/Status.cpp
 
 HEADERS  += \ 
     src/askuserwindow.hpp \
@@ -55,7 +55,7 @@ HEADERS  += \
     src/log/Logger.h \
     src/designpatterns/Singleton.h \
     src/components/ConsoleDock.h \
-    src/error/Error.h \
-    src/assets/FileType.h
+    src/assets/FileType.h \
+    src/error/Status.h
 
 FORMS    +=

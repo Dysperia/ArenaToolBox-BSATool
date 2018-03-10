@@ -1,9 +1,9 @@
-#include "Error.h"
+#include "Status.h"
 
 //**************************************************************************
 // Constructors
 //**************************************************************************
-Error::Error(const int &status, const QString &message):
+Status::Status(const int &status, const QString &message):
     mStatus(status), mMessage(message)
 {
 
@@ -12,12 +12,12 @@ Error::Error(const int &status, const QString &message):
 //**************************************************************************
 // Getters/setters
 //**************************************************************************
-int Error::status() const
+int Status::status() const
 {
     return mStatus;
 }
 
-QString Error::message() const
+QString Status::message() const
 {
     return mMessage;
 }
