@@ -45,7 +45,7 @@ QString buildLogLine(const Logger::MessageType type,
         default :
             break;
     }
-    line.append(message).append("\n");
+    line.append(message);
     return line;
 }
 
