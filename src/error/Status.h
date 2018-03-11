@@ -6,9 +6,10 @@
 /**
  * @brief Describe the return of a function
  *
- * This class contains an integer indicating the status (zero indicating that no
- * error occured, any other int indicates an error). In case the status is not
- * zero, the message should be set to detail what happened)
+ * This class contains an integer indicating the status ( negative int indicates
+ * an error). In case the status is negative, the message should be set to
+ * detail what happened. The exact meaning of a positive or zero status should
+ * be explained by the operation itself
  */
 class Status {
 public:
@@ -27,11 +28,11 @@ private:
     // Attributes
     //**************************************************************************
     /**
-     * @brief status code. Any code different of zero indicates an error
+     * @brief status code.
      */
     int mStatus;
     /**
-     * @brief message detailling the error if any
+     * @brief message detailling the error if any happened
      */
     QString mMessage;
 };

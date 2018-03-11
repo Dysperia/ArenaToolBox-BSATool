@@ -60,11 +60,11 @@ bool BsaArchive::isModified() const
 Status BsaArchive::openArchive(const QString &filePath)
 {
     if (mOpened) {
-        return Status(1, QStringLiteral("An archive is already opened"));
+        return Status(-1, QStringLiteral("An archive is already opened"));
     }
     mArchiveFile.setFileName(filePath);
     if (!mArchiveFile.open(QIODevice::ReadOnly)) {
-        return Status(1, QString("Could not open the file in read mode : %1")
+        return Status(-1, QString("Could not open the file in read mode : %1")
                      .arg(filePath));
     }
     // Getting total file size
@@ -82,11 +82,11 @@ Status BsaArchive::openArchive(const QString &filePath)
     quint32 size = 0;
     for (quint16 i(0); i < mFileNumber; i++) {
         if (mArchiveFile.atEnd()) {
-            return Status(1, QString("Reached end of file while reading infos of file %1 of %2")
+            return Status(-1, QString("Reached end of file while reading infos of file %1 of %2")
                          .arg(i+1).arg(mFileNumber));
         }
         if (mReadingStream.readRawData(&name[0], 14) < 14) {
-            return Status(1, QString("Could not read file name of file %1 of %2")
+            return Status(-1, QString("Could not read file name of file %1 of %2")
                          .arg(i+1).arg(mFileNumber));
         }
         mReadingStream >> size;
@@ -99,7 +99,7 @@ Status BsaArchive::openArchive(const QString &filePath)
                                     mFiles, &BsaFile::size, sizeReduce);
     totalSizeFromFiles += 2 + fileTableSize;
     if (totalSizeFromFiles != mSize) {
-        return Status(1, QString("The archive seems corrupted (actual size : %1, expected size : %2")
+        return Status(-1, QString("The archive seems corrupted (actual size : %1, expected size : %2")
                      .arg(mSize).arg(totalSizeFromFiles));
     }
     // Archive has been read and ok -> opened

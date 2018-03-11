@@ -51,11 +51,22 @@ public:
     /**
      * @brief open the given archive
      * @param filePath the filepath to the archive
-     * @return the status of the operation
+     * @return the status of the operation :
+     * -1 if failed
+     * 0 if success
      */
     Status openArchive(const QString &filePath);
-    //TODO documentation
+    /**
+     * @brief close this archive and restore state to a not opened archive
+     */
     void closeArchive();
+    /**
+     * @brief extract a file
+     * @param destinationFolder destination folder of the file
+     * @param file file to extract
+     * @return the status of the operation :
+     *
+     */
     Status extractFile(const QString &destinationFolder,
                       const BsaFile &file);
     BsaFile updateFile(const QString &updateFilePath,
