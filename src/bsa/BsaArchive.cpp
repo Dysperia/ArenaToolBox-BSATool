@@ -74,12 +74,13 @@ Status BsaArchive::openArchive(const QString &filePath)
     // Reading file number
     mArchiveFile.seek(0);
     mReadingStream >> mFileNumber;
-    // Reading files name and size
+    // Reading files name and size from file table
     quint16 fileTableSize = 18*mFileNumber;
     mArchiveFile.seek(mSize - fileTableSize);
     quint32 offset = 2;
     char name[14];
     quint32 size = 0;
+    mFiles.resize(mFileNumber);
     for (quint16 i(0); i < mFileNumber; i++) {
         if (mArchiveFile.atEnd()) {
             return Status(-1, QString("Reached end of file while reading infos of file %1 of %2")
@@ -120,6 +121,22 @@ void BsaArchive::closeArchive()
     mModifiedSize = 0;
     mFileNumber = 0;
     mFiles.clear();
+}
+
+QVector<char> BsaArchive::getFileData(const BsaFile &file)
+{
+    // Bad index, not opened
+    if (!mOpened || file.index() >= mFiles.size()) {
+        return QVector<char>(0);
+    }
+    BsaFile internFile = mFiles.at(file.index());
+    // new file or seek error
+    if (!mArchiveFile.seek(internFile.startOffsetInArchive())) {
+        return QVector<char>(0);
+    }
+    QVector<char> data(internFile.size());
+    size_t bytesRead = mReadingStream.readRawData(data.data(), internFile.size());
+    return bytesRead == internFile.size() ? data : QVector<char>(0);
 }
 
 Status BsaArchive::extractFile(const QString &destinationFolder, const BsaFile &file)

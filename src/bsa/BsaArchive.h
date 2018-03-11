@@ -3,6 +3,7 @@
 
 #include "BsaFile.h"
 #include "../error/Status.h"
+#include "memory"
 #include <QVector>
 #include <QDataStream>
 #include <QFile>
@@ -51,9 +52,7 @@ public:
     /**
      * @brief open the given archive
      * @param filePath the filepath to the archive
-     * @return the status of the operation :
-     * -1 if failed
-     * 0 if success
+     * @return the status of the operation : -1 if failure, 0 if success
      */
     Status openArchive(const QString &filePath);
     /**
@@ -61,21 +60,62 @@ public:
      */
     void closeArchive();
     /**
+     * @brief retourne the archive data for the file
+     * @param file the file to read, It should have at least the index set
+     * @return the file data. If an error occured and the data can not be read
+     * an empty vector is returned. The same happens if the archive is not
+     * opened or the file is new
+     */
+    QVector<char> getFileData(const BsaFile &file);
+    /**
      * @brief extract a file
      * @param destinationFolder destination folder of the file
-     * @param file file to extract
-     * @return the status of the operation :
-     *
+     * @param file file to extract. It should have at least the index set
+     * @return the status of the operation : -1 if failure, 0 if success
      */
     Status extractFile(const QString &destinationFolder,
                       const BsaFile &file);
+    /**
+     * @brief update a file by a new one
+     * @param updateFilePath path the new file
+     * @param file file to update. It should have at least the index set
+     * @return the file with its state updated
+     */
     BsaFile updateFile(const QString &updateFilePath,
                     const BsaFile &file);
+    /**
+     * @brief delete a file
+     * @param file file to delete. It should have at least the index set
+     * @return the file with its state updated
+     */
     BsaFile deleteFile(const BsaFile &file);
+    /**
+     * @brief addFile add a new file to the archive
+     * @param filePath path the new file
+     * @return the file created
+     */
     BsaFile addFile(const QString &filePath);
+    /**
+     * @brief cancel the delete operation pending on a file
+     * @param file the file for which the operation has to be cancel
+     * @return the file with its state updated
+     */
     BsaFile cancelDeleteFile(const BsaFile &file);
+    /**
+     * @brief cancel the update operation pending on a file
+     * @param file the file for which the operation has to be cancel
+     * @return the file with its state updated
+     */
     BsaFile cancelUpdateFile(const BsaFile &file);
+    /**
+     * @brief create a new empty archive
+     */
     void createNewArchive();
+    /**
+     * @brief save the archive to the given file path
+     * @param filePath path to the save file
+     * @return the status of the operation : -1 if failure, 0 if success
+     */
     Status saveArchive(const QString &filePath);
 
 private:

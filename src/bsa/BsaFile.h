@@ -41,6 +41,13 @@ public:
      * @brief copy assigment operator
      */
     BsaFile &operator =(const BsaFile &bsaFile) = default;
+    /**
+     * @brief equals operator
+     *
+     * Two files are considered equal if their filename and index in archive are
+     * the same
+     */
+    bool operator ==(const BsaFile &bsaFile) const;
 
     //**************************************************************************
     // Getters/setters
