@@ -61,14 +61,14 @@ void BsaFile::setIsNew(bool isNew)
     mIsNew = isNew;
 }
 
-bool BsaFile::toDeleted() const
+bool BsaFile::toDelete() const
 {
-    return mToDeleted;
+    return mToDelete;
 }
 
-void BsaFile::setToDeleted(bool toDeleted)
+void BsaFile::setToDelete(bool toDelete)
 {
-    mToDeleted = toDeleted;
+    mToDelete = toDelete;
 }
 
 bool BsaFile::updated() const

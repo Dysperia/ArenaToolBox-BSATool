@@ -6,7 +6,8 @@
 /**
  * @brief The File class
  *
- * Describe an archive file
+ * Describe an archive file. A file with an offset of zero indicate an invalid
+ * file since the minimum is 2 (bsa archive begins by two bytes for file number)
  */
 class BsaFile
 {
@@ -58,8 +59,8 @@ public:
     quint16 index() const;
     bool isNew() const;
     void setIsNew(bool isNew);
-    bool toDeleted() const;
-    void setToDeleted(bool toDeleted);
+    bool toDelete() const;
+    void setToDelete(bool toDelete);
     bool updated() const;
     void setUpdated(bool updated);
     quint32 updateFileSize() const;
@@ -86,7 +87,7 @@ private:
      */
     QString mFileName{};
     /**
-     * @brief index of the in archive
+     * @brief index of the in archive (starts at zero)
      */
     quint16 mIndex{0};
     /**
@@ -96,7 +97,7 @@ private:
     /**
      * @brief true if the file is to be remove of the archive
      */
-    bool mToDeleted{false};
+    bool mToDelete{false};
     /**
      * @brief true if the file is to be updated with a new version
      */

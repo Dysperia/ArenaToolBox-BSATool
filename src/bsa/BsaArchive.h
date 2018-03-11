@@ -68,7 +68,9 @@ public:
      */
     QVector<char> getFileData(const BsaFile &file);
     /**
-     * @brief extract a file
+     * @brief extract a file.
+     * Does not work for new file and extract the archive file, not the updated
+     * one in case of an updated file
      * @param destinationFolder destination folder of the file
      * @param file file to extract. It should have at least the index set
      * @return the status of the operation : -1 if failure, 0 if success
@@ -77,6 +79,10 @@ public:
                       const BsaFile &file);
     /**
      * @brief update a file by a new one
+     *
+     * An invalid file is returned in case a wrong file provided, for example
+     * if the index is invalid. This is also the case if the update file does
+     * not exist
      * @param updateFilePath path the new file
      * @param file file to update. It should have at least the index set
      * @return the file with its state updated
@@ -85,6 +91,9 @@ public:
                     const BsaFile &file);
     /**
      * @brief delete a file
+     *
+     * An invalid file is returned in case a wrong file provided, for example
+     * if the index is invalid.
      * @param file file to delete. It should have at least the index set
      * @return the file with its state updated
      */
@@ -97,12 +106,18 @@ public:
     BsaFile addFile(const QString &filePath);
     /**
      * @brief cancel the delete operation pending on a file
+     *
+     * An invalid file is returned in case a wrong file provided, for example
+     * if the index is invalid. Noting is done if the file is not to delete
      * @param file the file for which the operation has to be cancel
      * @return the file with its state updated
      */
     BsaFile cancelDeleteFile(const BsaFile &file);
     /**
      * @brief cancel the update operation pending on a file
+     *
+     * An invalid file is returned in case a wrong file provided, for example
+     * if the index is invalid. Noting is done if the file is not update
      * @param file the file for which the operation has to be cancel
      * @return the file with its state updated
      */
@@ -154,6 +169,19 @@ private:
      * @brief true if the opened archive has been modified
      */
     bool mModified{false};
+
+    //**************************************************************************
+    // Methods
+    //**************************************************************************
+    /**
+     * @brief check and return error if file is out of the archive file table,
+     * the archive is not opened and optionally if the file is new
+     * @param file the file to check
+     * @param checkNew check for not new file if true
+     * @return 0 if no error cases found, -1 otherwise
+     */
+    Status verifyIndexOpenOrNewErrors(const BsaFile &file,
+                                      bool checkNew = false);
 };
 
 #endif // ARCHIVE_H

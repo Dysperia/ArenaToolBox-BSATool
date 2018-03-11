@@ -3,6 +3,8 @@
 #include <QtConcurrent/QtConcurrent>
 #include "functional"
 
+const BsaFile INVALID_BSAFILE(0, 0, "", 0); // offset of zero is impossible
+
 //******************************************************************************
 // Constructors
 //******************************************************************************
@@ -123,14 +125,28 @@ void BsaArchive::closeArchive()
     mFiles.clear();
 }
 
+Status BsaArchive::verifyIndexOpenOrNewErrors(const BsaFile &file,
+                                              bool checkNew) {
+    if (!mOpened) {
+        return Status(-1, QStringLiteral("The archive is not opened"));
+    }
+    if (file.index() >= mFileNumber) {
+        return Status(-1, QStringLiteral("The file index is out of the archive"));
+    }
+    if (checkNew && mFiles.at(file.index()).isNew()) {
+        return Status(-1, QStringLiteral("The operation cannot be performed for new files"));
+    }
+    return Status(0);
+}
+
 QVector<char> BsaArchive::getFileData(const BsaFile &file)
 {
-    // Bad index, not opened
-    if (!mOpened || file.index() >= mFiles.size()) {
+    Status status = verifyIndexOpenOrNewErrors(file, true);
+    if (status.status() < 0) {
         return QVector<char>(0);
     }
     BsaFile internFile = mFiles.at(file.index());
-    // new file or seek error
+    // seek error
     if (!mArchiveFile.seek(internFile.startOffsetInArchive())) {
         return QVector<char>(0);
     }
@@ -141,20 +157,63 @@ QVector<char> BsaArchive::getFileData(const BsaFile &file)
 
 Status BsaArchive::extractFile(const QString &destinationFolder, const BsaFile &file)
 {
-    //TODO implements extractFile
-    return Status(1);
+    Status status = verifyIndexOpenOrNewErrors(file, true);
+    if (status.status() < 0) {
+        return status;
+    }
+    BsaFile internFile = mFiles.at(file.index());
+    QFile saveFile(destinationFolder + QDir::separator() + internFile.fileName());
+    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        return Status(-1, QString("Could not open the file in write mode : %1")
+                     .arg(saveFile.fileName()));
+    }
+    QDataStream writeStream(&saveFile);
+    QVector<char> data = getFileData(internFile);
+    size_t bytesRead = data.size();
+    // data size too small
+    if (bytesRead < internFile.size()) {
+        return Status(-1, QString("To few data read from the archive, actual :%1, expected : %2")
+                     .arg(data.size()).arg(internFile.size()));
+    }
+    size_t bytesWritten = writeStream.writeRawData(data.constData(), data.size());
+    if (bytesWritten < internFile.size()) {
+        return Status(-1, QString("Only %1 bytes of %2 written to file %3")
+                      .arg(bytesWritten).arg(internFile.size())
+                      .arg(saveFile.fileName()));
+    }
+    return Status(0);
 }
 
 BsaFile BsaArchive::updateFile(const QString &updateFilePath, const BsaFile &file)
 {
-    //TODO implements updateFile
-    return BsaFile(0,0,"",0);
+    Status status = verifyIndexOpenOrNewErrors(file);
+    if (status.status() < 0) {
+        return INVALID_BSAFILE;
+    }
+    // Update file should exist
+    QFile updateFile(updateFilePath);
+    if (!updateFile.exists()) {
+        return INVALID_BSAFILE;
+    }
+    quint32 updateSize = updateFile.size();
+    // Updating file state
+    BsaFile internFile = mFiles[file.index()];
+    internFile.setUpdated(true);
+    internFile.setUpdateFilePath(updateFilePath);
+    internFile.setUpdateFileSize(updateSize);
+    return internFile;
 }
 
 BsaFile BsaArchive::deleteFile(const BsaFile &file)
 {
-    //TODO implements deleteFile
-    return BsaFile(0,0,"",0);
+    Status status = verifyIndexOpenOrNewErrors(file);
+    if (status.status() < 0) {
+        return INVALID_BSAFILE;
+    }
+    // Updating file state
+    BsaFile internFile = mFiles[file.index()];
+    internFile.setToDelete(true);
+    return internFile;
 }
 
 BsaFile BsaArchive::addFile(const QString &filePath)
@@ -165,14 +224,36 @@ BsaFile BsaArchive::addFile(const QString &filePath)
 
 BsaFile BsaArchive::cancelDeleteFile(const BsaFile &file)
 {
-    //TODO implements cancelDeleteFile
-    return BsaFile(0,0,"",0);
+    Status status = verifyIndexOpenOrNewErrors(file);
+    if (status.status() < 0) {
+        return INVALID_BSAFILE;
+    }
+    BsaFile internFile = mFiles[file.index()];
+    // Noting to be done if file not to delete
+    if (!internFile.toDelete()) {
+        return internFile;
+    }
+    // Updating file state
+    internFile.setToDelete(false);
+    return internFile;
 }
 
 BsaFile BsaArchive::cancelUpdateFile(const BsaFile &file)
 {
-    //TODO implements cancelUpdateFile
-    return BsaFile(0,0,"",0);
+    Status status = verifyIndexOpenOrNewErrors(file);
+    if (status.status() < 0) {
+        return INVALID_BSAFILE;
+    }
+    BsaFile internFile = mFiles[file.index()];
+    // Noting to be done if file not updated
+    if (!internFile.updated()) {
+        return internFile;
+    }
+    // Updating file state
+    internFile.setUpdated(false);
+    internFile.setUpdateFilePath("");
+    internFile.setUpdateFileSize(0);
+    return internFile;
 }
 
 void BsaArchive::createNewArchive()
