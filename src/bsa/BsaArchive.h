@@ -182,6 +182,10 @@ private:
      */
     Status verifyIndexOpenOrNewErrors(const BsaFile &file,
                                       bool checkNew = false);
+    /**
+     * @brief update the mModified attribute
+     */
+    void updateIsModified();
 };
 
 #endif // ARCHIVE_H

@@ -139,6 +139,20 @@ Status BsaArchive::verifyIndexOpenOrNewErrors(const BsaFile &file,
     return Status(0);
 }
 
+void BsaArchive::updateIsModified()
+{
+    if (mOpened) {
+        for (quint16 i(0); i < mFileNumber; i++) {
+            const BsaFile &internFile = mFiles.at(i);
+            if (internFile.isNew() || internFile.toDelete() || internFile.updated()) {
+                mModified = true;
+                return;
+            }
+        }
+        mModified = false;
+    }
+}
+
 QVector<char> BsaArchive::getFileData(const BsaFile &file)
 {
     Status status = verifyIndexOpenOrNewErrors(file, true);
@@ -190,17 +204,22 @@ BsaFile BsaArchive::updateFile(const QString &updateFilePath, const BsaFile &fil
     if (status.status() < 0) {
         return INVALID_BSAFILE;
     }
-    // Update file should exist
+    // Update file should exist and be readable for size
     QFile updateFile(updateFilePath);
-    if (!updateFile.exists()) {
+    if (!updateFile.exists() || !updateFile.open(QIODevice::ReadOnly)) {
         return INVALID_BSAFILE;
     }
     quint32 updateSize = updateFile.size();
+    updateFile.close();
     // Updating file state
     BsaFile internFile = mFiles[file.index()];
     internFile.setUpdated(true);
     internFile.setUpdateFilePath(updateFilePath);
     internFile.setUpdateFileSize(updateSize);
+    // Updating archive state
+    mModifiedSize -= internFile.size();
+    mModifiedSize += internFile.updateFileSize();
+    mModified = true;
     return internFile;
 }
 
@@ -213,13 +232,30 @@ BsaFile BsaArchive::deleteFile(const BsaFile &file)
     // Updating file state
     BsaFile internFile = mFiles[file.index()];
     internFile.setToDelete(true);
+    // Updating archive state
+    mModifiedSize -= (internFile.updated() ? internFile.updateFileSize() : internFile.size());
+    mModified = true;
     return internFile;
 }
 
 BsaFile BsaArchive::addFile(const QString &filePath)
 {
-    //TODO implements addFile
-    return BsaFile(0,0,"",0);
+    QFile newFile(filePath);
+    // New file should exist and be readable for size
+    if (!newFile.exists() || !newFile.open(QIODevice::ReadOnly)) {
+        return INVALID_BSAFILE;
+    }
+    quint32 newFileSize = newFile.size();
+    newFile.close();
+    BsaFile newBsaFile(newFileSize, 2, QFileInfo(newFile).fileName(), mFileNumber);
+    newBsaFile.setIsNew(true);
+    newBsaFile.setNewFilePath(filePath);
+    // Updating archive state
+    mFiles.append(newBsaFile);
+    mFileNumber++;
+    mModifiedSize += newFileSize;
+    mModified = true;
+    return newBsaFile;
 }
 
 BsaFile BsaArchive::cancelDeleteFile(const BsaFile &file)
@@ -235,6 +271,9 @@ BsaFile BsaArchive::cancelDeleteFile(const BsaFile &file)
     }
     // Updating file state
     internFile.setToDelete(false);
+    // Updating archive state
+    mModifiedSize += (internFile.updated() ? internFile.updateFileSize() : internFile.size());
+    updateIsModified();
     return internFile;
 }
 
@@ -253,6 +292,10 @@ BsaFile BsaArchive::cancelUpdateFile(const BsaFile &file)
     internFile.setUpdated(false);
     internFile.setUpdateFilePath("");
     internFile.setUpdateFileSize(0);
+    // Updating archive state
+    mModifiedSize += internFile.size();
+    mModifiedSize -= internFile.updateFileSize();
+    updateIsModified();
     return internFile;
 }
 
