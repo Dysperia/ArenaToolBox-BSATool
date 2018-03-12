@@ -26,6 +26,11 @@ QString BsaArchive::getArchiveFilePath() const
     return mArchiveFile.fileName();
 }
 
+QString BsaArchive::getArchiveFileName() const
+{
+    return QFileInfo(mArchiveFile).fileName();
+}
+
 quint16 BsaArchive::getFileNumber() const
 {
     return mFileNumber;
@@ -110,8 +115,11 @@ Status BsaArchive::openArchive(const QString &filePath)
     return Status(0);
 }
 
-void BsaArchive::closeArchive()
+Status BsaArchive::closeArchive()
 {
+    if (!mOpened) {
+        return Status(-1, QStringLiteral("Cannot close : archive not opened"));
+    }
     if (mArchiveFile.openMode() != QIODevice::NotOpen)
     {
         mArchiveFile.close();
@@ -123,6 +131,7 @@ void BsaArchive::closeArchive()
     mModifiedSize = 0;
     mFileNumber = 0;
     mFiles.clear();
+    return Status(0);
 }
 
 Status BsaArchive::verifyIndexOpenOrNewErrors(const BsaFile &file,
@@ -195,6 +204,8 @@ Status BsaArchive::extractFile(const QString &destinationFolder, const BsaFile &
                       .arg(bytesWritten).arg(internFile.size())
                       .arg(saveFile.fileName()));
     }
+    saveFile.flush();
+    saveFile.close();
     return Status(0);
 }
 
@@ -247,7 +258,12 @@ BsaFile BsaArchive::addFile(const QString &filePath)
     }
     quint32 newFileSize = newFile.size();
     newFile.close();
-    BsaFile newBsaFile(newFileSize, 2, QFileInfo(newFile).fileName(), mFileNumber);
+    QString newFileName = QFileInfo(newFile).fileName();
+    // Checking filename length
+    if (newFileName.size() > 13) {
+        return INVALID_BSAFILE;
+    }
+    BsaFile newBsaFile(newFileSize, 2, newFileName, mFileNumber);
     newBsaFile.setIsNew(true);
     newBsaFile.setNewFilePath(filePath);
     // Updating archive state
@@ -299,13 +315,158 @@ BsaFile BsaArchive::cancelUpdateFile(const BsaFile &file)
     return internFile;
 }
 
-void BsaArchive::createNewArchive()
+Status BsaArchive::createNewArchive()
 {
-    //TODO implements createNewArchive
+    if (mOpened) {
+        return Status(-1, QStringLiteral("Cannot create archive: already opened"));
+    }
+    // init empty archive data
+    mArchiveFile.setFileName("");
+    mFileNumber = 0;
+    mFiles.clear();
+    mModified = false;
+    mModifiedSize = 0;
+    mOpened = true;
+    mReadingStream.setDevice(nullptr);
+    mSize = 0;
+    return Status(0);
 }
 
 Status BsaArchive::saveArchive(const QString &filePath)
 {
-    //TODO implements saveArchive
-    return Status(1);
+    if (!mOpened) {
+        return Status(-1, QStringLiteral("Cannot save archive: not opened"));
+    }
+    QFile saveFile(filePath + ".tmp");
+    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        return Status(-1, QString("Cannot save archive: could not write temporary file %1")
+                      .arg(saveFile.fileName()));
+    }
+    QDataStream saveStream(&saveFile);
+    // Count number of file to write in archive
+    quint16 nbFileToSave = mFileNumber;
+    for (quint16 i(0); i<mFileNumber; i++) {
+        if (mFiles.at(i).toDelete()) {
+            nbFileToSave--;
+        }
+    }
+    // Writing header
+    saveStream << nbFileToSave;
+    // Writing files data
+    size_t totalFileSize(0);
+    QVector<char> fileData;
+    for (quint16 i(0); i<mFileNumber; i++) {
+        // To skip deleted file
+        if (!mFiles.at(i).toDelete()) {
+            const BsaFile &file = mFiles.at(i);
+            quint32 dataSize(0);
+            // Reading file data for updated or new
+            if (file.updated() || file.isNew()) {
+                QFile externFile(file.updated() ? file.updateFilePath() : file.newFilePath());
+                quint32 dataSize = file.updated() ? file.updateFileSize() : file.size();
+                // Error opening file
+                if (!externFile.open(QIODevice::ReadOnly)) {
+                    saveFile.close();
+                    saveFile.remove();
+                    return Status(-1, QString("Error while reading file %1")
+                                  .arg(externFile.fileName()));
+                }
+                QDataStream externStream(&externFile);
+                fileData.resize(dataSize);
+                size_t bytesRead = externStream.readRawData(fileData.data(),
+                                                            dataSize);
+                // Error reading data
+                if (bytesRead != dataSize) {
+                    saveFile.close();
+                    saveFile.remove();
+                    return Status(-1, QString("Error while reading file %1. Got only %2 bytes of %3")
+                                  .arg(externFile.fileName()).arg(bytesRead)
+                                  .arg(dataSize));
+                }
+                externFile.close();
+            }
+            // reading data from archive
+            else {
+                if (!mArchiveFile.seek(file.startOffsetInArchive())) {
+                    saveFile.close();
+                    saveFile.remove();
+                    return Status(-1, QString("Error while reading archive data for file %1")
+                                  .arg(file.fileName()));
+                }
+                dataSize = file.size();
+                fileData.resize(dataSize);
+                size_t bytesRead = mReadingStream.readRawData(fileData.data(), dataSize);
+                // Error reading data
+                if (bytesRead != dataSize) {
+                    saveFile.close();
+                    saveFile.remove();
+                    return Status(-1, QString("Error while archive data for file %1. Got only %2 bytes of %3")
+                                  .arg(file.fileName()).arg(bytesRead)
+                                  .arg(dataSize));
+                }
+            }
+            // Writing file data
+            size_t bytesWritten = saveStream.writeRawData(fileData.data(),
+                                                          dataSize);
+            // Error writing data
+            if (bytesWritten != dataSize) {
+                saveFile.close();
+                saveFile.remove();
+                return Status(-1, QString("Error while writing data for file %1. Got only %2 bytes of %3")
+                              .arg(file.fileName()).arg(bytesWritten)
+                              .arg(dataSize));
+            }
+            totalFileSize += bytesWritten;
+        }
+    }
+    // Writing file table
+    char nullString[14] = {0};
+    for (quint16 i(0); i<mFileNumber; i++) {
+        // To skip deleted file
+        const BsaFile &file = mFiles.at(i);
+        if (!file.toDelete()) {
+            // Writing file name and padding name to 14 bytes
+            int nameBytes = saveStream.writeRawData(file.fileName().toStdString().c_str(),
+                                    file.fileName().size());
+            int paddingBytes = saveStream.writeRawData(&nullString[0],
+                                    14 - file.fileName().size());
+            // Error writing data
+            if (nameBytes + paddingBytes != 14) {
+                saveFile.close();
+                saveFile.remove();
+                return Status(-1, QString("Error while writing data in file table for file %1")
+                              .arg(file.fileName()));
+            }
+            // Writing file size
+            saveStream << (file.updated() ? file.updateFileSize() : file.size());
+        }
+    }
+    // Flushing and closing
+    saveFile.flush();
+    saveFile.close();
+    // Checking temporary saved archive integrity before writing final file
+    size_t expectedSize = 2 + totalFileSize + nbFileToSave*18;
+    saveFile.open(QIODevice::ReadOnly);
+    size_t savedSize = saveFile.size();
+    saveFile.close();
+    if (expectedSize != savedSize) {
+        saveFile.remove();
+        return Status(-1, QString("Archive not properly saved: saved archive size: %1, expected: %2")
+                      .arg(savedSize).arg(expectedSize));
+    }
+    // Writing final file
+    QFile finalFile(filePath);
+    // Trying to delete existing if exists
+    if (finalFile.exists()) {
+        if (!finalFile.remove()) {
+            return Status(-1, QString("Could not delete existing file %1. Saved archive can be found at %2")
+                          .arg(finalFile.fileName()).arg(saveFile.fileName()));
+        }
+    }
+    // Renaming temporary to final file
+    if (!saveFile.rename(finalFile.fileName())) {
+        return Status(-1, QString("Could not rename temporary saved archive %1 to %2. Saved archive can be found at %1")
+                      .arg(saveFile.fileName()).arg(finalFile.fileName()));
+    }
+    return Status(0);
 }

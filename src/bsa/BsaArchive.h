@@ -12,13 +12,13 @@
  * @brief Describe a BSA archive
  *
  * The archive is built on the following pattern:
- * - File number: 2 bytes
+ * - File number: 2 bytes (max file number: 65 535)
  * - Files data put directly one after an other
  * - File table: 18 bytes for each
- *   - 14 bytes for the name
- *   - 4 bytes for the file size
+ *   - 14 bytes for the name (max character number for file name: 13)
+ *   - 4 bytes for the file size (max file size: 4 294 967 295 bytes)
  *
- * All data are written in little endian
+ * Datas are written in little endian
  */
 class BsaArchive
 {
@@ -39,6 +39,7 @@ public:
     // Getters/setters
     //**************************************************************************
     QString getArchiveFilePath() const;
+    QString getArchiveFileName() const;
     quint16 getFileNumber() const;
     qint64 getSize() const;
     qint64 getModifiedSize() const;
@@ -52,13 +53,15 @@ public:
     /**
      * @brief open the given archive
      * @param filePath the filepath to the archive
-     * @return the status of the operation : -1 if failure, 0 if success
+     * @return the status of the operation: -1 if failure, 0 if success
      */
     Status openArchive(const QString &filePath);
     /**
      * @brief close this archive and restore state to a not opened archive
+     * @return the status of the operation: -1 if failure (example: archive
+     * not opened), 0 if success
      */
-    void closeArchive();
+    Status closeArchive();
     /**
      * @brief retourne the archive data for the file
      * @param file the file to read, It should have at least the index set
@@ -73,7 +76,7 @@ public:
      * one in case of an updated file
      * @param destinationFolder destination folder of the file
      * @param file file to extract. It should have at least the index set
-     * @return the status of the operation : -1 if failure, 0 if success
+     * @return the status of the operation: -1 if failure, 0 if success
      */
     Status extractFile(const QString &destinationFolder,
                       const BsaFile &file);
@@ -124,12 +127,14 @@ public:
     BsaFile cancelUpdateFile(const BsaFile &file);
     /**
      * @brief create a new empty archive
+     * @return the status of the operation: -1 if failure (example: archive
+     * already opened), 0 if success
      */
-    void createNewArchive();
+    Status createNewArchive();
     /**
      * @brief save the archive to the given file path
      * @param filePath path to the save file
-     * @return the status of the operation : -1 if failure, 0 if success
+     * @return the status of the operation: -1 if failure, 0 if success
      */
     Status saveArchive(const QString &filePath);
 
