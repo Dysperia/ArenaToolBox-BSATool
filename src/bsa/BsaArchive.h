@@ -24,7 +24,7 @@ class BsaArchive
 {
 public:
     //**************************************************************************
-    // Constructors
+    // Constructors/Destructor
     //**************************************************************************
     /**
      * @brief Archive constructor

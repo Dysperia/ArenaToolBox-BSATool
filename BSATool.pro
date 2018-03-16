@@ -33,7 +33,8 @@ SOURCES += \
     src/log/Logger.cpp \
     src/components/ConsoleDock.cpp \
     src/assets/FileType.cpp \
-    src/error/Status.cpp
+    src/error/Status.cpp \
+    src/assets/img.cpp
 
 HEADERS  += \ 
     src/askuserwindow.hpp \
@@ -56,6 +57,7 @@ HEADERS  += \
     src/designpatterns/Singleton.h \
     src/components/ConsoleDock.h \
     src/assets/FileType.h \
-    src/error/Status.h
+    src/error/Status.h \
+    src/assets/img.h
 
 FORMS    +=
