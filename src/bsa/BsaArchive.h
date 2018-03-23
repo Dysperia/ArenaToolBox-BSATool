@@ -39,12 +39,19 @@ public:
     // Getters/setters
     //**************************************************************************
     QString getArchiveFilePath() const;
+
     QString getArchiveFileName() const;
+
     quint16 getFileNumber() const;
+
     qint64 getSize() const;
+
     qint64 getModifiedSize() const;
+
     QVector<BsaFile> getFiles() const;
+
     bool isOpened() const;
+
     bool isModified() const;
 
     //**************************************************************************

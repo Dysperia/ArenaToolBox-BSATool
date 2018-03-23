@@ -54,19 +54,28 @@ public:
     // Getters/setters
     //**************************************************************************
     quint32 size() const;
+
     qint64 startOffsetInArchive() const;
+
     QString fileName() const;
+
     quint16 index() const;
+
     bool isNew() const;
     void setIsNew(bool isNew);
+
     bool toDelete() const;
     void setToDelete(bool toDelete);
+
     bool updated() const;
     void setUpdated(bool updated);
+
     quint32 updateFileSize() const;
     void setUpdateFileSize(quint32 updateFileSize);
+
     QString updateFilePath() const;
     void setUpdateFilePath(const QString &updateFilePath);
+
     QString newFilePath() const;
     void setNewFilePath(const QString &newFilePath);
 

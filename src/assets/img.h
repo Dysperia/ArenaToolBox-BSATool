@@ -2,6 +2,7 @@
 #define IMG_H
 
 #include <QImage>
+#include "Palette.h"
 
 /**
  * @brief Describe the IMG image format
@@ -23,12 +24,41 @@ public:
     // Constructors
     //**************************************************************************
     /**
-     * @brief
+     * @brief constructor of IMG with parsing of the header
+     * @param imgData data of the IMG file
      */
-    IMG();
+    IMG(QVector<char> &imgData);
+    /**
+     * @brief constructor of IMG without parsing of the header
+     */
+    IMG(QVector<char> &imgData, quint16 width, quint16 height, Palette palette);
+
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
+    quint16 offsetX() const;
+
+    quint16 offsetY() const;
+
+    quint16 width() const;
+    void setWidth(const quint16 &width);
+
+    quint16 height() const;
+    void setHeight(const quint16 &height);
+
+    quint8 compressionFlag() const;
+
+    quint8 paletteFlag() const;
+
+    quint16 dataSize() const;
+
+    Palette palette() const;
+    void setPalette(const Palette &palette);
+
+    //**************************************************************************
+    // Methods
+    //**************************************************************************
+
 private:
     /**
      * @brief offset X used to draw the image at the correct position on screen
@@ -58,6 +88,10 @@ private:
      * @brief size of the image data
      */
     quint16 mDataSize;
+    /**
+     * @brief color palette
+     */
+    Palette mPalette;
 };
 
 #endif // IMG_H
