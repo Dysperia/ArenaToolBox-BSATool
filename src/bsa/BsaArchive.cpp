@@ -4,6 +4,7 @@
 #include "functional"
 
 const BsaFile INVALID_BSAFILE(0, 0, "", 0); // offset of zero is impossible
+const int FILETABLE_ENTRY_SIZE = 18;
 
 //******************************************************************************
 // Constructors
@@ -82,7 +83,7 @@ Status BsaArchive::openArchive(const QString &filePath)
     mArchiveFile.seek(0);
     mReadingStream >> mFileNumber;
     // Reading files name and size from file table
-    quint16 fileTableSize = 18*mFileNumber;
+    quint16 fileTableSize = FILETABLE_ENTRY_SIZE*mFileNumber;
     mArchiveFile.seek(mSize - fileTableSize);
     quint32 offset = 2;
     char name[14];
@@ -245,6 +246,7 @@ BsaFile BsaArchive::deleteFile(const BsaFile &file)
     internFile.setToDelete(true);
     // Updating archive state
     mModifiedSize -= (internFile.updated() ? internFile.updateFileSize() : internFile.size());
+    mModifiedSize -= FILETABLE_ENTRY_SIZE;
     mModified = true;
     return internFile;
 }
@@ -270,6 +272,7 @@ BsaFile BsaArchive::addFile(const QString &filePath)
     mFiles.append(newBsaFile);
     mFileNumber++;
     mModifiedSize += newFileSize;
+    mModifiedSize += FILETABLE_ENTRY_SIZE;
     mModified = true;
     return newBsaFile;
 }
@@ -289,6 +292,7 @@ BsaFile BsaArchive::cancelDeleteFile(const BsaFile &file)
     internFile.setToDelete(false);
     // Updating archive state
     mModifiedSize += (internFile.updated() ? internFile.updateFileSize() : internFile.size());
+    mModifiedSize += FILETABLE_ENTRY_SIZE;
     updateIsModified();
     return internFile;
 }
@@ -325,10 +329,10 @@ Status BsaArchive::createNewArchive()
     mFileNumber = 0;
     mFiles.clear();
     mModified = false;
-    mModifiedSize = 0;
+    mModifiedSize = 2;
     mOpened = true;
     mReadingStream.setDevice(nullptr);
-    mSize = 0;
+    mSize = 2;
     return Status(0);
 }
 
@@ -445,7 +449,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
     saveFile.flush();
     saveFile.close();
     // Checking temporary saved archive integrity before writing final file
-    size_t expectedSize = 2 + totalFileSize + nbFileToSave*18;
+    size_t expectedSize = 2 + totalFileSize + nbFileToSave*FILETABLE_ENTRY_SIZE;
     saveFile.open(QIODevice::ReadOnly);
     size_t savedSize = saveFile.size();
     saveFile.close();

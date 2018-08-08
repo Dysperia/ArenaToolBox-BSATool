@@ -70,7 +70,7 @@ public:
      */
     Status closeArchive();
     /**
-     * @brief retourne the archive data for the file
+     * @brief retourn the archive data for the file
      * @param file the file to read, It should have at least the index set
      * @return the file data. If an error occured and the data can not be read
      * an empty vector is returned. The same happens if the archive is not

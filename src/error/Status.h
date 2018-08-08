@@ -6,7 +6,7 @@
 /**
  * @brief Describe the return of a function
  *
- * This class contains an integer indicating the status ( negative int indicates
+ * This class contains an integer indicating the status (negative int indicates
  * an error). In case the status is negative, the message should be set to
  * detail what happened. The exact meaning of a positive or zero status should
  * be explained by the operation itself

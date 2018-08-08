@@ -3,6 +3,7 @@
 
 #include <QPlainTextEdit>
 #include "../designpatterns/Singleton.h"
+#include "../error/Status.h"
 
 /**
  * @brief Implementation of a simple logger
@@ -59,6 +60,22 @@ public:
      */
     void log(const MessageType type,
               const QString &message);
+
+    /**
+     * @brief log the error message if the status is negative. The message
+     * logged is the one detailing the error in the Status object
+     * @param status Status object to log if error
+     */
+    void logError(const Status &status);
+
+    /**
+     * @brief log the error message if the status is negative. The message
+     * logged is the one detailing the error in the Status object. In case of
+     * null or positive status, the info message is logged
+     * @param status Status object to log if error
+     * @param infoMessage message to log if not error
+     */
+    void logErrorOrInfo(const Status &status, const QString &infoMessage);
 
 private:
     //**************************************************************************

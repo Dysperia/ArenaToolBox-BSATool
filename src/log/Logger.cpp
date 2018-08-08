@@ -55,3 +55,20 @@ void Logger::log(const Logger::MessageType type,
     QString line = buildLogLine(type, message);
     mTextWidget->appendPlainText(line);
 }
+
+void Logger::logError(const Status &status)
+{
+    if (status.status() < 0) {
+        this->log(MessageType::ERROR, status.message());
+    }
+}
+
+void Logger::logErrorOrInfo(const Status &status, const QString &infoMessage)
+{
+    if (status.status() < 0) {
+        this->log(MessageType::ERROR, status.message());
+    }
+    else {
+        this->log(MessageType::INFO, infoMessage);
+    }
+}
