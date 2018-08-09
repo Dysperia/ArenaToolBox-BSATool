@@ -1,6 +1,6 @@
 #include "img.h"
 
-IMG::IMG()
+IMG::IMG(QVector<char> &imgData)
 {
 
 }
@@ -70,37 +70,12 @@ quint16 IMG::dataSize() const
     return mDataSize;
 }
 
+Palette IMG::palette() const
+{
+    return mPalette;
+}
+
 void IMG::setPalette(const Palette &palette)
 {
     mPalette = palette;
-}
-
-quint16 IMG::offsetX() const
-{
-    return mOffsetX;
-}
-
-void IMG::setWidth(const quint16 &width)
-{
-    mWidth = width;
-}
-
-void IMG::setHeight(const quint16 &height)
-{
-    mHeight = height;
-}
-
-void IMG::setDataSize(const quint16 &dataSize)
-{
-    mDataSize = dataSize;
-}
-
-QVector<QRgb> IMG::colorPalette() const
-{
-    return mColorPalette;
-}
-
-void IMG::setColorPalette(const QVector<QRgb> &colorPalette)
-{
-    mColorPalette = colorPalette;
 }

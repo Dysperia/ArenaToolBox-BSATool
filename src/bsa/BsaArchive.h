@@ -189,11 +189,11 @@ private:
      * @brief check and return error if file is out of the archive file table,
      * the archive is not opened and optionally if the file is new
      * @param file the file to check
-     * @param checkNew check for not new file if true
+     * @param forbidNew check for not new file if true
      * @return 0 if no error cases found, -1 otherwise
      */
     Status verifyIndexOpenOrNewErrors(const BsaFile &file,
-                                      bool checkNew = false);
+                                      bool forbidNew = false);
     /**
      * @brief update the mModified attribute
      */

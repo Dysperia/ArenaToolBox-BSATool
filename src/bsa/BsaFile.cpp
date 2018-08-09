@@ -25,7 +25,20 @@ BsaFile::BsaFile(const quint32 &size,
 
 bool BsaFile::operator ==(const BsaFile &bsaFile) const
 {
-    return mFileName == bsaFile.mFileName && mIndex == bsaFile.mIndex;
+    if (mFileName != bsaFile.mFileName) {
+        return false;
+    }
+    else if (mIndex != bsaFile.mIndex) {
+        return false;
+    }
+    else {
+        // TODO size comparison according to updated state
+    }
+}
+
+bool BsaFile::operator !=(const BsaFile &bsaFile) const
+{
+    return !(this->operator==(bsaFile));
 }
 
 //******************************************************************************

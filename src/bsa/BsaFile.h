@@ -43,12 +43,21 @@ public:
      */
     BsaFile &operator =(const BsaFile &bsaFile) = default;
     /**
-     * @brief equals operator
+     * @brief equal operator
      *
-     * Two files are considered equal if their filename and index in archive are
-     * the same
+     * Two files are considered equal if their filename, index in archive and
+     * file size are the same
      */
     bool operator ==(const BsaFile &bsaFile) const;
+    /**
+     * @brief not equal operator
+     *
+     * Two files are considered not equal if one of the following is different:
+     * - filename
+     * - fileSize
+     * - index in archive
+     */
+    bool operator !=(const BsaFile &bsaFile) const;
 
     //**************************************************************************
     // Getters/setters

@@ -3,8 +3,8 @@
 #include <QtConcurrent/QtConcurrent>
 #include "functional"
 
-const BsaFile INVALID_BSAFILE(0, 0, "", 0); // offset of zero is impossible
-const int FILETABLE_ENTRY_SIZE = 18;
+const BsaFile INVALID_BSAFILE(0, 0, "INVALID", 0); // offset of zero is impossible
+const int FILETABLE_ENTRY_SIZE = 18; // 18 bytes
 
 //******************************************************************************
 // Constructors
@@ -136,14 +136,14 @@ Status BsaArchive::closeArchive()
 }
 
 Status BsaArchive::verifyIndexOpenOrNewErrors(const BsaFile &file,
-                                              bool checkNew) {
+                                              bool forbidNew) {
     if (!mOpened) {
         return Status(-1, QStringLiteral("The archive is not opened"));
     }
     if (file.index() >= mFileNumber) {
         return Status(-1, QStringLiteral("The file index is out of the archive"));
     }
-    if (checkNew && mFiles.at(file.index()).isNew()) {
+    if (forbidNew && mFiles.at(file.index()).isNew()) {
         return Status(-1, QStringLiteral("The operation cannot be performed for new files"));
     }
     return Status(0);

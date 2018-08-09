@@ -37,8 +37,10 @@ public:
     // Getters/setters
     //**************************************************************************
     quint16 offsetX() const;
+    void setOffsetX(const quint16 &offsetX);
 
     quint16 offsetY() const;
+    void setOffsetY(const quint16 &offsetY);
 
     quint16 width() const;
     void setWidth(const quint16 &width);
@@ -47,8 +49,10 @@ public:
     void setHeight(const quint16 &height);
 
     quint8 compressionFlag() const;
+    void setCompressionFlag(const quint8 &compressionFlag);
 
     quint8 paletteFlag() const;
+    void setPaletteFlag(const quint8 &paletteFlag);
 
     quint16 dataSize() const;
 
@@ -60,6 +64,9 @@ public:
     //**************************************************************************
 
 private:
+    //**************************************************************************
+    // Attributes
+    //**************************************************************************
     /**
      * @brief offset X used to draw the image at the correct position on screen
      */
