@@ -32,7 +32,7 @@ bool BsaFile::operator ==(const BsaFile &bsaFile) const
         return false;
     }
     else {
-        // TODO size comparison according to updated state
+        return (mUpdated ? updateFileSize() : size()) == (bsaFile.mUpdated ? bsaFile.updateFileSize() : bsaFile.size());
     }
 }
 
