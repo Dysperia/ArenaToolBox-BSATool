@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+#include "MainWindow.hpp"
 #include "../previewpalette.hpp"
 #include "../imageviewer.hpp"
 #include "../askuserwindow.hpp"

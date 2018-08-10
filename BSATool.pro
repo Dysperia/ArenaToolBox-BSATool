@@ -13,10 +13,7 @@ TEMPLATE = app
 VERSION = 2.0
 
 CONFIG += c++14
-
-SOURCES += $$files(*.cpp, true)
-
-HEADERS += $$files(*.h, true)
-HEADERS += $$files(*.hpp, true)
+include(BSATool.pri)
+SOURCES += $$files(src/main/*.cpp, true)
 
 FORMS +=
