@@ -5,6 +5,11 @@ IMG::IMG(QVector<char> &imgData)
 
 }
 
+IMG::IMG(QVector<char> &imgData, quint16 width, quint16 height, Palette palette)
+{
+
+}
+
 quint16 IMG::offsetX() const
 {
     return mOffsetX;
@@ -68,6 +73,11 @@ void IMG::setPaletteFlag(const quint8 &paletteFlag)
 quint16 IMG::dataSize() const
 {
     return mDataSize;
+}
+
+void IMG::setDataSize(const quint16 &dataSize)
+{
+    mDataSize = dataSize;
 }
 
 Palette IMG::palette() const

@@ -1,10 +1,11 @@
 #include "BsaArchive.h"
 
 #include <QtConcurrent/QtConcurrent>
-#include "functional"
 
-const BsaFile INVALID_BSAFILE(0, 0, "INVALID", 0); // offset of zero is impossible
-const int FILETABLE_ENTRY_SIZE = 18; // 18 bytes
+//******************************************************************************
+// Statics
+//******************************************************************************
+const BsaFile BsaArchive::INVALID_BSAFILE(0, 0, "INVALID", 0);
 
 //******************************************************************************
 // Constructors

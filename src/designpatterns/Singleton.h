@@ -1,8 +1,6 @@
 #ifndef SINGLETON_H
 #define SINGLETON_H
 
-#include <memory>
-
 /**
  * @Brief Design pattern singleton
  *

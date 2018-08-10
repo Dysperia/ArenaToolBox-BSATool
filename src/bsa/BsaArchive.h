@@ -3,7 +3,6 @@
 
 #include "BsaFile.h"
 #include "../error/Status.h"
-#include "memory"
 #include <QVector>
 #include <QDataStream>
 #include <QFile>
@@ -23,6 +22,21 @@
 class BsaArchive
 {
 public:
+    //**************************************************************************
+    // Statics
+    //**************************************************************************
+
+    /**
+     * @brief Invalid bsaFile used to return an error. Invalid because an offset
+     * of 0 is impossible: 2 bytes minimum
+     */
+    const static BsaFile INVALID_BSAFILE;
+
+    /**
+     * @brief Size of a filetable entry: 18 bytes
+     */
+    const static int FILETABLE_ENTRY_SIZE = 18;
+
     //**************************************************************************
     // Constructors/Destructor
     //**************************************************************************

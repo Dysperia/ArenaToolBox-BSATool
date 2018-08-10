@@ -55,6 +55,7 @@ public:
     void setPaletteFlag(const quint8 &paletteFlag);
 
     quint16 dataSize() const;
+    void setDataSize(const quint16 &dataSize);
 
     Palette palette() const;
     void setPalette(const Palette &palette);
@@ -70,31 +71,31 @@ private:
     /**
      * @brief offset X used to draw the image at the correct position on screen
      */
-    quint16 mOffsetX;
+    quint16 mOffsetX = 0;
     /**
      * @brief offset Y used to draw the image at the correct position on screen
      */
-    quint16 mOffsetY;
+    quint16 mOffsetY = 0;
     /**
      * @brief width of the image
      */
-    quint16 mWidth;
+    quint16 mWidth = 0;
     /**
      * @brief height of the image
      */
-    quint16 mHeight;
+    quint16 mHeight = 0;
     /**
      * @brief compression flag
      */
-    quint8 mCompressionFlag;
+    quint8 mCompressionFlag = 0;
     /**
      * @brief palette flag
      */
-    quint8 mPaletteFlag;
+    quint8 mPaletteFlag = 0;
     /**
      * @brief size of the image data
      */
-    quint16 mDataSize;
+    quint16 mDataSize = 0;
     /**
      * @brief color palette
      */

@@ -3,8 +3,8 @@
 #include "ConsoleDock.h"
 #include "../log/Logger.h"
 
-#include "QGridLayout"
-#include "QMessageBox"
+#include <QGridLayout>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
 {
