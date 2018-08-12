@@ -17,6 +17,8 @@
  * - Image data size : 2 bytes
  * Then follows the image data and after the palette data if any
  */
+
+// TODO new class
 class IMG
 {
 public:
