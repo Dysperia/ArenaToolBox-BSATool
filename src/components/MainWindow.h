@@ -9,10 +9,10 @@
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+signals:
+
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-
-signals:
 
 public slots:
 
@@ -24,9 +24,10 @@ private:
     BsaArchive mBsaArchive;
 
 private slots:
-
     // Create a new empty bsa
     void newBsaSlot();
+    // Close the opened bsa
+    void closeBsaSlot();
 };
 
 #endif // MAINWINDOW_H
