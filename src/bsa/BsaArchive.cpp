@@ -114,6 +114,7 @@ Status BsaArchive::openArchive(const QString &filePath)
     }
     // Archive has been read and ok -> opened
     mOpened = true;
+    emit archiveOpened(true);
     return Status(0);
 }
 
@@ -133,6 +134,7 @@ Status BsaArchive::closeArchive()
     mModifiedSize = 0;
     mFileNumber = 0;
     mFiles.clear();
+    emit archiveClosed(false);
     return Status(0);
 }
 
@@ -334,6 +336,7 @@ Status BsaArchive::createNewArchive()
     mOpened = true;
     mReadingStream.setDevice(nullptr);
     mSize = 2;
+    emit archiveOpened(true);
     return Status(0);
 }
 

@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QDataStream>
 #include <QFile>
+#include <QObject>
 
 /**
  * @brief Describe a BSA archive
@@ -19,8 +20,13 @@
  *
  * Datas are written in little endian
  */
-class BsaArchive
+class BsaArchive: public QObject
 {
+    Q_OBJECT
+signals:
+    void archiveClosed(bool opened);
+    void archiveOpened(bool opened);
+
 public:
     //**************************************************************************
     // Statics
