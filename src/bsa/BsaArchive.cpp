@@ -476,5 +476,16 @@ Status BsaArchive::saveArchive(const QString &filePath)
         return Status(-1, QString("Could not rename temporary saved archive %1 to %2. Saved archive can be found at %1")
                       .arg(saveFile.fileName()).arg(finalFile.fileName()));
     }
+
+    // Reloading Archive
+    Status status = this->closeArchive();
+    if (status.status() < 0) {
+        return status;
+    }
+    status = this->openArchive(filePath);
+    if (status.status() < 0) {
+        return status;
+    }
+
     return Status(0);
 }
