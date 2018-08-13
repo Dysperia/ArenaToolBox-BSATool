@@ -10,8 +10,8 @@ ToolBar::ToolBar(MenuBar *menuBar)
     setMovable(false);
     setFloatable(false);
     addAction(menuBar->getNewBSAFileAction());
-//    addAction(menuBar->getOpenBSAFileAction());
-//    addAction(menuBar->getSaveBSAFileAction());
+    addAction(menuBar->getOpenBSAFileAction());
+    addAction(menuBar->getSaveBSAFileAction());
     addAction(menuBar->getCloseBSAFileAction());
 //    addSeparator();
 //    addAction(menuBar->getAddFileAction());

@@ -3,19 +3,19 @@
 //******************************************************************************
 // Constructors
 //******************************************************************************
-MenuBar::MenuBar(const BsaArchive * const bsaArchive)
+MenuBar::MenuBar()
 {
     // Building menus
     mFileMenu = addMenu("File");
     mNewBSAFileAction = new QAction("New BSA file", this);
     mFileMenu->addAction(mNewBSAFileAction);
     mNewBSAFileAction->setIcon(QIcon("icon/new_bsa.png"));
-//    mOpenBSAFileAction = new QAction("Open BSA file", this);
-//    mFileMenu->addAction(mOpenBSAFileAction);
-//    mOpenBSAFileAction->setIcon(QIcon("icon/open_bsa.png"));
-//    mSaveBSAFileAction = new QAction("Save BSA file", this);
-//    mFileMenu->addAction(mSaveBSAFileAction);
-//    mSaveBSAFileAction->setIcon(QIcon("icon/save_bsa.png"));
+    mOpenBSAFileAction = new QAction("Open BSA file", this);
+    mFileMenu->addAction(mOpenBSAFileAction);
+    mOpenBSAFileAction->setIcon(QIcon("icon/open_bsa.png"));
+    mSaveBSAFileAction = new QAction("Save BSA file", this);
+    mFileMenu->addAction(mSaveBSAFileAction);
+    mSaveBSAFileAction->setIcon(QIcon("icon/save_bsa.png"));
     mCloseBSAFileAction = new QAction("Close BSA file", this);
     mFileMenu->addAction(mCloseBSAFileAction);
     mCloseBSAFileAction->setIcon(QIcon("icon/close_bsa.png"));
@@ -80,12 +80,6 @@ MenuBar::MenuBar(const BsaArchive * const bsaArchive)
 //    mAboutAction = new QAction("About", this);
 //    mAboutMenu->addAction(mAboutAction);
 //    mAboutAction->setIcon(QIcon("icon/about.png"));
-
-    // Connecting actions update slots
-    connect(bsaArchive, SIGNAL(archiveOpened(bool)), this, SLOT(updateActionsFromBsaArchiveState(bool)));
-    connect(bsaArchive, SIGNAL(archiveClosed(bool)), this, SLOT(updateActionsFromBsaArchiveState(bool)));
-
-    this->updateActionsFromBsaArchiveState(bsaArchive->isOpened());
 }
 
 //******************************************************************************
@@ -124,12 +118,12 @@ QMenu *MenuBar::getViewMenu() {
 QAction *MenuBar::getNewBSAFileAction() {
     return mNewBSAFileAction;
 }
-//QAction *MenuBar::getOpenBSAFileAction() {
-//    return mOpenBSAFileAction;
-//}
-//QAction *MenuBar::getSaveBSAFileAction() {
-//    return mSaveBSAFileAction;
-//}
+QAction *MenuBar::getOpenBSAFileAction() {
+    return mOpenBSAFileAction;
+}
+QAction *MenuBar::getSaveBSAFileAction() {
+    return mSaveBSAFileAction;
+}
 QAction *MenuBar::getCloseBSAFileAction() {
     return mCloseBSAFileAction;
 }
@@ -202,11 +196,11 @@ QAction *MenuBar::getCloseBSAFileAction() {
 //**************************************************************************
 void MenuBar::updateActionsFromBsaArchiveState(bool archiveOpened) {
     if (archiveOpened) {
-        mNewBSAFileAction->setDisabled(true);
+        mSaveBSAFileAction->setDisabled(false);
         mCloseBSAFileAction->setDisabled(false);
     }
     else {
-        mNewBSAFileAction->setDisabled(false);
+        mSaveBSAFileAction->setDisabled(true);
         mCloseBSAFileAction->setDisabled(true);
     }
 }

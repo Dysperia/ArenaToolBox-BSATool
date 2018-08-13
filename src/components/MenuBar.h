@@ -19,7 +19,7 @@ public:
      *
      * build the menu and the QActions associated with it
      */
-    MenuBar(const BsaArchive * const bsaArchive);
+    MenuBar();
 
     //**************************************************************************
     // Getters/setters
@@ -36,8 +36,8 @@ public:
 //    QMenu *getAboutMenu();
     // Getters actions
     QAction *getNewBSAFileAction();
-//    QAction *getOpenBSAFileAction();
-//    QAction *getSaveBSAFileAction();
+    QAction *getOpenBSAFileAction();
+    QAction *getSaveBSAFileAction();
     QAction *getCloseBSAFileAction();
 //    QAction *getAddFileAction();
 //    QAction *getUpdateFileAction();
@@ -88,8 +88,8 @@ private:
 //    QMenu *mAboutMenu;
     // Actions
     QAction *mNewBSAFileAction;
-//    QAction *mOpenBSAFileAction;
-//    QAction *mSaveBSAFileAction;
+    QAction *mOpenBSAFileAction;
+    QAction *mSaveBSAFileAction;
     QAction *mCloseBSAFileAction;
 //    QAction *mAddFileAction;
 //    QAction *mUpdateFileAction;

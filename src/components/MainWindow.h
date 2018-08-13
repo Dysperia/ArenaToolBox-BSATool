@@ -23,11 +23,20 @@ private:
     MenuBar* mMenuBar;
     BsaArchive mBsaArchive;
 
+    //**************************************************************************
+    // Methods
+    //**************************************************************************
+    void askUserToConfirmClosingOfOpenedBsa();
+
 private slots:
     // Create a new empty bsa
-    void newBsaSlot();
+    void newBsa();
+    // Open a bsa
+    void openBsa();
+    // Save a bsa
+    void saveBsa();
     // Close the opened bsa
-    void closeBsaSlot();
+    void closeBsa();
 };
 
 #endif // MAINWINDOW_H

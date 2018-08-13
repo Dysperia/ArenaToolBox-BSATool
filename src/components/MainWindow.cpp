@@ -5,11 +5,12 @@
 
 #include <QGridLayout>
 #include <QMessageBox>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
 {
     // Menu bar
-    mMenuBar = new MenuBar(&mBsaArchive);
+    mMenuBar = new MenuBar();
     setMenuBar(mMenuBar);
 
     // Toolbar
@@ -17,8 +18,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     addToolBar(toolBar);
 
     // Connecting MenuBar/ToolBar actions
-    connect(mMenuBar->getNewBSAFileAction(), SIGNAL(triggered()),this, SLOT(newBsaSlot()));
-    connect(mMenuBar->getCloseBSAFileAction(), SIGNAL(triggered()),this, SLOT(closeBsaSlot()));
+    connect(mMenuBar->getNewBSAFileAction(), SIGNAL(triggered()),this, SLOT(newBsa()));
+    connect(mMenuBar->getOpenBSAFileAction(), SIGNAL(triggered()),this, SLOT(openBsa()));
+    connect(mMenuBar->getSaveBSAFileAction(), SIGNAL(triggered()),this, SLOT(saveBsa()));
+    connect(mMenuBar->getCloseBSAFileAction(), SIGNAL(triggered()),this, SLOT(closeBsa()));
+
+    // Connecting actions update slots
+    connect(&mBsaArchive, SIGNAL(archiveOpened(bool)), mMenuBar, SLOT(updateActionsFromBsaArchiveState(bool)));
+    connect(&mBsaArchive, SIGNAL(archiveClosed(bool)), mMenuBar, SLOT(updateActionsFromBsaArchiveState(bool)));
+    mMenuBar->updateActionsFromBsaArchiveState(mBsaArchive.isOpened());
 
     // Central widget
     QWidget *mainZone = new QWidget;
@@ -32,21 +40,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     mMenuBar->getViewMenu()->addAction(consoleDock->toggleViewAction());
 }
 
-// Create a new empty bsa
-void MainWindow::newBsaSlot()
+void MainWindow::askUserToConfirmClosingOfOpenedBsa()
 {
     if (mBsaArchive.isOpened())
     {
-        int ret = QMessageBox::question(this, "Create a new BSA",
+        int ret = QMessageBox::question(this, "Open a BSA",
                                         "A BSA archive is already opened.\n"
-                                        "If you create a new one, unsaved changes of the previous BSA will be discarded.\n"
-                                        "Do you really want to create a new BSA archive?");
+                                        "If you open a new one, unsaved changes of the previous BSA will be discarded.\n"
+                                        "Do you really want to open an other BSA archive?");
         if (ret == QMessageBox::Yes)
         {
             Status status = mBsaArchive.closeArchive();
-            Logger::getInstance().logError(status);
+            Logger::getInstance().logErrorOrInfo(status, QString("Archive closed."));
         }
     }
+}
+
+// Create a new empty bsa
+void MainWindow::newBsa()
+{
+    this->askUserToConfirmClosingOfOpenedBsa();
     if (!mBsaArchive.isOpened())
     {
         Status status = mBsaArchive.createNewArchive();
@@ -57,8 +70,43 @@ void MainWindow::newBsaSlot()
     }
 }
 
+// Open a bsa
+void MainWindow::openBsa() {
+    this->askUserToConfirmClosingOfOpenedBsa();
+    if (!mBsaArchive.isOpened())
+    {
+        QString bsaDirectory(QDir::homePath());
+        QString archiveFilePath = QFileDialog::getOpenFileName(this, "Open BSA archive",
+                                                               bsaDirectory, "BSA archives (*.bsa *.BSA)");
+        if (archiveFilePath != NULL)
+        {
+            Status status = mBsaArchive.openArchive(archiveFilePath);
+            Logger::getInstance().logErrorOrInfo(status,
+                                                 QString("Archive opened : %1")
+                                                 .arg(archiveFilePath));
+        }
+    }
+}
+
+// Save a bsa
+void MainWindow::saveBsa() {
+    if (mBsaArchive.isOpened())
+    {
+        QString bsaDirectory(QDir::homePath());
+        QString saveFilePath = QFileDialog::getSaveFileName(this, "Save BSA archive",
+                                                               bsaDirectory, "BSA archives (*.bsa *.BSA)");
+        if (saveFilePath != NULL)
+        {
+            Status status = mBsaArchive.saveArchive(saveFilePath);
+            Logger::getInstance().logErrorOrInfo(status,
+                                                 QString("Archive saved to %1")
+                                                 .arg(saveFilePath));
+        }
+    }
+}
+
 // Close the opened bsa
-void MainWindow::closeBsaSlot()
+void MainWindow::closeBsa()
 {
     if (mBsaArchive.isOpened())
     {
