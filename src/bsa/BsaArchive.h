@@ -24,8 +24,23 @@ class BsaArchive: public QObject
 {
     Q_OBJECT
 signals:
+    /**
+     * @brief signal sent when the archive is fully closed
+     * @param opened always false;
+     */
     void archiveClosed(bool opened);
+
+    /**
+     * @brief signal sent when the archive is fully opened
+     * @param opened always true;
+     */
     void archiveOpened(bool opened);
+
+    /**
+     * @brief signal sent when the files in the archive are modified
+     * @param fileList updated file list;
+     */
+    void archiveModified(QVector<BsaFile> fileList);
 
 public:
     //**************************************************************************
@@ -50,6 +65,7 @@ public:
      * @brief Archive constructor
      */
     BsaArchive();
+
     /**
      * @brief Archive destructor
      */
@@ -83,12 +99,14 @@ public:
      * @return the status of the operation: -1 if failure, 0 if success
      */
     Status openArchive(const QString &filePath);
+
     /**
      * @brief close this archive and restore state to a not opened archive
      * @return the status of the operation: -1 if failure (example: archive
      * not opened), 0 if success
      */
     Status closeArchive();
+
     /**
      * @brief retourn the archive data for the file
      * @param file the file to read, It should have at least the index set
@@ -97,6 +115,8 @@ public:
      * opened or the file is new
      */
     QVector<char> getFileData(const BsaFile &file);
+
+
     /**
      * @brief extract a file.
      * Does not work for new file and extract the archive file, not the updated
@@ -107,6 +127,7 @@ public:
      */
     Status extractFile(const QString &destinationFolder,
                       const BsaFile &file);
+
     /**
      * @brief update a file by a new one
      *
@@ -119,6 +140,7 @@ public:
      */
     BsaFile updateFile(const QString &updateFilePath,
                     const BsaFile &file);
+
     /**
      * @brief delete a file
      *
@@ -128,12 +150,14 @@ public:
      * @return the file with its state updated
      */
     BsaFile deleteFile(const BsaFile &file);
+
     /**
      * @brief addFile add a new file to the archive
      * @param filePath path the new file
      * @return the file created
      */
     BsaFile addFile(const QString &filePath);
+
     /**
      * @brief cancel the delete operation pending on a file
      *
@@ -143,6 +167,7 @@ public:
      * @return the file with its state updated
      */
     BsaFile cancelDeleteFile(const BsaFile &file);
+
     /**
      * @brief cancel the update operation pending on a file
      *
@@ -152,12 +177,14 @@ public:
      * @return the file with its state updated
      */
     BsaFile cancelUpdateFile(const BsaFile &file);
+
     /**
      * @brief create a new empty archive
      * @return the status of the operation: -1 if failure (example: archive
      * already opened), 0 if success
      */
     Status createNewArchive();
+
     /**
      * @brief save the archive to the given file path
      * @param filePath path to the save file
@@ -173,30 +200,37 @@ private:
      * @brief complete archive path with filename
      */
     QFile mArchiveFile{};
+
     /**
      * @brief fileNumber (bytes 1 to 2 of the archive)
      */
     quint16 mFileNumber{0};
+
     /**
      * @brief archive total size
      */
     qint64 mSize{0};
+
     /**
      * @brief archive total size including all current modifications
      */
     qint64 mModifiedSize{0};
+
     /**
      * @brief List of the archive files
      */
     QVector<BsaFile> mFiles{};
+
     /**
      * @brief file stream reading the archive file
      */
     QDataStream mReadingStream{};
+
     /**
      * @brief true if an archive is opened
      */
     bool mOpened{false};
+
     /**
      * @brief true if the opened archive has been modified
      */
@@ -214,6 +248,7 @@ private:
      */
     Status verifyIndexOpenOrNewErrors(const BsaFile &file,
                                       bool forbidNew = false);
+
     /**
      * @brief update the mModified attribute
      */
