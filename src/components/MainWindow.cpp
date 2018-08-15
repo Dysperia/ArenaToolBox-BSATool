@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ToolBar.h"
 #include "ConsoleDock.h"
+#include "FileListViewer.h"
 #include "../log/Logger.h"
 
 #include <QGridLayout>
@@ -18,10 +19,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     addToolBar(toolBar);
 
     // Connecting MenuBar/ToolBar actions
-    connect(mMenuBar->getNewBSAFileAction(), SIGNAL(triggered()),this, SLOT(newBsa()));
-    connect(mMenuBar->getOpenBSAFileAction(), SIGNAL(triggered()),this, SLOT(openBsa()));
-    connect(mMenuBar->getSaveBSAFileAction(), SIGNAL(triggered()),this, SLOT(saveBsa()));
-    connect(mMenuBar->getCloseBSAFileAction(), SIGNAL(triggered()),this, SLOT(closeBsa()));
+    connect(mMenuBar->getNewBSAFileAction(), SIGNAL(triggered()), SLOT(newBsa()));
+    connect(mMenuBar->getOpenBSAFileAction(), SIGNAL(triggered()), SLOT(openBsa()));
+    connect(mMenuBar->getSaveBSAFileAction(), SIGNAL(triggered()), SLOT(saveBsa()));
+    connect(mMenuBar->getCloseBSAFileAction(), SIGNAL(triggered()), SLOT(closeBsa()));
 
     // Connecting actions update slots
     connect(&mBsaArchive, SIGNAL(archiveOpened(bool)), mMenuBar, SLOT(updateActionsFromBsaArchiveState(bool)));
@@ -33,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     setCentralWidget(mainZone);
     QGridLayout *mainGrid = new QGridLayout;
     mainZone->setLayout(mainGrid);
+    FileListViewer *fileListViewer = new FileListViewer;
+    mainGrid->addLayout(fileListViewer,0,0);
 
     // Console
     QDockWidget *consoleDock = new ConsoleDock(this);
