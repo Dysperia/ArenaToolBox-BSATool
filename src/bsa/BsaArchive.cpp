@@ -115,7 +115,7 @@ Status BsaArchive::openArchive(const QString &filePath)
     // Archive has been read and ok -> opened
     mOpened = true;
     emit archiveOpened(true);
-    emit archiveModified(mFiles);
+    emit fileListModified(mFiles);
     return Status(0);
 }
 
@@ -135,7 +135,7 @@ Status BsaArchive::closeArchive()
     mModifiedSize = 0;
     mFileNumber = 0;
     mFiles.clear();
-    emit archiveModified(mFiles);
+    emit fileListModified(mFiles);
     emit archiveClosed(false);
     return Status(0);
 }
@@ -237,7 +237,7 @@ BsaFile BsaArchive::updateFile(const QString &updateFilePath, const BsaFile &fil
     mModifiedSize -= internFile.size();
     mModifiedSize += internFile.updateFileSize();
     mModified = true;
-    emit archiveModified(mFiles);
+    emit fileModified(internFile);
     return internFile;
 }
 
@@ -254,7 +254,7 @@ BsaFile BsaArchive::deleteFile(const BsaFile &file)
     mModifiedSize -= (internFile.updated() ? internFile.updateFileSize() : internFile.size());
     mModifiedSize -= FILETABLE_ENTRY_SIZE;
     mModified = true;
-    emit archiveModified(mFiles);
+    emit fileModified(internFile);
     return internFile;
 }
 
@@ -281,7 +281,7 @@ BsaFile BsaArchive::addFile(const QString &filePath)
     mModifiedSize += newFileSize;
     mModifiedSize += FILETABLE_ENTRY_SIZE;
     mModified = true;
-    emit archiveModified(mFiles);
+    emit fileListModified(mFiles);
     return newBsaFile;
 }
 
@@ -302,7 +302,7 @@ BsaFile BsaArchive::cancelDeleteFile(const BsaFile &file)
     mModifiedSize += (internFile.updated() ? internFile.updateFileSize() : internFile.size());
     mModifiedSize += FILETABLE_ENTRY_SIZE;
     updateIsModified();
-    emit archiveModified(mFiles);
+    emit fileModified(internFile);
     return internFile;
 }
 
@@ -325,7 +325,7 @@ BsaFile BsaArchive::cancelUpdateFile(const BsaFile &file)
     mModifiedSize += internFile.size();
     mModifiedSize -= internFile.updateFileSize();
     updateIsModified();
-    emit archiveModified(mFiles);
+    emit fileModified(internFile);
     return internFile;
 }
 
@@ -344,7 +344,7 @@ Status BsaArchive::createNewArchive()
     mReadingStream.setDevice(nullptr);
     mSize = 2;
     emit archiveOpened(true);
-    emit archiveModified(mFiles);
+    emit fileListModified(mFiles);
     return Status(0);
 }
 

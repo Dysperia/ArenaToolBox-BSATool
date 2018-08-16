@@ -40,7 +40,13 @@ signals:
      * @brief signal sent when the files in the archive are modified
      * @param fileList updated file list;
      */
-    void archiveModified(QVector<BsaFile> fileList);
+    void fileListModified(QVector<BsaFile> fileList);
+
+    /**
+     * @brief signal sent when a file in the archive is modified
+     * @param file updated file;
+     */
+    void fileModified(BsaFile file);
 
 public:
     //**************************************************************************

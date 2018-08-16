@@ -1,6 +1,8 @@
 #ifndef FILELISTVIEWER_H
 #define FILELISTVIEWER_H
 
+#include "../bsa/BsaFile.h"
+
 #include <QVBoxLayout>
 #include <QComboBox>
 #include <QListWidget>
@@ -18,10 +20,11 @@ public slots:
 
 private:
     QComboBox *mFileExtensionFilter;
-    QListWidget *mArchiveFileList;
+    QListWidget *mFileListView;
 
 private slots:
-    void updateFileListFromFilterSlot(QString filter);
+    void updateViewFromFilterChange(QString filter);
+    void updateViewFromFileList(QVector<BsaFile> fileListr);
 
 };
 
