@@ -89,7 +89,6 @@ Status BsaArchive::openArchive(const QString &filePath)
     quint32 offset = 2;
     char name[14];
     quint32 size = 0;
-    mFiles.resize(mFileNumber);
     for (quint16 i(0); i < mFileNumber; i++) {
         if (mArchiveFile.atEnd()) {
             return Status(-1, QString("Reached end of file while reading infos of file %1 of %2")

@@ -1,6 +1,8 @@
 #include "FileListViewer.h"
 #include <QLabel>
 
+const QString ALL_TYPE = QString("All types");
+
 FileListViewer::FileListViewer()
 {
     QHBoxLayout *filterLayout = new QHBoxLayout;
@@ -14,7 +16,7 @@ FileListViewer::FileListViewer()
     this->addWidget(mFileListView);
 
     // Connecting filter mecanic
-    connect(mFileExtensionFilter, SIGNAL(activated(QString)), SLOT(updateFileListFromFilterSlot(QString)));
+    connect(mFileExtensionFilter, SIGNAL(activated(QString)), SLOT(updateViewFromFilterChange(QString)));
 
    // Passing throw signal from internal widget
     connect(mFileListView, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
@@ -22,7 +24,10 @@ FileListViewer::FileListViewer()
 }
 
 void FileListViewer::updateViewFromFilterChange(QString filter) {
-
+    for (int i=0; i<mFileListView->count(); i++) {
+        QListWidgetItem *item = mFileListView->item(i);
+        item->setHidden(filter != ALL_TYPE && !item->text().toUpper().endsWith(filter));
+    }
 }
 
 // Generate the file filter lists
@@ -47,6 +52,6 @@ void FileListViewer::updateViewFromFileList(QVector<BsaFile> fileList)
         mFileListView->addItem(file.fileName());
     }
     extensions.sort();
-    extensions.prepend(QString("All"));
+    extensions.prepend(ALL_TYPE);
     mFileExtensionFilter->addItems(extensions);
 }
