@@ -37,6 +37,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     FileListViewer *fileListViewer = new FileListViewer;
     mainGrid->addLayout(fileListViewer,0,0);
 
+    // Connecting fileListViewer to bsaArchive
+    connect(&mBsaArchive, SIGNAL(fileListModified(QVector<BsaFile>)), fileListViewer, SLOT(updateViewFromFileList(QVector<BsaFile>)));
+
     // Console
     QDockWidget *consoleDock = new ConsoleDock(this);
     this->addDockWidget(Qt::BottomDockWidgetArea, consoleDock);
@@ -98,7 +101,7 @@ void MainWindow::saveBsa() {
         QString bsaDirectory(QDir::homePath());
         QString saveFilePath = QFileDialog::getSaveFileName(this, "Save BSA archive",
                                                                bsaDirectory, "BSA archives (*.bsa *.BSA)");
-        if (saveFilePath != NULL)
+        if (saveFilePath != nullptr)
         {
             Status status = mBsaArchive.saveArchive(saveFilePath);
             Logger::getInstance().logErrorOrInfo(status,

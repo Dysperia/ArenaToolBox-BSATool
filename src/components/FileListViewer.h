@@ -17,6 +17,7 @@ public:
     FileListViewer();
 
 public slots:
+    void updateViewFromFileList(QVector<BsaFile> fileListr);
 
 private:
     QComboBox *mFileExtensionFilter;
@@ -24,7 +25,6 @@ private:
 
 private slots:
     void updateViewFromFilterChange(QString filter);
-    void updateViewFromFileList(QVector<BsaFile> fileListr);
 
 };
 
