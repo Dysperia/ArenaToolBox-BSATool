@@ -19,7 +19,7 @@
  */
 
 // TODO new class
-class IMG
+class Img
 {
 public:
     //**************************************************************************
@@ -29,11 +29,11 @@ public:
      * @brief constructor of IMG with parsing of the header
      * @param imgData data of the IMG file
      */
-    IMG(QVector<char> &imgData);
+    Img(QVector<char> &imgData);
     /**
      * @brief constructor of IMG without parsing of the header
      */
-    IMG(QVector<char> &imgData, quint16 width, quint16 height, Palette palette);
+    Img(QVector<char> &imgData, quint16 width, quint16 height, Palette palette);
 
     //**************************************************************************
     // Getters/setters
