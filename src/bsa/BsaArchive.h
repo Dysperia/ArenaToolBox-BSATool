@@ -54,12 +54,6 @@ public:
     //**************************************************************************
 
     /**
-     * @brief Invalid bsaFile used to return an error. Invalid because an offset
-     * of 0 is impossible: 2 bytes minimum
-     */
-    const static BsaFile INVALID_BSAFILE;
-
-    /**
      * @brief Size of a filetable entry: 18 bytes
      */
     const static int FILETABLE_ENTRY_SIZE = 18;

@@ -3,11 +3,6 @@
 #include <QtConcurrent/QtConcurrent>
 
 //******************************************************************************
-// Statics
-//******************************************************************************
-const BsaFile BsaArchive::INVALID_BSAFILE(0, 0, "INVALID", 0);
-
-//******************************************************************************
 // Constructors
 //******************************************************************************
 BsaArchive::BsaArchive()
@@ -218,12 +213,12 @@ BsaFile BsaArchive::updateFile(const QString &updateFilePath, const BsaFile &fil
 {
     Status status = verifyIndexOpenOrNewErrors(file);
     if (status.status() < 0) {
-        return INVALID_BSAFILE;
+        return BsaFile::INVALID_BSAFILE;
     }
     // Update file should exist and be readable for size
     QFile updateFile(updateFilePath);
     if (!updateFile.exists() || !updateFile.open(QIODevice::ReadOnly)) {
-        return INVALID_BSAFILE;
+        return BsaFile::INVALID_BSAFILE;
     }
     quint32 updateSize = updateFile.size();
     updateFile.close();
@@ -244,7 +239,7 @@ BsaFile BsaArchive::deleteFile(const BsaFile &file)
 {
     Status status = verifyIndexOpenOrNewErrors(file);
     if (status.status() < 0) {
-        return INVALID_BSAFILE;
+        return BsaFile::INVALID_BSAFILE;
     }
     // Updating file state
     BsaFile internFile = mFiles[file.index()];
@@ -262,14 +257,14 @@ BsaFile BsaArchive::addFile(const QString &filePath)
     QFile newFile(filePath);
     // New file should exist and be readable for size
     if (!newFile.exists() || !newFile.open(QIODevice::ReadOnly)) {
-        return INVALID_BSAFILE;
+        return BsaFile::INVALID_BSAFILE;
     }
     quint32 newFileSize = newFile.size();
     newFile.close();
     QString newFileName = QFileInfo(newFile).fileName();
     // Checking filename length
     if (newFileName.size() > 13) {
-        return INVALID_BSAFILE;
+        return BsaFile::INVALID_BSAFILE;
     }
     BsaFile newBsaFile(newFileSize, 2, newFileName, mFileNumber);
     newBsaFile.setIsNew(true);
@@ -288,7 +283,7 @@ BsaFile BsaArchive::cancelDeleteFile(const BsaFile &file)
 {
     Status status = verifyIndexOpenOrNewErrors(file);
     if (status.status() < 0) {
-        return INVALID_BSAFILE;
+        return BsaFile::INVALID_BSAFILE;
     }
     BsaFile internFile = mFiles[file.index()];
     // Noting to be done if file not to delete
@@ -309,7 +304,7 @@ BsaFile BsaArchive::cancelUpdateFile(const BsaFile &file)
 {
     Status status = verifyIndexOpenOrNewErrors(file);
     if (status.status() < 0) {
-        return INVALID_BSAFILE;
+        return BsaFile::INVALID_BSAFILE;
     }
     BsaFile internFile = mFiles[file.index()];
     // Noting to be done if file not updated

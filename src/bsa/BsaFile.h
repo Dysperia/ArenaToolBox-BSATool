@@ -13,6 +13,16 @@ class BsaFile
 {
 public:
     //**************************************************************************
+    // Statics
+    //**************************************************************************
+
+    /**
+     * @brief Invalid bsaFile used to return an error. Invalid because an offset
+     * of 0 is impossible in a bsa archive: 2 bytes minimum
+     */
+    const static BsaFile INVALID_BSAFILE;
+
+    //**************************************************************************
     // Constructors
     //**************************************************************************
     /**
