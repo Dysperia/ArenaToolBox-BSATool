@@ -1,4 +1,7 @@
 #include "FileListViewer.h"
+#include "FileListViewerItem.h"
+#include "../log/Logger.h"
+
 #include <QLabel>
 
 //******************************************************************************
@@ -15,6 +18,7 @@ FileListViewer::FileListViewer(QWidget *parent)
     QHBoxLayout *filterLayout = new QHBoxLayout;
     QLabel *filterLabel = new QLabel("File type");
     mFileExtensionFilter = new QComboBox;
+    mFileExtensionFilter->addItem(ALL_TYPE);
     filterLayout->addWidget(filterLabel);
     filterLayout->addWidget(mFileExtensionFilter);
     mFileListViewerWithFilterWidget = new QVBoxLayout(parent);
@@ -38,15 +42,19 @@ QVBoxLayout *FileListViewer::fileListViewerWithFilterWidget() const
 //**************************************************************************
 void FileListViewer::updateViewFromFilterChange(QString filter) {
     for (int i=0; i<this->count(); i++) {
-        QListWidgetItem *item = this->item(i);
-        item->setHidden(filter != ALL_TYPE && !item->text().toUpper().endsWith(filter));
+        FileListViewerItem *item = (FileListViewerItem*) this->item(i);
+        item->setHidden(filter != ALL_TYPE && !item->bsaFile().fileName()
+                                  .toUpper().endsWith('.' + filter));
     }
 }
 
 void FileListViewer::updateViewFromFileList(QVector<BsaFile> fileList)
 {
+    QString currentItemText = this->currentItem() == nullptr ? "" : this->currentItem()->text();
+    QString currentFilter = mFileExtensionFilter->currentText();
     QStringList extensions;
     this->clear();
+    mFileExtensionFilter->clear();
     for (int i(0); i < fileList.size(); i++)
     {
         BsaFile file = fileList.at(i);
@@ -61,9 +69,19 @@ void FileListViewer::updateViewFromFileList(QVector<BsaFile> fileList)
         if (!extensions.contains(extension)) {
             extensions.append(extension);
         }
-        this->addItem(file.fileName());
+        FileListViewerItem *item = new FileListViewerItem;
+        item->setBsaFile(file);
+        item->setText(file.fileName());
+        this->addItem(item);
     }
     extensions.sort();
     extensions.prepend(ALL_TYPE);
+
+    // TODO check if it is working when files can be modified
     mFileExtensionFilter->addItems(extensions);
+    QList<QListWidgetItem*> itemList = this->findItems(currentItemText, Qt::MatchExactly);
+    if (extensions.contains(currentFilter) && itemList.size() == 1) {
+        mFileExtensionFilter->setCurrentText(currentFilter);
+        this->setCurrentItem(itemList.at(0));
+    }
 }
