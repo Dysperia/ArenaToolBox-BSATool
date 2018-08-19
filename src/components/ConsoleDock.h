@@ -17,7 +17,7 @@ public:
      * @brief Constructor
      * @param parent parent of the component
      */
-    ConsoleDock(QWidget *parent);
+    explicit ConsoleDock(QWidget *parent = Q_NULLPTR);
 };
 
 #endif // CONSOLEDOCK_H

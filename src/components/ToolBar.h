@@ -19,7 +19,7 @@ public:
      * needs the menu bar to get the action to associate with the tool bar's items
      * @param menuBar the menu bar
      */
-    ToolBar(MenuBar *menuBar);
+    explicit ToolBar(MenuBar *menuBar);
 };
 
 #endif // TOOLBAR_H

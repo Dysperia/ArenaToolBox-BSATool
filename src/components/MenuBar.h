@@ -19,7 +19,7 @@ public:
      *
      * build the menu and the QActions associated with it
      */
-    MenuBar();
+    explicit MenuBar(QWidget *parent = Q_NULLPTR);
 
     //**************************************************************************
     // Getters/setters

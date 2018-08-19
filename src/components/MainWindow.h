@@ -6,12 +6,20 @@
 
 #include <QMainWindow>
 
+/**
+ * @brief the main window of the application, used to explore and edit the bsa
+ * archive files
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 signals:
 
 public:
+    /**
+     * @brief MainWindow
+     * @param parent parent of this window
+     */
     explicit MainWindow(QWidget *parent = nullptr);
 
 public slots:
@@ -20,22 +28,43 @@ private:
     //**************************************************************************
     // Attributes
     //**************************************************************************
+    /**
+     * @brief custom menu bar of the application
+     */
     MenuBar* mMenuBar;
+
+    /**
+     * @brief bsa archive manager
+     */
     BsaArchive mBsaArchive;
 
     //**************************************************************************
     // Methods
     //**************************************************************************
+    /**
+     * @brief start a dialog to ask the user confirmation for opening a archive
+     */
     void askUserToConfirmClosingOfOpenedBsa();
 
 private slots:
-    // Create a new empty bsa
+    /**
+     * @brief create a new bsa archive
+     */
     void newBsa();
-    // Open a bsa
+
+    /**
+     * @brief open a existing bsa archive from a user chosen file
+     */
     void openBsa();
-    // Save a bsa
+
+    /**
+     * @brief save the bsa archive to a user chosen file
+     */
     void saveBsa();
-    // Close the opened bsa
+
+    /**
+     * @brief close the bsa archive
+     */
     void closeBsa();
 };
 

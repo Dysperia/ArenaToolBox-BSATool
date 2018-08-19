@@ -3,7 +3,7 @@
 //******************************************************************************
 // Constructors
 //******************************************************************************
-MenuBar::MenuBar()
+MenuBar::MenuBar(QWidget *parent): QMenuBar(parent)
 {
     // Building menus
     mFileMenu = addMenu("File");

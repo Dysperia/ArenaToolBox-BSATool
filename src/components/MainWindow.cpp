@@ -8,6 +8,9 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+//******************************************************************************
+// Constructors
+//******************************************************************************
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
 {
     // Menu bar
@@ -35,17 +38,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     QGridLayout *mainGrid = new QGridLayout;
     mainZone->setLayout(mainGrid);
     FileListViewer *fileListViewer = new FileListViewer;
-    mainGrid->addLayout(fileListViewer,0,0);
+    mainGrid->addLayout(fileListViewer->fileListViewerWithFilterWidget(),0,0);
 
     // Connecting fileListViewer to bsaArchive
     connect(&mBsaArchive, SIGNAL(fileListModified(QVector<BsaFile>)), fileListViewer, SLOT(updateViewFromFileList(QVector<BsaFile>)));
 
     // Console
-    QDockWidget *consoleDock = new ConsoleDock(this);
+    QDockWidget *consoleDock = new ConsoleDock;
     this->addDockWidget(Qt::BottomDockWidgetArea, consoleDock);
     mMenuBar->getViewMenu()->addAction(consoleDock->toggleViewAction());
 }
 
+//**************************************************************************
+// Methods
+//**************************************************************************
 void MainWindow::askUserToConfirmClosingOfOpenedBsa()
 {
     if (mBsaArchive.isOpened())
@@ -62,7 +68,6 @@ void MainWindow::askUserToConfirmClosingOfOpenedBsa()
     }
 }
 
-// Create a new empty bsa
 void MainWindow::newBsa()
 {
     this->askUserToConfirmClosingOfOpenedBsa();
@@ -76,7 +81,6 @@ void MainWindow::newBsa()
     }
 }
 
-// Open a bsa
 void MainWindow::openBsa() {
     this->askUserToConfirmClosingOfOpenedBsa();
     if (!mBsaArchive.isOpened())
@@ -88,13 +92,14 @@ void MainWindow::openBsa() {
         {
             Status status = mBsaArchive.openArchive(archiveFilePath);
             Logger::getInstance().logErrorOrInfo(status,
-                                                 QString("Archive opened : %1")
-                                                 .arg(archiveFilePath));
+                                                 QString("Archive opened : %1. %2 files, size: %3 bytes")
+                                                 .arg(archiveFilePath)
+                                                 .arg(mBsaArchive.getFileNumber())
+                                                 .arg(mBsaArchive.getModifiedSize()));
         }
     }
 }
 
-// Save a bsa
 void MainWindow::saveBsa() {
     if (mBsaArchive.isOpened())
     {
@@ -111,7 +116,6 @@ void MainWindow::saveBsa() {
     }
 }
 
-// Close the opened bsa
 void MainWindow::closeBsa()
 {
     if (mBsaArchive.isOpened())
