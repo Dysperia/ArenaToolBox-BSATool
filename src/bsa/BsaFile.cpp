@@ -30,15 +30,7 @@ BsaFile::BsaFile(const quint32 &size,
 
 bool BsaFile::operator ==(const BsaFile &bsaFile) const
 {
-    if (mFileName != bsaFile.mFileName) {
-        return false;
-    }
-    else if (mIndex != bsaFile.mIndex) {
-        return false;
-    }
-    else {
-        return (mUpdated ? updateFileSize() : size()) == (bsaFile.mUpdated ? bsaFile.updateFileSize() : bsaFile.size());
-    }
+    return mFileName == bsaFile.mFileName;
 }
 
 bool BsaFile::operator !=(const BsaFile &bsaFile) const
