@@ -26,14 +26,18 @@ public:
     // Constructors
     //**************************************************************************
     /**
-     * @brief constructor of IMG with parsing of the header
+     * @brief constructor of IMG with parsing of the header. The well
+     * initialization can be checked with the potentilly Null status of the
+     * QImage
      * @param imgData data of the IMG file
      */
-    Img(QVector<char> &imgData);
+    Img(QVector<uchar> &imgData);
     /**
-     * @brief constructor of IMG without parsing of the header
+     * @brief constructor of IMG without parsing of the header. The well
+     * initialization can be checked with the potentilly Null status of the
+     * QImage
      */
-    Img(QVector<char> &imgData, quint16 width, quint16 height, Palette palette);
+    Img(QVector<uchar> &imgData, quint16 width, quint16 height, Palette palette);
 
     //**************************************************************************
     // Getters/setters
@@ -61,6 +65,8 @@ public:
 
     Palette palette() const;
     void setPalette(const Palette &palette);
+
+    QImage qImage() const;
 
     //**************************************************************************
     // Methods
@@ -102,6 +108,14 @@ private:
      * @brief color palette
      */
     Palette mPalette;
+    /**
+     * @brief image data
+     */
+    QVector<uchar> mImageData;
+    /**
+     * @brief QImage version of this img, mainly used for display
+     */
+    QImage mQImage;
 };
 
 #endif // IMG_H

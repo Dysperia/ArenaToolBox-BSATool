@@ -1,15 +1,40 @@
 #include "Img.h"
 
-Img::Img(QVector<char> &imgData)
+//******************************************************************************
+// Constructors
+//******************************************************************************
+Img::Img(QVector<uchar> &imgData)
 {
-
+    if (imgData.size() > 12) {
+        QDataStream imgDataStream(QByteArray(reinterpret_cast<const char *>(imgData.constData()), imgData.size()));
+        imgDataStream >> mOffsetX;
+        imgDataStream >> mOffsetY;
+        imgDataStream >> mWidth;
+        imgDataStream >> mHeight;
+        imgDataStream >> mCompressionFlag;
+        imgDataStream >> mPaletteFlag;
+        imgDataStream >> mDataSize;
+        if (imgData.size() >= mDataSize + 12) {
+            QVector<uchar> compressedImageData(mDataSize);
+            imgDataStream.readRawData(reinterpret_cast<char *>(compressedImageData.data()), mDataSize);
+            mImageData = compressedImageData;
+            mQImage = QImage(mImageData.data(), mWidth, mHeight, QImage::Format_Indexed8);
+            mQImage.setColorTable(mPalette.getColorTable());
+        }
+    }
 }
 
-Img::Img(QVector<char> &imgData, quint16 width, quint16 height, Palette palette)
+Img::Img(QVector<uchar> &imgData, quint16 width, quint16 height, Palette palette):
+    mWidth(width), mHeight(height), mPalette(palette)
 {
-
+    mImageData = imgData;
+    mQImage = QImage(mImageData.data(), mWidth, mHeight, QImage::Format_Indexed8);
+    mQImage.setColorTable(mPalette.getColorTable());
 }
 
+//******************************************************************************
+// Getters/setters
+//******************************************************************************
 quint16 Img::offsetX() const
 {
     return mOffsetX;
@@ -88,4 +113,9 @@ Palette Img::palette() const
 void Img::setPalette(const Palette &palette)
 {
     mPalette = palette;
+}
+
+QImage Img::qImage() const
+{
+    return mQImage;
 }
