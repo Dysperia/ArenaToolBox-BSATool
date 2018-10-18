@@ -12,8 +12,8 @@ void BsaFileTest::testEquality()
     QCOMPARE(bsaFile1 == bsaFile2, true);
     QCOMPARE(bsaFile1 != bsaFile2, false);
 
-    QCOMPARE(BsaFile(0, 0, "INVALID", 0) == BsaArchive::INVALID_BSAFILE, true);
-    QCOMPARE(BsaFile(0, 0, "INVALID", 0) != BsaArchive::INVALID_BSAFILE, false);
+    QCOMPARE(BsaFile(0, 0, "INVALID", 0) == BsaFile::INVALID_BSAFILE, true);
+    QCOMPARE(BsaFile(0, 0, "INVALID", 0) != BsaFile::INVALID_BSAFILE, false);
 
     QWARN("Should return equality for files not updated with same sizes, different offsets, same names and same index");
     bsaFile2 = BsaFile(10, 200, "file1", 1);
