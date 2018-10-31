@@ -2,7 +2,11 @@
 #define FILEDISPLAYER_H
 
 #include <QVBoxLayout>
+#include "ImageDisplayer.h"
 
+/**
+ * @brief Class used to display the various file types found in a bsa archive.
+ */
 class FileDisplayer : public QVBoxLayout
 {
     Q_OBJECT
