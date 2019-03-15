@@ -2,6 +2,7 @@
 #include "ToolBar.h"
 #include "ConsoleDock.h"
 #include "FileListViewer.h"
+#include "FileDisplayer.h"
 #include "../log/Logger.h"
 
 #include <QGridLayout>
@@ -42,6 +43,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
 
     // Connecting fileListViewer to bsaArchive
     connect(&mBsaArchive, SIGNAL(fileListModified(QVector<BsaFile>)), fileListViewer, SLOT(updateViewFromFileList(QVector<BsaFile>)));
+
+    // File display
+    FileDisplayer *fileDisplayer = new FileDisplayer;
+    mainGrid->addLayout(fileDisplayer, 0, 1);
 
     // Console
     QDockWidget *consoleDock = new ConsoleDock;
@@ -88,7 +93,7 @@ void MainWindow::openBsa() {
         QString bsaDirectory(QDir::homePath());
         QString archiveFilePath = QFileDialog::getOpenFileName(this, "Open BSA archive",
                                                                bsaDirectory, "BSA archives (*.bsa *.BSA)");
-        if (archiveFilePath != NULL)
+        if (archiveFilePath != nullptr)
         {
             Status status = mBsaArchive.openArchive(archiveFilePath);
             Logger::getInstance().logErrorOrInfo(status,

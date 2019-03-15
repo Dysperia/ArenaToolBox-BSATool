@@ -3,6 +3,7 @@
 
 #include <QVBoxLayout>
 #include "ImageDisplayer.h"
+#include "../bsa/BsaFile.h"
 
 /**
  * @brief Class used to display the various file types found in a bsa archive.
@@ -27,11 +28,16 @@ public:
     //**************************************************************************
 
 public slots:
+    void display(BsaFile &file, QVector<uchar> &imgData);
 
 private:
     //**************************************************************************
     // Attributes
     //**************************************************************************
+    /**
+     * @brief Image displayer
+     */
+    ImageDisplayer *mImageDisplayer;
 };
 
 #endif // FILEDISPLAYER_H
