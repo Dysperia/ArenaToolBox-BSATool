@@ -34,7 +34,7 @@ public:
     Img(QVector<uchar> &imgData);
     /**
      * @brief constructor of IMG without parsing of the header. The well
-     * initialization can be checked with the potentilly Null status of the
+     * initialization can be checked with the potentially Null status of the
      * QImage
      */
     Img(QVector<uchar> &imgData, quint16 width, quint16 height, Palette palette);
