@@ -20,20 +20,20 @@ void BsaFileTest::testEquality()
     QCOMPARE(bsaFile1 == bsaFile2, true);
     QCOMPARE(bsaFile1 != bsaFile2, false);
 
-    QWARN("Should return not equality for files not updated with different sizes, same offsets, same names and same index");
+    QWARN("Should return equality for files not updated with different sizes, same offsets, same names and same index");
     bsaFile2 = BsaFile(100, 20, QString("file1"), 1);
-    QCOMPARE(bsaFile1 == bsaFile2, false);
-    QCOMPARE(bsaFile1 != bsaFile2, true);
+    QCOMPARE(bsaFile1 == bsaFile2, true);
+    QCOMPARE(bsaFile1 != bsaFile2, false);
 
     QWARN("Should return not equality for files not updated with same sizes, same offsets, different names and same index");
     bsaFile2 = BsaFile(10, 20, QString("file10"), 1);
     QCOMPARE(bsaFile1 == bsaFile2, false);
     QCOMPARE(bsaFile1 != bsaFile2, true);
 
-    QWARN("Should return not equality for files not updated with same sizes, same offsets, same names and different index");
+    QWARN("Should return equality for files not updated with same sizes, same offsets, same names and different index");
     bsaFile2 = BsaFile(10, 20, QString("file1"), 10);
-    QCOMPARE(bsaFile1 == bsaFile2, false);
-    QCOMPARE(bsaFile1 != bsaFile2, true);
+    QCOMPARE(bsaFile1 == bsaFile2, true);
+    QCOMPARE(bsaFile1 != bsaFile2, false);
 
     QWARN("Should return equality for same files, but one updated with same updated sizes");
     bsaFile2 = BsaFile(10, 20, QString("file1"), 1);
@@ -42,12 +42,12 @@ void BsaFileTest::testEquality()
     QCOMPARE(bsaFile1 == bsaFile2, true);
     QCOMPARE(bsaFile1 != bsaFile2, false);
 
-    QWARN("Should return not equality for same files, but one updated with different updated sizes");
+    QWARN("Should return equality for same files, but one updated with different updated sizes");
     bsaFile2 = BsaFile(10, 20, QString("file1"), 1);
     bsaFile2.setUpdated(true);
     bsaFile2.setUpdateFileSize(100);
-    QCOMPARE(bsaFile1 == bsaFile2, false);
-    QCOMPARE(bsaFile1 != bsaFile2, true);
+    QCOMPARE(bsaFile1 == bsaFile2, true);
+    QCOMPARE(bsaFile1 != bsaFile2, false);
 
     QWARN("Should return equality for same files, both updated with same updated sizes");
     bsaFile1 = BsaFile(10, 20, QString("file1"), 1);
@@ -59,13 +59,13 @@ void BsaFileTest::testEquality()
     QCOMPARE(bsaFile1 == bsaFile2, true);
     QCOMPARE(bsaFile1 != bsaFile2, false);
 
-    QWARN("Should return equality for same files, both updated but with different updated sizes");
+    QWARN("Should return not equality for same files, both updated but with different updated sizes");
     bsaFile1 = BsaFile(10, 20, QString("file1"), 1);
     bsaFile1.setUpdated(true);
     bsaFile1.setUpdateFileSize(100);
     bsaFile2 = BsaFile(10, 20, QString("file1"), 1);
     bsaFile2.setUpdated(true);
     bsaFile2.setUpdateFileSize(1000);
-    QCOMPARE(bsaFile1 == bsaFile2, false);
-    QCOMPARE(bsaFile1 != bsaFile2, true);
+    QCOMPARE(bsaFile1 == bsaFile2, true);
+    QCOMPARE(bsaFile1 != bsaFile2, false);
 }

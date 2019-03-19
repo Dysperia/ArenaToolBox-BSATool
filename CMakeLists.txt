@@ -15,25 +15,10 @@ find_package(Qt5Core CONFIG REQUIRED)
 find_package(Qt5Gui CONFIG REQUIRED)
 find_package(Qt5Concurrent CONFIG REQUIRED)
 
-# Populate a CMake variable with the sources
-file(GLOB BSATool_SRCS
-        "src/assets/*.cpp"
-        "src/bsa/*.cpp"
-        "src/components/*.cpp"
-        "src/configuration/*.cpp"
-        "src/error/*.cpp"
-        "src/log/*.cpp"
-        "src/utils/*.cpp"
-        "src/main/*.cpp"
-        "src/assets/*.h"
-        "src/bsa/*.h"
-        "src/components/*.h"
-        "src/configuration/*.h"
-        "src/designpatterns/*.h"
-        "src/error/*.h"
-        "src/log/*.h"
-        "src/utils/*.h")
-# Tell CMake to create the executable
-add_executable(BSATool ${BSATool_SRCS})
-# Use the modules from Qt 5
-target_link_libraries(BSATool Qt5::Widgets Qt5::Concurrent)
+# BSATool
+add_subdirectory(src)
+
+# Tests
+add_subdirectory(test)
+enable_testing()
+add_test(NAME BSAToolTest COMMAND BSAToolTest)
