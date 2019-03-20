@@ -24,7 +24,7 @@ Img::Img(QVector<uchar> &imgData)
     }
 }
 
-Img::Img(QVector<uchar> &imgData, quint16 width, quint16 height, Palette palette):
+Img::Img(QVector<uchar> &imgData, quint16 width, quint16 height, Palette &palette):
     mWidth(width), mHeight(height), mPalette(palette)
 {
     mImageData = imgData;

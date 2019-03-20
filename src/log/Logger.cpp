@@ -1,5 +1,4 @@
 #include "Logger.h"
-#include <fstream>
 #include <QDateTime>
 
 //******************************************************************************
@@ -10,7 +9,7 @@ Logger::Logger(token t) {
     this->mTextWidget->setReadOnly(true);
 }
 
-Logger::~Logger() {}
+Logger::~Logger() = default;
 
 //******************************************************************************
 // Getters/setters
@@ -29,7 +28,7 @@ QPlainTextEdit *Logger::textWidget() const
  * @param message log message
  * @return the log line
  */
-QString buildLogLine(const Logger::MessageType type,
+QString buildLogLine(const Logger::MessageType &type,
                           const QString &message) {
     QString line = QDateTime::currentDateTime().toString("dd/MM/yyyy hh:mm:ss ");
     switch (type) {
@@ -49,7 +48,7 @@ QString buildLogLine(const Logger::MessageType type,
     return line;
 }
 
-void Logger::log(const Logger::MessageType type,
+void Logger::log(const Logger::MessageType &type,
                  const QString &message)
 {
     QString line = buildLogLine(type, message);

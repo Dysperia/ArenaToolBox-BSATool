@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 #include "BsaFile.h"
 
 //******************************************************************************
@@ -9,14 +11,11 @@ const BsaFile BsaFile::INVALID_BSAFILE(0, 0, "INVALID", 0);
 // Constructors
 //******************************************************************************
 
-BsaFile::BsaFile()
-{
-
-}
+BsaFile::BsaFile() = default;
 
 BsaFile::BsaFile(const quint32 &size,
                  const qint64 &startOffsetInArchive,
-                 const QString fileName,
+                 const QString &fileName,
                  const quint16 &index):
     mSize(size), mStartOffsetInArchive(startOffsetInArchive),
     mFileName(fileName), mIndex(index)
@@ -120,3 +119,5 @@ void BsaFile::setNewFilePath(const QString &newFilePath)
 {
     mNewFilePath = newFilePath;
 }
+
+#pragma clang diagnostic pop

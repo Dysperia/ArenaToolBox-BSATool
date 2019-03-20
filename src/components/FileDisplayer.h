@@ -21,7 +21,7 @@ public:
      * @brief Default constructor
      * @param parent of the FileDisplayer
      */
-    FileDisplayer(QWidget *parent = Q_NULLPTR);
+    explicit FileDisplayer(QWidget *parent = Q_NULLPTR);
 
     //**************************************************************************
     // Getters/setters

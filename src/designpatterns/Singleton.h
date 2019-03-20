@@ -42,11 +42,12 @@ protected:
     /**
      * @brief Singleton constructor
      */
-    Singleton() {}
+    Singleton() = default;
+
     /**
      * @brief Destructor
      */
-    virtual ~Singleton() {}
+    virtual ~Singleton() = default;
 
     //**************************************************************************
     // Attributes

@@ -5,7 +5,6 @@
 #include "FileDisplayer.h"
 #include "../log/Logger.h"
 
-#include <QGridLayout>
 #include <QMessageBox>
 #include <QFileDialog>
 
@@ -19,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     setMenuBar(mMenuBar);
 
     // Toolbar
-    ToolBar *toolBar = new ToolBar(mMenuBar);
+    auto *toolBar = new ToolBar(mMenuBar);
     addToolBar(toolBar);
 
     // Connecting MenuBar/ToolBar actions
@@ -36,16 +35,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     // Central widget
     QWidget *mainZone = new QWidget;
     setCentralWidget(mainZone);
-    QGridLayout *mainGrid = new QGridLayout;
+    auto *mainGrid = new QGridLayout;
     mainZone->setLayout(mainGrid);
-    FileListViewer *fileListViewer = new FileListViewer;
+    auto *fileListViewer = new FileListViewer;
     mainGrid->addLayout(fileListViewer->fileListViewerWithFilterWidget(),0,0);
 
     // Connecting fileListViewer to bsaArchive
     connect(&mBsaArchive, SIGNAL(fileListModified(QVector<BsaFile>)), fileListViewer, SLOT(updateViewFromFileList(QVector<BsaFile>)));
 
     // File display
-    FileDisplayer *fileDisplayer = new FileDisplayer;
+    auto *fileDisplayer = new FileDisplayer;
     mainGrid->addLayout(fileDisplayer, 0, 1);
 
     // Console

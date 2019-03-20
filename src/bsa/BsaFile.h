@@ -38,7 +38,7 @@ public:
      */
     BsaFile(const quint32 &size,
          const qint64 &startOffsetInArchive,
-         const QString fileName,
+         const QString &fileName,
          const quint16 &index);
     /**
      * @brief copy constructor

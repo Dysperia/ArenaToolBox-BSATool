@@ -8,5 +8,5 @@ int main(int argc, char *argv[])
     MainWindow w;
     Logger::getInstance().log(Logger::MessageType::INFO, "Starting BSATool");
     w.show();
-    return app.exec();
+    return QApplication::exec();
 }

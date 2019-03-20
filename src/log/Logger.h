@@ -35,11 +35,11 @@ public:
      * @brief Logger constructor for the singleton
      * @param t token used by the singleton
      */
-    Logger(token t);
+    explicit Logger(token t);
     /**
      * @brief Destrutor
      */
-    ~Logger();
+    ~Logger() override;
 
     //**************************************************************************
     // Getters/setters
@@ -58,7 +58,7 @@ public:
      * @param type message type
      * @param message message to log
      */
-    void log(const MessageType type,
+    void log(const MessageType &type,
               const QString &message);
 
     /**

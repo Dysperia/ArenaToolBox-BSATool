@@ -1,9 +1,10 @@
 find_package(Qt5Test CONFIG REQUIRED)
 
 # Populate a CMake variable with the sources
-file(GLOB_RECURSE BSAToolTest_SRCS
-        "*.cpp"
-        "*.h")
+set(BSAToolTest_SRCS
+        "bsa/BsaFileTest.cpp"
+        "bsa/BsaFileTest.h"
+        "main/main.cpp")
 # Tell CMake to create the executable
 add_executable(BSAToolTest ${BSAToolTest_SRCS})
 # Use the modules from Qt 5

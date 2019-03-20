@@ -69,7 +69,7 @@ public:
     /**
      * @brief Archive destructor
      */
-    ~BsaArchive();
+    ~BsaArchive() override;
 
     //**************************************************************************
     // Getters/setters

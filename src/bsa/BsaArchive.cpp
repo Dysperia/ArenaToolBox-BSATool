@@ -79,7 +79,7 @@ Status BsaArchive::openArchive(const QString &filePath)
     mArchiveFile.seek(0);
     mReadingStream >> mFileNumber;
     // Reading files name and size from file table
-    quint16 fileTableSize = FILETABLE_ENTRY_SIZE*mFileNumber;
+    int fileTableSize = FILETABLE_ENTRY_SIZE * mFileNumber;
     mArchiveFile.seek(mSize - fileTableSize);
     quint32 offset = 2;
     char name[14];
@@ -99,7 +99,7 @@ Status BsaArchive::openArchive(const QString &filePath)
     }
     // Checking archive size and integrity
     auto sizeReduce = [](qint64 &result, const qint64 &current) -> void {result += current;};
-    qint64 totalSizeFromFiles = QtConcurrent::blockingMappedReduced<qint64>(
+    auto totalSizeFromFiles = QtConcurrent::blockingMappedReduced<qint64>(
                                     mFiles, &BsaFile::size, sizeReduce);
     totalSizeFromFiles += 2 + fileTableSize;
     if (totalSizeFromFiles != mSize) {
@@ -174,7 +174,7 @@ QVector<char> BsaArchive::getFileData(const BsaFile &file)
         return QVector<char>(0);
     }
     QVector<char> data(internFile.size());
-    size_t bytesRead = mReadingStream.readRawData(data.data(), internFile.size());
+    int bytesRead = mReadingStream.readRawData(data.data(), internFile.size());
     return bytesRead == internFile.size() ? data : QVector<char>(0);
 }
 
@@ -192,13 +192,13 @@ Status BsaArchive::extractFile(const QString &destinationFolder, const BsaFile &
     }
     QDataStream writeStream(&saveFile);
     QVector<char> data = getFileData(internFile);
-    size_t bytesRead = data.size();
+    int bytesRead = data.size();
     // data size too small
     if (bytesRead < internFile.size()) {
         return Status(-1, QString("To few data read from the archive, actual :%1, expected : %2")
                      .arg(data.size()).arg(internFile.size()));
     }
-    size_t bytesWritten = writeStream.writeRawData(data.constData(), data.size());
+    int bytesWritten = writeStream.writeRawData(data.constData(), data.size());
     if (bytesWritten < internFile.size()) {
         return Status(-1, QString("Only %1 bytes of %2 written to file %3")
                       .arg(bytesWritten).arg(internFile.size())
@@ -220,7 +220,7 @@ BsaFile BsaArchive::updateFile(const QString &updateFilePath, const BsaFile &fil
     if (!updateFile.exists() || !updateFile.open(QIODevice::ReadOnly)) {
         return BsaFile::INVALID_BSAFILE;
     }
-    quint32 updateSize = updateFile.size();
+    auto updateSize = static_cast<quint32>(updateFile.size());
     updateFile.close();
     // Updating file state
     BsaFile internFile = mFiles[file.index()];
@@ -259,7 +259,7 @@ BsaFile BsaArchive::addFile(const QString &filePath)
     if (!newFile.exists() || !newFile.open(QIODevice::ReadOnly)) {
         return BsaFile::INVALID_BSAFILE;
     }
-    quint32 newFileSize = newFile.size();
+    auto newFileSize = static_cast<quint32>(newFile.size());
     newFile.close();
     QString newFileName = QFileInfo(newFile).fileName();
     // Checking filename length
@@ -373,7 +373,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
             // Reading file data for updated or new
             if (file.updated() || file.isNew()) {
                 QFile externFile(file.updated() ? file.updateFilePath() : file.newFilePath());
-                quint32 dataSize = file.updated() ? file.updateFileSize() : file.size();
+                dataSize = file.updated() ? file.updateFileSize() : file.size();
                 // Error opening file
                 if (!externFile.open(QIODevice::ReadOnly)) {
                     saveFile.close();
@@ -383,7 +383,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
                 }
                 QDataStream externStream(&externFile);
                 fileData.resize(dataSize);
-                size_t bytesRead = externStream.readRawData(fileData.data(),
+                int bytesRead = externStream.readRawData(fileData.data(),
                                                             dataSize);
                 // Error reading data
                 if (bytesRead != dataSize) {
@@ -405,7 +405,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
                 }
                 dataSize = file.size();
                 fileData.resize(dataSize);
-                size_t bytesRead = mReadingStream.readRawData(fileData.data(), dataSize);
+                int bytesRead = mReadingStream.readRawData(fileData.data(), dataSize);
                 // Error reading data
                 if (bytesRead != dataSize) {
                     saveFile.close();
@@ -416,7 +416,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
                 }
             }
             // Writing file data
-            size_t bytesWritten = saveStream.writeRawData(fileData.data(),
+            int bytesWritten = saveStream.writeRawData(fileData.data(),
                                                           dataSize);
             // Error writing data
             if (bytesWritten != dataSize) {
@@ -457,7 +457,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
     // Checking temporary saved archive integrity before writing final file
     size_t expectedSize = 2 + totalFileSize + nbFileToSave*FILETABLE_ENTRY_SIZE;
     saveFile.open(QIODevice::ReadOnly);
-    size_t savedSize = saveFile.size();
+    qint64 savedSize = saveFile.size();
     saveFile.close();
     if (expectedSize != savedSize) {
         saveFile.remove();
