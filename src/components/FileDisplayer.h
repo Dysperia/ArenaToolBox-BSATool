@@ -28,7 +28,7 @@ public:
     //**************************************************************************
 
 public slots:
-    void display(BsaFile &file, QVector<uchar> &imgData);
+    void display(const BsaFile &file, const QVector<char> &imgData);
 
 private:
     //**************************************************************************

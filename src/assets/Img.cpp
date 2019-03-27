@@ -3,10 +3,10 @@
 //******************************************************************************
 // Constructors
 //******************************************************************************
-Img::Img(QVector<uchar> &imgData)
+Img::Img(const QVector<char> &imgData)
 {
     if (imgData.size() > 12) {
-        QDataStream imgDataStream(QByteArray(reinterpret_cast<const char *>(imgData.constData()), imgData.size()));
+        QDataStream imgDataStream(QByteArray((imgData.constData()), imgData.size()));
         imgDataStream >> mOffsetX;
         imgDataStream >> mOffsetY;
         imgDataStream >> mWidth;

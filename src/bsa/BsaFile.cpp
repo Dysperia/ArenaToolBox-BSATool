@@ -1,11 +1,9 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
 #include "BsaFile.h"
 
 //******************************************************************************
 // Statics
 //******************************************************************************
-const BsaFile BsaFile::INVALID_BSAFILE(0, 0, "INVALID", 0);
+const BsaFile BsaFile::INVALID_BSAFILE(0, 0, "INVALID", 0); // NOLINT(cert-err58-cpp)
 
 //******************************************************************************
 // Constructors

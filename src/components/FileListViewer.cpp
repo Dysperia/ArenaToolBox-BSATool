@@ -7,7 +7,7 @@
 //******************************************************************************
 // Statics
 //******************************************************************************
-const QString ALL_TYPE = QString("All types");
+const QString ALL_TYPE = QString("All types"); // NOLINT(cert-err58-cpp)
 
 //******************************************************************************
 // Constructors
@@ -15,7 +15,7 @@ const QString ALL_TYPE = QString("All types");
 FileListViewer::FileListViewer(QWidget *parent)
 {
     // Building full widget
-    QHBoxLayout *filterLayout = new QHBoxLayout;
+    auto *filterLayout = new QHBoxLayout;
     QLabel *filterLabel = new QLabel("File type");
     mFileExtensionFilter = new QComboBox;
     mFileExtensionFilter->addItem(ALL_TYPE);
@@ -42,7 +42,7 @@ QVBoxLayout *FileListViewer::fileListViewerWithFilterWidget() const
 //**************************************************************************
 void FileListViewer::updateViewFromFilterChange(QString filter) {
     for (int i=0; i<this->count(); i++) {
-        FileListViewerItem *item = (FileListViewerItem*) this->item(i);
+        auto *item = (FileListViewerItem*) this->item(i);
         item->setHidden(filter != ALL_TYPE && !item->bsaFile().fileName()
                                   .toUpper().endsWith('.' + filter));
     }
@@ -55,9 +55,7 @@ void FileListViewer::updateViewFromFileList(QVector<BsaFile> fileList)
     QStringList extensions;
     this->clear();
     mFileExtensionFilter->clear();
-    for (int i(0); i < fileList.size(); i++)
-    {
-        BsaFile file = fileList.at(i);
+    for (const auto &file : fileList) {
         int lastPointPosition = file.fileName().lastIndexOf('.');
         QString extension;
         if (lastPointPosition == -1) {
@@ -69,7 +67,7 @@ void FileListViewer::updateViewFromFileList(QVector<BsaFile> fileList)
         if (!extensions.contains(extension)) {
             extensions.append(extension);
         }
-        FileListViewerItem *item = new FileListViewerItem;
+        auto *item = new FileListViewerItem;
         item->setBsaFile(file);
         item->setText(file.fileName());
         this->addItem(item);

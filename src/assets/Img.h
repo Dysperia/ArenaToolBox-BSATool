@@ -31,7 +31,7 @@ public:
      * QImage
      * @param imgData data of the IMG file
      */
-    explicit Img(QVector<uchar> &imgData);
+    explicit Img(const QVector<char> &imgData);
     /**
      * @brief constructor of IMG without parsing of the header. The well
      * initialization can be checked with the potentially Null status of the

@@ -2,8 +2,8 @@
 #include "ToolBar.h"
 #include "ConsoleDock.h"
 #include "FileListViewer.h"
-#include "FileDisplayer.h"
 #include "../log/Logger.h"
+#include "FileListViewerItem.h"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -28,8 +28,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     connect(mMenuBar->getCloseBSAFileAction(), SIGNAL(triggered()), SLOT(closeBsa()));
 
     // Connecting actions update slots
-    connect(&mBsaArchive, SIGNAL(archiveOpened(bool)), mMenuBar, SLOT(updateActionsFromBsaArchiveState(bool)));
-    connect(&mBsaArchive, SIGNAL(archiveClosed(bool)), mMenuBar, SLOT(updateActionsFromBsaArchiveState(bool)));
+    connect(&mBsaArchive, &BsaArchive::archiveOpened, mMenuBar, &MenuBar::updateActionsFromBsaArchiveState);
+    connect(&mBsaArchive, &BsaArchive::archiveClosed, mMenuBar, &MenuBar::updateActionsFromBsaArchiveState);
     mMenuBar->updateActionsFromBsaArchiveState(mBsaArchive.isOpened());
 
     // Central widget
@@ -40,12 +40,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     auto *fileListViewer = new FileListViewer;
     mainGrid->addLayout(fileListViewer->fileListViewerWithFilterWidget(),0,0);
 
-    // Connecting fileListViewer to bsaArchive
-    connect(&mBsaArchive, SIGNAL(fileListModified(QVector<BsaFile>)), fileListViewer, SLOT(updateViewFromFileList(QVector<BsaFile>)));
+    // Connecting fileListViewer and bsaArchive
+    connect(&mBsaArchive, &BsaArchive::fileListModified, fileListViewer, &FileListViewer::updateViewFromFileList);
 
     // File display
-    auto *fileDisplayer = new FileDisplayer;
-    mainGrid->addLayout(fileDisplayer, 0, 1);
+    mFileDisplayer = new FileDisplayer;
+    mainGrid->addLayout(mFileDisplayer, 0, 1);
+
+    // Connecting fileDisplayer and fileListViewer
+    connect(fileListViewer, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), SLOT(updateOnFileSelected(QListWidgetItem *)));
 
     // Console
     QDockWidget *consoleDock = new ConsoleDock;
@@ -137,5 +140,16 @@ void MainWindow::closeBsa()
         }
         Status status = mBsaArchive.closeArchive();
         Logger::getInstance().logErrorOrInfo(status, QString("Archive closed."));
+    }
+}
+
+void MainWindow::updateOnFileSelected(QListWidgetItem *currentItem)
+{
+    auto *currentFileListItem = dynamic_cast<FileListViewerItem *>(currentItem);
+    if (currentFileListItem != nullptr)
+    {
+        const BsaFile &file = currentFileListItem->bsaFile();
+        const QVector<char> &fileData = mBsaArchive.getFileData(file);
+        mFileDisplayer->display(file, fileData);
     }
 }

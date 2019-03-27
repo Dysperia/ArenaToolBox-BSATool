@@ -3,8 +3,10 @@
 
 #include "MenuBar.h"
 #include "../bsa/BsaArchive.h"
+#include "FileDisplayer.h"
 
 #include <QMainWindow>
+#include <QtWidgets/QListWidgetItem>
 
 /**
  * @brief the main window of the application, used to explore and edit the bsa
@@ -38,6 +40,11 @@ private:
      */
     BsaArchive mBsaArchive;
 
+    /**
+     * @brief file displayer
+     */
+    FileDisplayer *mFileDisplayer;
+
     //**************************************************************************
     // Methods
     //**************************************************************************
@@ -66,6 +73,12 @@ private slots:
      * @brief close the bsa archive
      */
     void closeBsa();
+
+    /**
+     * @brief update the interface when a file is selected
+     * @param currentItem the current selection
+     */
+    void updateOnFileSelected(QListWidgetItem *currentItem);
 };
 
 #endif // MAINWINDOW_H
