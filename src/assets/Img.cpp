@@ -7,6 +7,7 @@ Img::Img(const QVector<char> &imgData)
 {
     if (imgData.size() > 12) {
         QDataStream imgDataStream(QByteArray((imgData.constData()), imgData.size()));
+        imgDataStream.setByteOrder(QDataStream::LittleEndian);
         imgDataStream >> mOffsetX;
         imgDataStream >> mOffsetY;
         imgDataStream >> mWidth;
