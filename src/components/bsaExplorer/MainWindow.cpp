@@ -1,9 +1,9 @@
 #include "MainWindow.h"
-#include "ToolBar.h"
-#include "ConsoleDock.h"
-#include "FileListViewer.h"
-#include "../log/Logger.h"
-#include "FileListViewerItem.h"
+#include "components/toolbar/ToolBar.h"
+#include "components/console/ConsoleDock.h"
+#include "components/fileList/FileListViewer.h"
+#include "log/Logger.h"
+#include "components/fileList/FileListViewerItem.h"
 
 #include <QMessageBox>
 #include <QFileDialog>

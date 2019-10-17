@@ -1,9 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "MenuBar.h"
-#include "../bsa/BsaArchive.h"
-#include "FileDisplayer.h"
+#include "components/menu/MenuBar.h"
+#include "bsa/BsaArchive.h"
+#include "components/fileDisplay/FileDisplayer.h"
 
 #include <QMainWindow>
 #include <QtWidgets/QListWidgetItem>

@@ -3,7 +3,7 @@
 
 #include <QVBoxLayout>
 #include "ImageDisplayer.h"
-#include "../bsa/BsaFile.h"
+#include "bsa/BsaFile.h"
 
 /**
  * @brief Class used to display the various file types found in a bsa archive.

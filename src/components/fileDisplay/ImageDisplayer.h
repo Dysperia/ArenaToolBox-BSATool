@@ -2,7 +2,7 @@
 #define IMAGEDISPLAYER_H
 
 #include <QLabel>
-#include "../assets/Img.h"
+#include "assets/Img.h"
 
 class ImageDisplayer : public QLabel
 {

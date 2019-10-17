@@ -1,6 +1,6 @@
 #include "FileListViewer.h"
 #include "FileListViewerItem.h"
-#include "../log/Logger.h"
+#include "log/Logger.h"
 
 #include <QLabel>
 

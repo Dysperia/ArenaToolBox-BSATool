@@ -1,3 +1,4 @@
+#include <assets/FileType.h>
 #include "FileDisplayer.h"
 
 //**************************************************************************
@@ -10,6 +11,16 @@ FileDisplayer::FileDisplayer(QWidget *parent): QVBoxLayout (parent)
 }
 
 void FileDisplayer::display(const BsaFile &file, const QVector<char> &imgData) {
-    Img img(imgData);
-    this->mImageDisplayer->display(img);
+    if (file.size() == 4096) {
+        Img img(imgData, 64, 64);
+        this->mImageDisplayer->display(img);
+    }
+    else if (FileType::getExtension(file) == FileType::SET) {
+        Img img(imgData, 64, static_cast<quint16>(file.size() / 64));
+        this->mImageDisplayer->display(img);
+    }
+    else {
+        Img img(imgData);
+        this->mImageDisplayer->display(img);
+    }
 }

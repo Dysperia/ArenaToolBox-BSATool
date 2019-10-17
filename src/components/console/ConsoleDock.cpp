@@ -1,5 +1,5 @@
 #include "ConsoleDock.h"
-#include "../log/Logger.h"
+#include "log/Logger.h"
 
 //**************************************************************************
 // Constructors

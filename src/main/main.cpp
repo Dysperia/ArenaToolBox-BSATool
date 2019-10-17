@@ -1,4 +1,4 @@
-#include "../components/MainWindow.h"
+#include "components/bsaExplorer/MainWindow.h"
 #include <QApplication>
 #include "../log/Logger.h"
 

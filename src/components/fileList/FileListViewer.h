@@ -1,7 +1,7 @@
 #ifndef FILELISTVIEWER_H
 #define FILELISTVIEWER_H
 
-#include "../bsa/BsaFile.h"
+#include "bsa/BsaFile.h"
 
 #include <QVBoxLayout>
 #include <QComboBox>
