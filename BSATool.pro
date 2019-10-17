@@ -15,7 +15,7 @@ test {
     TEMPLATE = app
     VERSION = 2.0
 
-    CONFIG += c++14
+    CONFIG += c++17
 
     include(BSATool.pri)
     include(test/BSAToolTest.pri)
