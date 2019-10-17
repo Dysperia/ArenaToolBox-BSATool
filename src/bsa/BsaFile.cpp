@@ -35,6 +35,19 @@ bool BsaFile::operator !=(const BsaFile &bsaFile) const
     return !(this->operator==(bsaFile));
 }
 
+//**************************************************************************
+// Methods
+//**************************************************************************
+QString BsaFile::getExtension() const {
+    int idx = mFileName.lastIndexOf('.');
+    if (idx == -1 || idx == mFileName.length()) {
+        return QString();
+    }
+    else {
+        return mFileName.mid(idx + 1);
+    }
+}
+
 //******************************************************************************
 // Getters/setters
 //******************************************************************************

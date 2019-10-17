@@ -191,6 +191,7 @@ Status BsaArchive::extractFile(const QString &destinationFolder, const BsaFile &
                      .arg(saveFile.fileName()));
     }
     QDataStream writeStream(&saveFile);
+    writeStream.setByteOrder(QDataStream::LittleEndian);
     QVector<char> data = getFileData(internFile);
     int bytesRead = data.size();
     // data size too small
@@ -353,6 +354,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
                       .arg(saveFile.fileName()));
     }
     QDataStream saveStream(&saveFile);
+    saveStream.setByteOrder(QDataStream::LittleEndian);
     // Count number of file to write in archive
     quint16 nbFileToSave = mFileNumber;
     for (quint16 i(0); i<mFileNumber; i++) {
@@ -382,6 +384,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
                                   .arg(externFile.fileName()));
                 }
                 QDataStream externStream(&externFile);
+                externStream.setByteOrder(QDataStream::LittleEndian);
                 fileData.resize(dataSize);
                 int bytesRead = externStream.readRawData(fileData.data(),
                                                             dataSize);

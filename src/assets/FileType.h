@@ -2,6 +2,7 @@
 #define FILETYPE_H
 
 #include <QHash>
+#include "../bsa/BsaFile.h"
 
 /**
  * @brief class describing the file types commonly encountered in an archive
@@ -9,6 +10,14 @@
 class FileType
 {
 public:
+    //**************************************************************************
+    // Enumeration
+    //**************************************************************************
+    /**
+     * enum describing some known file extension encountered in bsa archive
+     */
+    enum Extension {CFA, IMG, CIF, INF, XFM, XMI, VOC, DFA, MIF, SET, RMD, UNKNOWN};
+
     //**************************************************************************
     // Methods
     //**************************************************************************
@@ -20,7 +29,14 @@ public:
      * @param ext extension
      * @return the description
      */
-    static QString getDescriptionFromExtension(const QString &ext);
+    static QString getDescriptionForExtension(const FileType::Extension extension);
+    /**
+     * @brief return the type of a file
+     *
+     * @param file the file
+     * @return the extension if known, UNKNOWN otherwise
+     */
+    static Extension getExtension(const BsaFile &file);
 private:
     //**************************************************************************
     // Constructors

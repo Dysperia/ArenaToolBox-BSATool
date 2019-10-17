@@ -31,13 +31,13 @@ public:
      * QImage
      * @param imgData data of the IMG file
      */
-    explicit Img(const QVector<char> &imgData);
+    explicit Img(const QVector<char> &imgData, const Palette &palette = Palette());
     /**
      * @brief constructor of IMG without parsing of the header. The well
      * initialization can be checked with the potentially Null status of the
      * QImage
      */
-    Img(QVector<uchar> &imgData, quint16 width, quint16 height, Palette &palette);
+    Img(const QVector<char> &imgData, quint16 width, quint16 height, const Palette &palette = Palette());
 
     //**************************************************************************
     // Getters/setters
@@ -111,7 +111,7 @@ private:
     /**
      * @brief image data
      */
-    QVector<uchar> mImageData;
+    QVector<char> mImageData;
     /**
      * @brief QImage version of this img, mainly used for display
      */

@@ -66,6 +66,16 @@ public:
     bool operator !=(const BsaFile &bsaFile) const;
 
     //**************************************************************************
+    // Methods
+    //**************************************************************************
+    /**
+     * @brief return the file name extension
+     *
+     * @return return this file name extension or an empty string if no '.' character is found in the file name
+     */
+    QString getExtension() const;
+
+    //**************************************************************************
     // Getters/setters
     //**************************************************************************
     quint32 size() const;

@@ -3,7 +3,7 @@
 //******************************************************************************
 // Constructors
 //******************************************************************************
-Img::Img(const QVector<char> &imgData)
+Img::Img(const QVector<char> &imgData, const Palette &palette)
 {
     if (imgData.size() > 12) {
         QDataStream imgDataStream(QByteArray((imgData.constData()), imgData.size()));
@@ -15,21 +15,20 @@ Img::Img(const QVector<char> &imgData)
         imgDataStream >> mCompressionFlag;
         imgDataStream >> mPaletteFlag;
         imgDataStream >> mDataSize;
-        if (imgData.size() >= mDataSize + 12) {
-            QVector<uchar> compressedImageData(mDataSize);
-            imgDataStream.readRawData(reinterpret_cast<char *>(compressedImageData.data()), mDataSize);
+        if (imgData.size() >= mDataSize + 12 && mCompressionFlag == 0x00) {
+            QVector<char> compressedImageData(mDataSize);
+            imgDataStream.readRawData(compressedImageData.data(), mDataSize);
             mImageData = compressedImageData;
-            mQImage = QImage(mImageData.data(), mWidth, mHeight, QImage::Format_Indexed8);
+            mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, QImage::Format_Indexed8);
             mQImage.setColorTable(mPalette.getColorTable());
         }
     }
 }
 
-Img::Img(QVector<uchar> &imgData, quint16 width, quint16 height, Palette &palette):
-    mWidth(width), mHeight(height), mPalette(palette)
+Img::Img(const QVector<char> &imgData, quint16 width, quint16 height, const Palette &palette):
+    mImageData(imgData), mWidth(width), mHeight(height), mPalette(palette)
 {
-    mImageData = imgData;
-    mQImage = QImage(mImageData.data(), mWidth, mHeight, QImage::Format_Indexed8);
+    mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, QImage::Format_Indexed8);
     mQImage.setColorTable(mPalette.getColorTable());
 }
 
