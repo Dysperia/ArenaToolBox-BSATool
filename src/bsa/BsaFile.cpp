@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "BsaFile.h"
 
 //******************************************************************************
@@ -13,10 +15,10 @@ BsaFile::BsaFile() = default;
 
 BsaFile::BsaFile(const quint32 &size,
                  const qint64 &startOffsetInArchive,
-                 const QString &fileName,
+                 QString fileName,
                  const quint16 &index):
     mSize(size), mStartOffsetInArchive(startOffsetInArchive),
-    mFileName(fileName), mIndex(index)
+    mFileName(std::move(fileName)), mIndex(index)
 {
 
 }

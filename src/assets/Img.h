@@ -37,7 +37,7 @@ public:
      * initialization can be checked with the potentially Null status of the
      * QImage
      */
-    Img(const QVector<char> &imgData, quint16 width, quint16 height, const Palette &palette = Palette());
+    Img(QVector<char> imgData, quint16 width, quint16 height, Palette palette = Palette());
 
     //**************************************************************************
     // Getters/setters

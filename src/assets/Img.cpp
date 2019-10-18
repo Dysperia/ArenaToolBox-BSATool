@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "Img.h"
 
 //******************************************************************************
@@ -25,8 +27,8 @@ Img::Img(const QVector<char> &imgData, const Palette &palette)
     }
 }
 
-Img::Img(const QVector<char> &imgData, quint16 width, quint16 height, const Palette &palette):
-    mImageData(imgData), mWidth(width), mHeight(height), mPalette(palette)
+Img::Img(QVector<char> imgData, quint16 width, quint16 height, Palette palette):
+    mImageData(std::move(imgData)), mWidth(width), mHeight(height), mPalette(std::move(palette))
 {
     mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, QImage::Format_Indexed8);
     mQImage.setColorTable(mPalette.getColorTable());

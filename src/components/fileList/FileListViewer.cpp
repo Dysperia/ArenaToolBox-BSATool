@@ -40,7 +40,7 @@ QVBoxLayout *FileListViewer::fileListViewerWithFilterWidget() const
 //**************************************************************************
 // Methods
 //**************************************************************************
-void FileListViewer::updateViewFromFilterChange(QString filter) {
+void FileListViewer::updateViewFromFilterChange(const QString& filter) {
     for (int i=0; i<this->count(); i++) {
         auto *item = (FileListViewerItem*) this->item(i);
         item->setHidden(filter != ALL_TYPE && !item->bsaFile().fileName()
@@ -48,7 +48,7 @@ void FileListViewer::updateViewFromFilterChange(QString filter) {
     }
 }
 
-void FileListViewer::updateViewFromFileList(QVector<BsaFile> fileList)
+void FileListViewer::updateViewFromFileList(const QVector<BsaFile>& fileList)
 {
     QString currentItemText = this->currentItem() == nullptr ? "" : this->currentItem()->text();
     QString currentFilter = mFileExtensionFilter->currentText();

@@ -1,10 +1,12 @@
+#include <utility>
+
 #include "Status.h"
 
 //**************************************************************************
 // Constructors
 //**************************************************************************
-Status::Status(const int &status, const QString &message):
-    mStatus(status), mMessage(message)
+Status::Status(const int &status, QString message):
+    mStatus(status), mMessage(std::move(message))
 {
 
 }

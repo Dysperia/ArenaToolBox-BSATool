@@ -29,7 +29,7 @@ public:
      * @param ext extension
      * @return the description
      */
-    static QString getDescriptionForExtension(const FileType::Extension extension);
+    static QString getDescriptionForExtension(FileType::Extension extension);
     /**
      * @brief return the type of a file
      *

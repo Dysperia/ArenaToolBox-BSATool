@@ -37,7 +37,7 @@ public slots:
      * @brief update the list from the bsa file list
      * @param fileList list of the bsa archive files
      */
-    void updateViewFromFileList(QVector<BsaFile> fileList);
+    void updateViewFromFileList(const QVector<BsaFile>& fileList);
 
 private:
     //**************************************************************************
@@ -60,7 +60,7 @@ private slots:
      *
      * @param filter the current selected file extension
      */
-    void updateViewFromFilterChange(QString filter);
+    void updateViewFromFilterChange(const QString& filter);
 
 };
 
