@@ -27,7 +27,7 @@ public:
     //**************************************************************************
     /**
      * @brief constructor of IMG with parsing of the header. The well
-     * initialization can be checked with the potentilly Null status of the
+     * initialization can be checked with the potentially Null status of the
      * QImage
      * @param imgData data of the IMG file
      */
