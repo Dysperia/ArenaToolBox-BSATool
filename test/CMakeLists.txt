@@ -4,6 +4,8 @@ find_package(Qt5Test CONFIG REQUIRED)
 set(BSAToolTest_SRCS
         "bsa/BsaFileTest.cpp"
         "bsa/BsaFileTest.h"
+        "utils/CompressionTest.cpp"
+        "utils/CompressionTest.h"
         "main/main.cpp")
 # Tell CMake to create the executable
 add_executable(BSAToolTest ${BSAToolTest_SRCS})

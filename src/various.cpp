@@ -95,62 +95,6 @@ size_t Compression::image02Compression(unsigned char *compressedData, unsigned c
     return compDataPosition;
 }
 
-// Decompress the image data compressed in 04
-void Compression::image04Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedLengh)
-{
-    unsigned char *uncompBuffer = new unsigned char[4096];
-    for (int i(0); i<0xFEE; i++)
-    {
-        uncompBuffer[i] = 0x20;
-    }
-    uint16_t bytesProcessed = 0;
-    uint8_t byte1 = 0x00;
-    uint8_t byte2 = 0x00;
-    uint16_t uncompBufferPosition = 0x0FEE;
-    uint16_t bitMask = 0x0000;
-    uint16_t uncompDataPosition = 0x0000;
-    uint16_t bufferPositionToCopy = 0x0000;
-    uint8_t numberOfTurn = 0x00;
-    while (bytesProcessed < compressedLengh)
-    {
-        bitMask = bitMask >> 1;
-        if ((bitMask & 0xFF00) == 0x0000)
-        {
-            byte1 = compressedData[bytesProcessed];
-            bytesProcessed += 1;
-            bitMask = byte1 | 0xFF00;
-        }
-        if ((bitMask & 0x01) == 0x01)
-        {
-            byte1 = compressedData[bytesProcessed];
-            bytesProcessed += 1;
-            uncompBuffer[uncompBufferPosition] = byte1;
-            uncompBufferPosition += 1;
-            uncompBufferPosition = uncompBufferPosition & 0x0FFF;
-            decompressedData[uncompDataPosition] = byte1;
-            uncompDataPosition += 1;
-        }
-        else
-        {
-            byte1 = compressedData[bytesProcessed];
-            bytesProcessed += 1;
-            byte2 = compressedData[bytesProcessed];
-            bytesProcessed += 1;
-            numberOfTurn = (byte2 & 0x0F) + 2;
-            bufferPositionToCopy = ((byte2 & 0xF0) << 4) | byte1;
-            for (uint8_t i(0); i <= numberOfTurn; i++)
-            {
-                uncompBuffer[uncompBufferPosition] = uncompBuffer[(bufferPositionToCopy + i) & 0x0FFF];
-                uncompBufferPosition += 1;
-                uncompBufferPosition = uncompBufferPosition & 0x0FFF;
-                decompressedData[uncompDataPosition] = uncompBuffer[(bufferPositionToCopy + i) & 0x0FFF];
-                uncompDataPosition += 1;
-            }
-        }
-    }
-    delete[] uncompBuffer;
-}
-
 // Compress the image data in 04
 size_t Compression::image04Compression(unsigned char *compressedData, unsigned char *decompressedData, size_t decompressedLengh)
 {

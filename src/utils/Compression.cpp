@@ -1,8 +1,10 @@
-#include <array>
 #include <error/Status.h>
 #include "Compression.h"
 #include "SlidingWindow.h"
 
+//**************************************************************************
+// Methods
+//**************************************************************************
 uchar Compression::getNextUnsignedByte(QVector<char> &data) {
     char nextByte = getNextByte(data);
     return reinterpret_cast<uchar&>(nextByte);
@@ -63,4 +65,18 @@ QVector<char> Compression::uncompressLZSS(QVector<char> compressedData) {
 
 QVector<char> Compression::compressLZSS(QVector<char> uncompressData) {
 
+}
+
+QVector<char> Compression::encryptDecrypt(QVector<char> data, QVector<quint8> cryptKey) {
+    int cryptKeyIndex(0);
+    quint8 counter(0);
+    QVector<char> cryptData;
+    cryptData.reserve(data.size());
+    while (!data.isEmpty()) {
+        quint8 effectiveKey = counter + cryptKey[cryptKeyIndex];
+        cryptData.push_back(getNextUnsignedByte(data) ^ effectiveKey);
+        counter ++;
+        cryptKeyIndex = (cryptKeyIndex + 1) % cryptKey.size();
+    }
+    return cryptData;
 }

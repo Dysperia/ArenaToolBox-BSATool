@@ -1,7 +1,5 @@
 #include "BsaFileTest.h"
-#include "../bsa/BsaFileTest.h"
 #include "../../src/bsa/BsaFile.h"
-#include "../../src/bsa/BsaArchive.h"
 #include <QtTest/QTest>
 
 void BsaFileTest::testEquality()
