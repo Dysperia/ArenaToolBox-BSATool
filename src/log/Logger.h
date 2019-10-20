@@ -1,5 +1,5 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef BSATOOL_LOGGER_H
+#define BSATOOL_LOGGER_H
 
 #include <QPlainTextEdit>
 #include "../designpatterns/Singleton.h"
@@ -87,4 +87,4 @@ private:
     QPlainTextEdit *mTextWidget;
 };
 
-#endif // LOGGER_H
+#endif // BSATOOL_LOGGER_H

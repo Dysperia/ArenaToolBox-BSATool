@@ -1,5 +1,5 @@
-#ifndef STATUS_H
-#define STATUS_H
+#ifndef BSATOOL_STATUS_H
+#define BSATOOL_STATUS_H
 
 #include <QString>
 
@@ -37,4 +37,4 @@ private:
     QString mMessage;
 };
 
-#endif // STATUS_H
+#endif // BSATOOL_STATUS_H

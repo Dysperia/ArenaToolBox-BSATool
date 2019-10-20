@@ -1,5 +1,5 @@
-#ifndef TOOLBAR_H
-#define TOOLBAR_H
+#ifndef BSATOOL_TOOLBAR_H
+#define BSATOOL_TOOLBAR_H
 
 #include <QToolBar>
 #include "components/menu/MenuBar.h"
@@ -22,4 +22,4 @@ public:
     explicit ToolBar(MenuBar *menuBar);
 };
 
-#endif // TOOLBAR_H
+#endif // BSATOOL_TOOLBAR_H

@@ -1,5 +1,5 @@
-#ifndef FILELISTVIEWER_H
-#define FILELISTVIEWER_H
+#ifndef BSATOOL_FILELISTVIEWER_H
+#define BSATOOL_FILELISTVIEWER_H
 
 #include "bsa/BsaFile.h"
 
@@ -64,4 +64,4 @@ private slots:
 
 };
 
-#endif // FILELISTVIEWER_H
+#endif // BSATOOL_FILELISTVIEWER_H

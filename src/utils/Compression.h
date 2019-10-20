@@ -1,5 +1,5 @@
-#ifndef COMPRESSION_H
-#define COMPRESSION_H
+#ifndef BSATOOL_COMPRESSION_H
+#define BSATOOL_COMPRESSION_H
 
 #include <QtCore/QVector>
 
@@ -13,4 +13,4 @@ public:
     static QVector<char> compressLZSS(const QVector<char> &uncompressData);
 };
 
-#endif // COMPRESSION_H
+#endif // BSATOOL_COMPRESSION_H

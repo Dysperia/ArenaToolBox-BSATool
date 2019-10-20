@@ -1,5 +1,5 @@
-#ifndef CONSOLEDOCK_H
-#define CONSOLEDOCK_H
+#ifndef BSATOOL_CONSOLEDOCK_H
+#define BSATOOL_CONSOLEDOCK_H
 
 #include <QDockWidget>
 
@@ -20,4 +20,4 @@ public:
     explicit ConsoleDock(QWidget *parent = Q_NULLPTR);
 };
 
-#endif // CONSOLEDOCK_H
+#endif // BSATOOL_CONSOLEDOCK_H

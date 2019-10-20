@@ -1,5 +1,5 @@
-#ifndef IMAGEDISPLAYER_H
-#define IMAGEDISPLAYER_H
+#ifndef BSATOOL_IMAGEDISPLAYER_H
+#define BSATOOL_IMAGEDISPLAYER_H
 
 #include <QLabel>
 #include "assets/Img.h"
@@ -14,4 +14,4 @@ private:
     QImage mQImage;
 };
 
-#endif // IMAGEDISPLAYER_H
+#endif // BSATOOL_IMAGEDISPLAYER_H

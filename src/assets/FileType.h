@@ -1,5 +1,5 @@
-#ifndef FILETYPE_H
-#define FILETYPE_H
+#ifndef BSATOOL_FILETYPE_H
+#define BSATOOL_FILETYPE_H
 
 #include <QHash>
 #include "../bsa/BsaFile.h"
@@ -47,4 +47,4 @@ private:
     FileType();
 };
 
-#endif // FILETYPE_H
+#endif // BSATOOL_FILETYPE_H

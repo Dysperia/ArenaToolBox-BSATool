@@ -1,5 +1,5 @@
-#ifndef BSAFILETEST_H
-#define BSAFILETEST_H
+#ifndef BSATOOL_BSAFILETEST_H
+#define BSATOOL_BSAFILETEST_H
 
 #include <QObject>
 
@@ -14,4 +14,4 @@ private slots:
     void testEquality();
 };
 
-#endif // BSAFILETEST_H
+#endif // BSATOOL_BSAFILETEST_H

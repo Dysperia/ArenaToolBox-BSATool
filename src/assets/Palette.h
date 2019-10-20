@@ -1,5 +1,5 @@
-#ifndef PALETTE_H
-#define PALETTE_H
+#ifndef BSATOOL_PALETTE_H
+#define BSATOOL_PALETTE_H
 
 #include <QRgb>
 #include <QVector>
@@ -33,4 +33,4 @@ private:
     QVector<QRgb> mColorTable{};
 };
 
-#endif // PALETTE_H
+#endif // BSATOOL_PALETTE_H

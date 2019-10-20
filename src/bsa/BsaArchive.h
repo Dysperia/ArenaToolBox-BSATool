@@ -1,5 +1,5 @@
-#ifndef ARCHIVE_H
-#define ARCHIVE_H
+#ifndef BSATOOL_ARCHIVE_H
+#define BSATOOL_ARCHIVE_H
 
 #include "BsaFile.h"
 #include "../error/Status.h"
@@ -255,4 +255,4 @@ private:
     void updateIsModified();
 };
 
-#endif // ARCHIVE_H
+#endif // BSATOOL_ARCHIVE_H

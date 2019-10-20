@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef BSATOOL_MAINWINDOW_H
+#define BSATOOL_MAINWINDOW_H
 
 #include "components/menu/MenuBar.h"
 #include "bsa/BsaArchive.h"
@@ -81,4 +81,4 @@ private slots:
     void updateOnFileSelected(QListWidgetItem *currentItem);
 };
 
-#endif // MAINWINDOW_H
+#endif // BSATOOL_MAINWINDOW_H

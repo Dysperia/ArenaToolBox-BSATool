@@ -1,5 +1,5 @@
-#ifndef MENUBAR_H
-#define MENUBAR_H
+#ifndef BSATOOL_MENUBAR_H
+#define BSATOOL_MENUBAR_H
 
 #include "bsa/BsaArchive.h"
 #include <QMenuBar>
@@ -114,4 +114,4 @@ private:
 //    QAction *mAboutAction;
 };
 
-#endif // MENUBAR_H
+#endif // BSATOOL_MENUBAR_H

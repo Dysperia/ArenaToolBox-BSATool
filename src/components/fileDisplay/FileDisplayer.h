@@ -1,5 +1,5 @@
-#ifndef FILEDISPLAYER_H
-#define FILEDISPLAYER_H
+#ifndef BSATOOL_FILEDISPLAYER_H
+#define BSATOOL_FILEDISPLAYER_H
 
 #include <QVBoxLayout>
 #include "ImageDisplayer.h"
@@ -40,4 +40,4 @@ private:
     ImageDisplayer *mImageDisplayer;
 };
 
-#endif // FILEDISPLAYER_H
+#endif // BSATOOL_FILEDISPLAYER_H

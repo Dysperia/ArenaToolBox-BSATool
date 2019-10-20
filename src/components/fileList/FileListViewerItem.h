@@ -1,5 +1,5 @@
-#ifndef FILELISTVIEWERITEM_H
-#define FILELISTVIEWERITEM_H
+#ifndef BSATOOL_FILELISTVIEWERITEM_H
+#define BSATOOL_FILELISTVIEWERITEM_H
 
 #include "bsa/BsaFile.h"
 
@@ -34,4 +34,4 @@ private:
     BsaFile mBsaFile;
 };
 
-#endif // FILELISTVIEWERITEM_H
+#endif // BSATOOL_FILELISTVIEWERITEM_H

@@ -1,5 +1,5 @@
-#ifndef SINGLETON_H
-#define SINGLETON_H
+#ifndef BSATOOL_SINGLETON_H
+#define BSATOOL_SINGLETON_H
 
 /**
  * @Brief Design pattern singleton
@@ -68,4 +68,4 @@ T &Singleton<T>::getInstance()
     return instance;
 }
 
-#endif // SINGLETON_H
+#endif // BSATOOL_SINGLETON_H

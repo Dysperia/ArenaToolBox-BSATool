@@ -1,5 +1,5 @@
-#ifndef IMG_H
-#define IMG_H
+#ifndef BSATOOL_IMG_H
+#define BSATOOL_IMG_H
 
 #include <QImage>
 #include "Palette.h"
@@ -118,4 +118,4 @@ private:
     QImage mQImage;
 };
 
-#endif // IMG_H
+#endif // BSATOOL_IMG_H

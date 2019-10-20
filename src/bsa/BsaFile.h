@@ -1,5 +1,5 @@
-#ifndef FILE_H
-#define FILE_H
+#ifndef BSATOOL_FILE_H
+#define BSATOOL_FILE_H
 
 #include <QString>
 
@@ -150,4 +150,4 @@ private:
     QString mNewFilePath{};
 };
 
-#endif // ENTRY_H
+#endif // BSATOOL_ENTRY_H
