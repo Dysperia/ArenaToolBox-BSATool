@@ -37,7 +37,8 @@ set(BSATool_SRCS
         "log/Logger.h"
         "main/main.cpp"
         "utils/Compression.cpp"
-        "utils/Compression.h")
+        "utils/Compression.h"
+        "utils/SlidingWindow.h")
 set(BSATool_MAIN "main/main.cpp")
 
 # BSATool library
