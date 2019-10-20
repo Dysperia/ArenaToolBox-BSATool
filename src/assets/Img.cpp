@@ -1,6 +1,11 @@
 #include <utility>
+#include <utils/Compression.h>
+#include <error/Status.h>
+#include <log/Logger.h>
 
 #include "Img.h"
+
+using namespace std;
 
 //******************************************************************************
 // Constructors
@@ -21,8 +26,36 @@ Img::Img(const QVector<char> &imgData, const Palette &palette)
             QVector<char> compressedImageData(mDataSize);
             imgDataStream.readRawData(compressedImageData.data(), mDataSize);
             mImageData = compressedImageData;
-            mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, QImage::Format_Indexed8);
-            mQImage.setColorTable(mPalette.getColorTable());
+            mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, mWidth, QImage::Format_Indexed8);
+            if (mPaletteFlag == 1) {
+                QVector<char> paletteDescription(768);
+                imgDataStream.readRawData(paletteDescription.data(), 768);
+                mPalette = Palette(paletteDescription, true);
+                mQImage.setColorTable(mPalette.getColorTable());
+            }
+            else {
+                mQImage.setColorTable(mPalette.getColorTable());
+            }
+        }
+        else if (mCompressionFlag == 0x04) {
+            QVector<char> compressedImageData(mDataSize);
+            imgDataStream.readRawData(compressedImageData.data(), mDataSize);
+            try {
+                mImageData = Compression::uncompressLZSS(compressedImageData);
+                mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, mWidth, QImage::Format_Indexed8);
+                if (mPaletteFlag == 1) {
+                    QVector<char> paletteDescription(768);
+                    imgDataStream.readRawData(paletteDescription.data(), 768);
+                    mPalette = Palette(paletteDescription, true);
+                    mQImage.setColorTable(mPalette.getColorTable());
+                }
+                else {
+                    mQImage.setColorTable(mPalette.getColorTable());
+                }
+            }
+            catch (Status &e) {
+                Logger::getInstance().log(Logger::MessageType::ERROR, e.message());
+            }
         }
     }
 }
