@@ -19,9 +19,6 @@ public:
 
     // Decompress the image data compressed in 08
     static void image08Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedSize, size_t decompressedSize);
-
-    // Decrypt encrypt Arena inf file
-    static void encryptDecryptINF(char *sourceData, size_t length);
 };
 
 #endif // VARIOUS_HPP

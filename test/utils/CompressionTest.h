@@ -12,6 +12,10 @@ private slots:
      * @brief test LZSS uncompression
      */
     void testLZSSUncompression();
+    /**
+     * @brief test encryption decryption
+     */
+    void testEncryptionDecryption();
 
 private:
     QVector<char> readFile(const QString &fileName) const;

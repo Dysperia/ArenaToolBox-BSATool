@@ -6,11 +6,27 @@ void CompressionTest::testLZSSUncompression() {
     QWARN("Should uncompress the file and get the original data");
     QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedLZSS.data"));
     QVERIFY(!uncompressedDataFromFile.isEmpty());
-    QVector<char> compressedData = readFile(QStringLiteral("ressources/compressedLZSS.data"));
-    QVERIFY(!compressedData.isEmpty());
-    QVector<char> uncompressedDataFromAlgorithm = Compression::uncompressLZSS(compressedData);
+    QVector<char> compressedDataFromFile = readFile(QStringLiteral("ressources/compressedLZSS.data"));
+    QVERIFY(!compressedDataFromFile.isEmpty());
+    QVector<char> uncompressedDataFromAlgorithm = Compression::uncompressLZSS(compressedDataFromFile);
     QVERIFY(!uncompressedDataFromAlgorithm.isEmpty());
     QCOMPARE(uncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
+}
+
+void CompressionTest::testEncryptionDecryption() {
+    QWARN("Should decrypt the file and get the original data");
+    QVector<char> decryptedDataFromFile = readFile(QStringLiteral("ressources/decryptedINF.data"));
+    QVERIFY(!decryptedDataFromFile.isEmpty());
+    QVector<char> encryptedDataFromFile = readFile(QStringLiteral("ressources/encryptedINF.data"));
+    QVERIFY(!encryptedDataFromFile.isEmpty());
+    QVector<char> decryptedDataFromAlgorithm = Compression::encryptDecrypt(encryptedDataFromFile);
+    QVERIFY(!decryptedDataFromAlgorithm.isEmpty());
+    QCOMPARE(decryptedDataFromAlgorithm == decryptedDataFromFile, true);
+
+    QWARN("Should encrypt then decrypt the file and get the original data");
+    QVector<char> encryptedThenDecryptedDataFromAlgorithm = Compression::encryptDecrypt(Compression::encryptDecrypt(decryptedDataFromFile));
+    QVERIFY(!encryptedThenDecryptedDataFromAlgorithm.isEmpty());
+    QCOMPARE(encryptedThenDecryptedDataFromAlgorithm == decryptedDataFromFile, true);
 }
 
 QVector<char> CompressionTest::readFile(const QString &fileName) const {

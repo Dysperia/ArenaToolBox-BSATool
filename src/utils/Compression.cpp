@@ -64,7 +64,7 @@ QVector<char> Compression::uncompressLZSS(QVector<char> compressedData) {
 }
 
 QVector<char> Compression::compressLZSS(QVector<char> uncompressData) {
-
+    return QVector<char>();
 }
 
 QVector<char> Compression::encryptDecrypt(QVector<char> data, QVector<quint8> cryptKey) {

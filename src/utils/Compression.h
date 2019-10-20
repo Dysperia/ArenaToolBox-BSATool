@@ -51,7 +51,7 @@ public:
 
     /**
      * Encrypt data according to the encryption key given. The same key is
-     * used to crypt and decrypt using a incrementing counter and xor operation
+     * used to encrypt and decrypt using a incrementing counter and xor operation
      * @param data to encrypt or decrypt
      * @param cryptKey encryption / decryption key
      */

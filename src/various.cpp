@@ -527,17 +527,3 @@ void Compression::image08Decompression(unsigned char *compressedData, unsigned c
     }
     delete[] colorBuffer;
 }
-
-// Decrypt encrypt Arena inf file
-void Compression::encryptDecryptINF(char *sourceData, size_t length)
-{
-    unsigned char cryptKey[8] = {0xEA, 0x7B, 0x4E, 0xBD, 0x19, 0xC9, 0x38, 0x99};
-    uint8_t counter(0);
-    uint8_t keyIndex(0);
-    for (size_t i(0); i<length; i++)
-    {
-        sourceData[i] = sourceData[i] ^ (counter + cryptKey[keyIndex]);
-        counter ++;
-        keyIndex = (keyIndex + 1) & 0x07;
-    }
-}
