@@ -3,6 +3,8 @@
 
 #include <QString>
 
+using namespace std;
+
 /**
  * @brief Describe the return of a function
  *
@@ -11,7 +13,7 @@
  * detail what happened. The exact meaning of a positive or zero status should
  * be explained by the operation itself
  */
-class Status {
+class Status : public exception {
 public:
     //**************************************************************************
     // Constructors
@@ -22,6 +24,10 @@ public:
     //**************************************************************************
     int status() const;
     QString message() const;
+    //**************************************************************************
+    // Methods
+    //**************************************************************************
+    const char* what() const noexcept override;
 
 private:
     //**************************************************************************
