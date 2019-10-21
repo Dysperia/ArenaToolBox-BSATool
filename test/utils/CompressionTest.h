@@ -13,6 +13,10 @@ private slots:
      */
     void testLZSSUncompression();
     /**
+     * @brief test LZSS compression
+     */
+    void testLZSSCompression();
+    /**
      * @brief test encryption decryption
      */
     void testEncryptionDecryption();
