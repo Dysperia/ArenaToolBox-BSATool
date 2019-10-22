@@ -1414,10 +1414,10 @@ QImage Image::buildQImage(int index, std::string extension)
         stream->read(reinterpret_cast<char*>(&height), 2);
         stream->read(reinterpret_cast<char*>(&flags), 2);
         stream->read(reinterpret_cast<char*>(&dataSize), 2);
-        // IMG compressed in 08 has the decompressed size stored after the header
+        // IMG compressed in 08 has the uncompressed size stored after the header
         if ((flags & 0x00FF) == 0x0008)
         {
-            stream->read(reinterpret_cast<char*>(&decompressedSize), 2);
+            stream->read(reinterpret_cast<char*>(&uncompressedSize), 2);
         }
         // Set the buffers bigger if needed
         if (width*height > 64000 || dataSize > 64000)
@@ -1437,14 +1437,14 @@ QImage Image::buildQImage(int index, std::string extension)
         else if ((flags & 0x00FF) == 0x0004)
         {
             stream->read(reinterpret_cast<char*>(compressedImageData), dataSize);
-            Compression::image04Decompression(compressedImageData, imageData, dataSize);
+            Compression::image04Uncompression(compressedImageData, imageData, dataSize);
             Img = QImage(imageData, width, height, width, QImage::Format_Indexed8);
         }
         // IMG compressed in 08
-        else if ((flags & 0x00FF) == 0x0008 && decompressedSize != 0)
+        else if ((flags & 0x00FF) == 0x0008 && uncompressedSize != 0)
         {
             stream->read(reinterpret_cast<char*>(compressedImageData), dataSize-2);
-            Compression::image08Decompression(compressedImageData, imageData, dataSize-2, decompressedSize);
+            Compression::image08Uncompression(compressedImageData, imageData, dataSize-2, uncompressedSize);
             Img = QImage(imageData, width, height, width, QImage::Format_Indexed8);
         }
         // Unknown IMG compression flag -> invalid IMG file
@@ -1655,10 +1655,10 @@ QImage Image::buildQImage(const std::string filePath)
                 ifstream.read(reinterpret_cast<char*>(&height), 2);
                 ifstream.read(reinterpret_cast<char*>(&flags), 2);
                 ifstream.read(reinterpret_cast<char*>(&dataSize), 2);
-                // IMG compressed in 08 has the decompressed size stored after the header
+                // IMG compressed in 08 has the uncompressed size stored after the header
                 if ((flags & 0x00FF) == 0x0008)
                 {
-                    ifstream.read(reinterpret_cast<char*>(&decompressedSize), 2);
+                    ifstream.read(reinterpret_cast<char*>(&uncompressedSize), 2);
                 }
                 // Set the buffers bigger if needed
                 if (width*height > 64000 || dataSize > 64000)
@@ -1678,14 +1678,14 @@ QImage Image::buildQImage(const std::string filePath)
                 else if ((flags & 0x00FF) == 0x0004)
                 {
                     ifstream.read(reinterpret_cast<char*>(compressedImageData), dataSize);
-                    Compression::image04Decompression(compressedImageData, imageData, dataSize);
+                    Compression::image04Uncompression(compressedImageData, imageData, dataSize);
                     Img = QImage(imageData, width, height, width, QImage::Format_Indexed8);
                 }
                 // IMG compressed in 08
-                else if ((flags & 0x00FF) == 0x0008 && decompressedSize != 0)
+                else if ((flags & 0x00FF) == 0x0008 && uncompressedSize != 0)
                 {
                     ifstream.read(reinterpret_cast<char*>(compressedImageData), dataSize-2);
-                    Compression::image08Decompression(compressedImageData, imageData, dataSize-2, decompressedSize);
+                    Compression::image08Uncompression(compressedImageData, imageData, dataSize-2, uncompressedSize);
                     Img = QImage(imageData, width, height, width, QImage::Format_Indexed8);
                 }
                 // Unknown IMG compression flag -> invalid IMG file
@@ -1927,7 +1927,7 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             else if (compressionFlag == 0x02)
             {
                 inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize);
-                Compression::image02Decompression(compressedFrameData, uncompressedFrameData, width, height);
+                Compression::image02Uncompression(compressedFrameData, uncompressedFrameData, width, height);
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
@@ -1940,7 +1940,7 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             else if (compressionFlag == 0x04)
             {
                 inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize);
-                Compression::image04Decompression(compressedFrameData, uncompressedFrameData, frameDataSize);
+                Compression::image04Uncompression(compressedFrameData, uncompressedFrameData, frameDataSize);
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
@@ -1953,7 +1953,7 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
             else if (compressionFlag == 0x08 && uncompressedFrameDataSize != 0)
             {
                 inputFileStream->read(reinterpret_cast<char*>(compressedFrameData), frameDataSize - 2);
-                Compression::image08Decompression(compressedFrameData, uncompressedFrameData, frameDataSize-2, uncompressedFrameDataSize);
+                Compression::image08Uncompression(compressedFrameData, uncompressedFrameData, frameDataSize-2, uncompressedFrameDataSize);
                 frame.hasTransparency = false;
                 frame.imagePaletteName = paletteName;
                 frame.imagePalette = transparentPalettesMap[frame.imagePaletteName];
@@ -1985,9 +1985,9 @@ std::vector<Image::frameData> Image::buildAnimation(int index, const std::string
     return animationData;
 }
 
-// Extract and decompress an IMG/SET file
+// Extract and uncompress an IMG/SET file
 // return: 0 all good, 1 error while writting file, 2 unknown flags IMG extracted as raw
-int Image::extractDecompressImage(int index, const std::string &filePath)
+int Image::extractUncompressImage(int index, const std::string &filePath)
 {
     std::string extension = BSAFile::getInstance()->getFileExtension(index);
     bool hasNoHeader(false);
@@ -2028,7 +2028,7 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
         // All other IMG
         // Get value from the 12 bytes header
         uint32_t offsets;
-        uint16_t sizeX, sizeY, dataSize, decompressedSize;
+        uint16_t sizeX, sizeY, dataSize, uncompressedSize;
         uint8_t compressionFlag, paletteFlag;
         stream->seekg(BSAFile::getInstance()->getFileOffset(index), std::ios_base::beg);
         stream->read(reinterpret_cast<char*>(&offsets), 4);
@@ -2037,10 +2037,10 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
         stream->read(reinterpret_cast<char*>(&compressionFlag), 1);
         stream->read(reinterpret_cast<char*>(&paletteFlag), 1);
         stream->read(reinterpret_cast<char*>(&dataSize), 2);
-        // IMG compressed in 08 has the decompressed size stored after the header
+        // IMG compressed in 08 has the uncompressed size stored after the header
         if (compressionFlag == 0x08)
         {
-            stream->read(reinterpret_cast<char*>(&decompressedSize), 2);
+            stream->read(reinterpret_cast<char*>(&uncompressedSize), 2);
         }
         // IMG not compressed
         if (compressionFlag == 0x00)
@@ -2078,9 +2078,9 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
         else if (compressionFlag == 0x04)
         {
             unsigned char *fileData = new unsigned char[dataSize];
-            unsigned char *decompressedData = new unsigned char[sizeX*sizeY];
+            unsigned char *uncompressedData = new unsigned char[sizeX*sizeY];
             stream->read(reinterpret_cast<char*>(fileData), dataSize);
-            Compression::image04Decompression(fileData, decompressedData, dataSize);
+            Compression::image04Uncompression(fileData, uncompressedData, dataSize);
             std::ofstream OfStream;
             OfStream.open(filePath, std::ios_base::out | std::ios_base::binary);
             if (OfStream.is_open())
@@ -2093,9 +2093,9 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
                 OfStream.write(reinterpret_cast<char*>(&paletteFlag), 1);
                 uint16_t newDataSize = sizeX*sizeY;
                 OfStream.write(reinterpret_cast<char*>(&newDataSize), 2);
-                OfStream.write(reinterpret_cast<char*>(decompressedData), newDataSize);
+                OfStream.write(reinterpret_cast<char*>(uncompressedData), newDataSize);
                 delete[] fileData;
-                delete [] decompressedData;
+                delete [] uncompressedData;
                 if (paletteFlag == 0x01 || paletteFlag == 0x09)
                 {
                     char *paletteData = new char[768];
@@ -2108,7 +2108,7 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
             else
             {
                 delete[] fileData;
-                delete[] decompressedData;
+                delete[] uncompressedData;
                 return 1;
             }
         }
@@ -2116,9 +2116,9 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
         else if (compressionFlag == 0x08)
         {
             unsigned char *fileData = new unsigned char[dataSize];
-            unsigned char *decompressedData = new unsigned char[sizeX*sizeY];
+            unsigned char *uncompressedData = new unsigned char[sizeX*sizeY];
             stream->read(reinterpret_cast<char*>(fileData), dataSize-2);
-            Compression::image08Decompression(fileData, decompressedData, dataSize-2, decompressedSize);
+            Compression::image08Uncompression(fileData, uncompressedData, dataSize-2, uncompressedSize);
             std::ofstream OfStream;
             OfStream.open(filePath, std::ios_base::out | std::ios_base::binary);
             if (OfStream.is_open())
@@ -2129,10 +2129,10 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
                 uint8_t newCompressionFlag = 0x00;
                 OfStream.write(reinterpret_cast<char*>(&newCompressionFlag), 1);
                 OfStream.write(reinterpret_cast<char*>(&paletteFlag), 1);
-                OfStream.write(reinterpret_cast<char*>(&decompressedSize), 2);
-                OfStream.write(reinterpret_cast<char*>(decompressedData), decompressedSize);
+                OfStream.write(reinterpret_cast<char*>(&uncompressedSize), 2);
+                OfStream.write(reinterpret_cast<char*>(uncompressedData), uncompressedSize);
                 delete[] fileData;
-                delete[] decompressedData;
+                delete[] uncompressedData;
                 if (paletteFlag == 0x01 || paletteFlag == 0x09)
                 {
                     char *paletteData = new char[768];
@@ -2145,7 +2145,7 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
             else
             {
                 delete[] fileData;
-                delete[] decompressedData;
+                delete[] uncompressedData;
                 return 1;
             }
         }
@@ -2173,9 +2173,9 @@ int Image::extractDecompressImage(int index, const std::string &filePath)
     }
 }
 
-// Extract, decompress and convert an IMG/SET file to png
+// Extract, uncompress and convert an IMG/SET file to png
 // return 0: ok, 1: error while extracting, 2: unknown header IMG not extracted
-int Image::extractDecompressConvertImage(int index, const std::string &filePath)
+int Image::extractUncompressConvertImage(int index, const std::string &filePath)
 {
     std::string ext = BSAFile::getInstance()->getFileExtension(index);
     QImage image = buildQImage(index, ext);
@@ -2197,9 +2197,9 @@ int Image::extractDecompressConvertImage(int index, const std::string &filePath)
     }
 }
 
-// Decompress external IMG
+// Uncompress external IMG
 // return 0: ok, 1: error while opening or writting, 2: IMG with no header or not compressed not modified ,3: unknown header IMG not modified, 4: not an IMG file
-int Image::decompressExternalIMG(const std::string &fileName, const std::string &filePath)
+int Image::uncompressExternalIMG(const std::string &fileName, const std::string &filePath)
 {
     std::string ext(""), upperExt("");
     size_t extPos = fileName.find_last_of(".");
@@ -2234,7 +2234,7 @@ int Image::decompressExternalIMG(const std::string &fileName, const std::string 
             {
                 // Get value from the 12 bytes header
                 uint32_t offsets;
-                uint16_t sizeX, sizeY, dataSize, decompressedSize;
+                uint16_t sizeX, sizeY, dataSize, uncompressedSize;
                 uint8_t compressionFlag, paletteFlag;
                 ifstream.read(reinterpret_cast<char*>(&offsets), 4);
                 ifstream.read(reinterpret_cast<char*>(&sizeX), 2);
@@ -2242,10 +2242,10 @@ int Image::decompressExternalIMG(const std::string &fileName, const std::string 
                 ifstream.read(reinterpret_cast<char*>(&compressionFlag), 1);
                 ifstream.read(reinterpret_cast<char*>(&paletteFlag), 1);
                 ifstream.read(reinterpret_cast<char*>(&dataSize), 2);
-                // IMG compressed in 08 has the decompressed size stored after the header
+                // IMG compressed in 08 has the uncompressed size stored after the header
                 if (compressionFlag == 0x08)
                 {
-                    ifstream.read(reinterpret_cast<char*>(&decompressedSize), 2);
+                    ifstream.read(reinterpret_cast<char*>(&uncompressedSize), 2);
                 }
                 // IMG not compressed
                 if (compressionFlag == 0x00)
@@ -2256,10 +2256,10 @@ int Image::decompressExternalIMG(const std::string &fileName, const std::string 
                 else if (compressionFlag == 0x04)
                 {
                     unsigned char *fileData = new unsigned char[dataSize];
-                    unsigned char *decompressedData = new unsigned char[sizeX*sizeY];
+                    unsigned char *uncompressedData = new unsigned char[sizeX*sizeY];
                     char *paletteData = new char[768];
                     ifstream.read(reinterpret_cast<char*>(fileData), dataSize);
-                    Compression::image04Decompression(fileData, decompressedData, dataSize);
+                    Compression::image04Uncompression(fileData, uncompressedData, dataSize);
                     if (paletteFlag == 0x01 || paletteFlag == 0x09)
                     {
                         ifstream.read(paletteData, 768);
@@ -2277,21 +2277,21 @@ int Image::decompressExternalIMG(const std::string &fileName, const std::string 
                         OfStream.write(reinterpret_cast<char*>(&paletteFlag), 1);
                         uint16_t newDataSize = sizeX*sizeY;
                         OfStream.write(reinterpret_cast<char*>(&newDataSize), 2);
-                        OfStream.write(reinterpret_cast<char*>(decompressedData), newDataSize);
+                        OfStream.write(reinterpret_cast<char*>(uncompressedData), newDataSize);
                         if (paletteFlag == 0x01 || paletteFlag == 0x09)
                         {
                             OfStream.write(paletteData, 768);
                         }
                         delete[] paletteData;
                         delete[] fileData;
-                        delete [] decompressedData;
+                        delete [] uncompressedData;
                         return 0;
                     }
                     else
                     {
                         delete[] paletteData;
                         delete[] fileData;
-                        delete[] decompressedData;
+                        delete[] uncompressedData;
                         return 1;
                     }
                 }
@@ -2299,10 +2299,10 @@ int Image::decompressExternalIMG(const std::string &fileName, const std::string 
                 else if (compressionFlag == 0x08)
                 {
                     unsigned char *fileData = new unsigned char[dataSize];
-                    unsigned char *decompressedData = new unsigned char[sizeX*sizeY];
+                    unsigned char *uncompressedData = new unsigned char[sizeX*sizeY];
                     char *paletteData = new char[768];
                     ifstream.read(reinterpret_cast<char*>(fileData), dataSize-2);
-                    Compression::image08Decompression(fileData, decompressedData, dataSize-2, decompressedSize);
+                    Compression::image08Uncompression(fileData, uncompressedData, dataSize-2, uncompressedSize);
                     if (paletteFlag == 0x01 || paletteFlag == 0x09)
                     {
                         ifstream.read(paletteData, 768);
@@ -2318,22 +2318,22 @@ int Image::decompressExternalIMG(const std::string &fileName, const std::string 
                         uint8_t newCompressionFlag = 0x00;
                         OfStream.write(reinterpret_cast<char*>(&newCompressionFlag), 1);
                         OfStream.write(reinterpret_cast<char*>(&paletteFlag), 1);
-                        OfStream.write(reinterpret_cast<char*>(&decompressedSize), 2);
-                        OfStream.write(reinterpret_cast<char*>(decompressedData), decompressedSize);
+                        OfStream.write(reinterpret_cast<char*>(&uncompressedSize), 2);
+                        OfStream.write(reinterpret_cast<char*>(uncompressedData), uncompressedSize);
                         if (paletteFlag == 0x01 || paletteFlag == 0x09)
                         {
                             OfStream.write(paletteData, 768);
                         }
                         delete[] paletteData;
                         delete[] fileData;
-                        delete [] decompressedData;
+                        delete [] uncompressedData;
                         return 0;
                     }
                     else
                     {
                         delete[] paletteData;
                         delete[] fileData;
-                        delete[] decompressedData;
+                        delete[] uncompressedData;
                         return 1;
                     }
                 }

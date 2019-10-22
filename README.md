@@ -72,7 +72,7 @@ As of august 11, 2014
 
 * Full support for IMG/SET files.
 * BSATool has knowledge of the 947 native IMGs with their type, color palette and file header. It will help to take decision while converting png to IMG.
-* All the IMG are accessible as the 2 decompression algorithms used have been founded (after about 1-2 months of work but founded!).
+* All the IMG are accessible as the 2 uncompression algorithms used have been founded (after about 1-2 months of work but founded!).
 * BSATool has knowledge of the 180 SETs native of Arena along with their dimensions, (also help to convert png).
 * Preview for IMG/SET file.
 * Extended preview in view menu will allow you to change between color palette and see the changes. However, I tried my best to set a default palette for all native IMG/SET, in order to see what Arena should display (be aware than some IMG will use various palette depending on the call in game, for example DUNGEON.IMG will use the different integrated palette of each different province).
@@ -84,9 +84,9 @@ This functionality was mostly designed to help modding of the game if a new engi
 * The first color of the color palette is set to be displayed transparent has it is the case in Arena (Alpha channel does not exist). PNG created will have the same setting but IMG/SET created from them lose the transparency and keep only the 3 color channels. This only for display and easy editing.
 
 * Raw extraction of one or all filtered file(s).
-* Extraction with decompression of one or all IMG/SET.
+* Extraction with uncompression of one or all IMG/SET.
 * Extraction with conversion to PNG of one or all IMG/SET.
-* External decompression of IMG(s). decompression algorithm is chosen upon header flag and not filename. Not native IMGs with the same format can also, in theory, be uncompressed.
+* External uncompression of IMG(s). uncompression algorithm is chosen upon header flag and not filename. Not native IMGs with the same format can also, in theory, be uncompressed.
 * External conversion of IMG/SET file(s) to PNG. If file is not native and have no palette integrated, BSATool will ask the user to choose a palette to include in the PNG file or to use default PAL.COL. Not native IMG have to be in a valid format (see below for information about Arena IMG/SET file).
 * External conversion of PNG(s) to IMG(s)/SET(s). Native IMG/SET will be setting up automatically by checking the filename and taking decision from it. If the image dimension does not match the native file, ask to user will be made to know if he really want to make the conversion, as this could break compatibility with Arena. If the filename is not known in IMG/SET file database, a window will be prompted to ask the user to choose to which format and with which settings he wants to convert the PNG file.
 

@@ -12,17 +12,23 @@ public:
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
-    size_t getMCurrentInsertPosition() const;
+    [[nodiscard]] size_t getMCurrentInsertPosition() const;
     void setMCurrentInsertPosition(size_t mCurrentInsertPosition);
 
     const array<_type, _size> &getWindow() const;
-    void setWindow(const array<_type, _size> &window);
 
     //**************************************************************************
     // Methods
     //**************************************************************************
     const _type &readAtIndex(const size_t &index) const;
     void insert(const _type &newValue);
+
+    /**
+     * Return the lowest positive index equivalent to the given one
+     * @param index to get the standard from
+     * @return the standard index
+     */
+    [[nodiscard]] size_t getStandardEquivalentIndex(const size_t &index) const;
 
 private:
     //**************************************************************************

@@ -34,8 +34,8 @@ private:
     // Image data size
     uint16_t dataSize;
 
-    // Decompressed image size (present only if (flags & 0x00FF) = 0x0008)
-    uint16_t decompressedSize;
+    // Uncompressed image size (present only if (flags & 0x00FF) = 0x0008)
+    uint16_t uncompressedSize;
 
     // Map containing all the palettes used for image building (with first color not transparent)
     std::map<std::string, QVector<QRgb>> palettesMap;
@@ -144,14 +144,14 @@ public:
     // Build animation from filepath (if different of "") or index
     std::vector<frameData> buildAnimation(int index, const std::string filePath = "");
 
-    // Extract and decompress an IMG/SET file
-    int extractDecompressImage(int index, const std::string &filePath);
+    // Extract and uncompress an IMG/SET file
+    int extractUncompressImage(int index, const std::string &filePath);
 
-    // Extract, decompress and convert an IMG/SET file to png
-    int extractDecompressConvertImage(int index, const std::string &filePath);
+    // Extract, uncompress and convert an IMG/SET file to png
+    int extractUncompressConvertImage(int index, const std::string &filePath);
 
-    // Decompress external IMG
-    int decompressExternalIMG(const std::string &fileName, const std::string &filePath);
+    // Uncompress external IMG
+    int uncompressExternalIMG(const std::string &fileName, const std::string &filePath);
 
     // Return image flags
     uint16_t getImageFlags();

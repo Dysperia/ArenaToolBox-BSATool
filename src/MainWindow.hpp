@@ -135,20 +135,20 @@ private slots:
     // Show the palette used by the current preview image
     void showPreviewPaletteSlot();
 
-    // Extract and decompress IMG/SET
-    void extractDecompressImageSlot();
+    // Extract and uncompress IMG/SET
+    void extractUncompressImageSlot();
 
-    // Extract and decompress all IMG/SET
-    void extractDecompressAllImageSlot();
+    // Extract and uncompress all IMG/SET
+    void extractUncompressAllImageSlot();
 
-    // Extract, decompress and convert IMG/SET
-    void extractDecompressConvertImageSlot();
+    // Extract, uncompress and convert IMG/SET
+    void extractUncompressConvertImageSlot();
 
-    // Extract, decompress and convert All IMG/SET
-    void extractDecompressConvertAllImageSlot();
+    // Extract, uncompress and convert All IMG/SET
+    void extractUncompressConvertAllImageSlot();
 
-    // Decompress external IMG(s)
-    void decompressExternalIMGSlot();
+    // Uncompress external IMG(s)
+    void uncompressExternalIMGSlot();
 
     // View an external IMG/SET file
     void viewExternalIMGSlot();
@@ -156,8 +156,8 @@ private slots:
     // View an extended preview window for the actual IMG/SET in preview
     void viewExtendedPreviewSlot();
 
-    // Decompress and convert external IMGs/SETs to PNG
-    void decompressConvertExternalIMGSETSlot();
+    // Uncompress and convert external IMGs/SETs to PNG
+    void uncompressConvertExternalIMGSETSlot();
 
     // Convert external PNG(s) to IMG(s)
     void convertPNGToIMGSETSlot();

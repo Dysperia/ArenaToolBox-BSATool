@@ -14,12 +14,12 @@ void CompressionTest::testLZSSUncompression() {
 }
 
 void CompressionTest::testLZSSCompression() {
-    QWARN("Should compress then decompress the file and get the original data");
+    QWARN("Should compress then uncompress the file and get the original data");
     QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedLZSS.data"));
     QVERIFY(!uncompressedDataFromFile.isEmpty());
-    QVector<char> compressedThenUncompressedDataFromFile = Compression::uncompressLZSS(Compression::compressLZSS(uncompressedDataFromFile));
-    QVERIFY(!compressedThenUncompressedDataFromFile.isEmpty());
-    QCOMPARE(compressedThenUncompressedDataFromFile == uncompressedDataFromFile, true);
+    QVector<char> compressedThenUncompressedDataFromAlgorithm = Compression::uncompressLZSS(Compression::compressLZSS(uncompressedDataFromFile));
+    QVERIFY(!compressedThenUncompressedDataFromAlgorithm.isEmpty());
+    QCOMPARE(compressedThenUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
 }
 
 void CompressionTest::testEncryptionDecryption() {

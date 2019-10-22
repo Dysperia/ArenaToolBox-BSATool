@@ -9,16 +9,16 @@ class Compression
 public:
 
     // Sort of RLE algo
-    // Decompress the image data compressed in 02
-    static void image02Decompression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height);
+    // Uncompress the image data compressed in 02
+    static void image02Uncompression(unsigned char *compressedData, unsigned char *uncompressedData, uint16_t width, uint16_t height);
     // Compress the image data in 02 compression
-    static size_t image02Compression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height);
+    static size_t image02Compression(unsigned char *compressedData, unsigned char *uncompressedData, uint16_t width, uint16_t height);
 
     // Compress the image data in 04
-    static size_t image04Compression(unsigned char *compressedData, unsigned char *decompressedData, size_t decompressedLengh);
+    static size_t image04Compression(unsigned char *compressedData, unsigned char *uncompressedData, size_t uncompressedLengh);
 
-    // Decompress the image data compressed in 08
-    static void image08Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedSize, size_t decompressedSize);
+    // Uncompress the image data compressed in 08
+    static void image08Uncompression(unsigned char *compressedData, unsigned char *uncompressedData, size_t compressedSize, size_t uncompressedSize);
 };
 
 #endif // VARIOUS_HPP

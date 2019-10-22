@@ -50,14 +50,14 @@ MenuBar::MenuBar(QWidget *parent): QMenuBar(parent)
 //    mExtractRawAllFilteredFilesAction = new QAction("Extract all filtered files", this);
 //    mExtractAsRawMenu->addAction(mExtractRawAllFilteredFilesAction);
 //    mExtractImageMenu = mExtractMenu->addMenu("Extract image");
-//    mExtractDecompressImageAction = new QAction("Extract and decompress IMG/SET", this);
-//    mExtractImageMenu->addAction(mExtractDecompressImageAction);
-//    mExtractDecompressAllImageAction = new QAction("Extract and decompress all IMG/SET", this);
-//    mExtractImageMenu->addAction(mExtractDecompressAllImageAction);
-//    mExtractDecompressConvertImageAction = new QAction("Extract, decompress and convert IMG/SET to PNG", this);
-//    mExtractImageMenu->addAction(mExtractDecompressConvertImageAction);
-//    mExtractDecompressConvertAllImageAction = new QAction("Extract, decompress and convert all IMG/SET to PNG", this);
-//    mExtractImageMenu->addAction(mExtractDecompressConvertAllImageAction);
+//    mExtractUncompressImageAction = new QAction("Extract and uncompress IMG/SET", this);
+//    mExtractImageMenu->addAction(mExtractUncompressImageAction);
+//    mExtractUncompressAllImageAction = new QAction("Extract and uncompress all IMG/SET", this);
+//    mExtractImageMenu->addAction(mExtractUncompressAllImageAction);
+//    mExtractUncompressConvertImageAction = new QAction("Extract, uncompress and convert IMG/SET to PNG", this);
+//    mExtractImageMenu->addAction(mExtractUncompressConvertImageAction);
+//    mExtractUncompressConvertAllImageAction = new QAction("Extract, uncompress and convert all IMG/SET to PNG", this);
+//    mExtractImageMenu->addAction(mExtractUncompressConvertAllImageAction);
 
 //    mPaletteMenu = addMenu("Palette");
 //    mViewPaletteAction = new QAction("View palette", this);
@@ -67,10 +67,10 @@ MenuBar::MenuBar(QWidget *parent): QMenuBar(parent)
 //    mToolMenu = addMenu("Tool");
 //    mEncryptDecryptInfAction = new QAction("Encrypt/Decrypt INF file", this);
 //    mToolMenu->addAction(mEncryptDecryptInfAction);
-//    mDecompressExternalIMGAction = new QAction("Decompress external IMG(s)", this);
-//    mToolMenu->addAction(mDecompressExternalIMGAction);
-//    mDecompressExternalIMGsToPNGsAction = new QAction("Decompress and convert external IMG(s)/SET(s) to PNG(s)", this);
-//    mToolMenu->addAction(mDecompressExternalIMGsToPNGsAction);
+//    mUncompressExternalIMGAction = new QAction("Uncompress external IMG(s)", this);
+//    mToolMenu->addAction(mUncompressExternalIMGAction);
+//    mUncompressExternalIMGsToPNGsAction = new QAction("Uncompress and convert external IMG(s)/SET(s) to PNG(s)", this);
+//    mToolMenu->addAction(mUncompressExternalIMGsToPNGsAction);
 //    mConvertPNGsToIMGsSETsAction = new QAction("Convert external PNG(s) to IMG/SET", this);
 //    mToolMenu->addAction(mConvertPNGsToIMGsSETsAction);
 //    mViewExternalIMGAction = new QAction("View an external IMG/SET", this);
@@ -157,17 +157,17 @@ QAction *MenuBar::getCloseBSAFileAction() {
 //QAction *MenuBar::getExtractRawAllFilteredFilesAction() {
 //    return mExtractRawAllFilteredFilesAction;
 //}
-//QAction *MenuBar::getExtractDecompressImageAction() {
-//    return mExtractDecompressImageAction;
+//QAction *MenuBar::getExtractUncompressImageAction() {
+//    return mExtractUncompressImageAction;
 //}
-//QAction *MenuBar::getExtractDecompressAllImageAction() {
-//    return mExtractDecompressAllImageAction;
+//QAction *MenuBar::getExtractUncompressAllImageAction() {
+//    return mExtractUncompressAllImageAction;
 //}
-//QAction *MenuBar::getExtractDecompressConvertImageAction() {
-//    return mExtractDecompressConvertImageAction;
+//QAction *MenuBar::getExtractUncompressConvertImageAction() {
+//    return mExtractUncompressConvertImageAction;
 //}
-//QAction *MenuBar::getExtractDecompressConvertAllImageAction() {
-//    return mExtractDecompressConvertAllImageAction;
+//QAction *MenuBar::getExtractUncompressConvertAllImageAction() {
+//    return mExtractUncompressConvertAllImageAction;
 //}
 //QAction *MenuBar::getViewPaletteAction() {
 //    return mViewPaletteAction;
@@ -175,11 +175,11 @@ QAction *MenuBar::getCloseBSAFileAction() {
 //QAction *MenuBar::getEncryptDecryptInfAction() {
 //    return mEncryptDecryptInfAction;
 //}
-//QAction *MenuBar::getDecompressExternalIMGAction() {
-//    return mDecompressExternalIMGAction;
+//QAction *MenuBar::getUncompressExternalIMGAction() {
+//    return mUncompressExternalIMGAction;
 //}
-//QAction *MenuBar::getDecompressExternalIMGsToPNGsAction() {
-//    return mDecompressExternalIMGsToPNGsAction;
+//QAction *MenuBar::getUncompressExternalIMGsToPNGsAction() {
+//    return mUncompressExternalIMGsToPNGsAction;
 //}
 //QAction *MenuBar::getConvertPNGsToIMGsSETsAction() {
 //    return mConvertPNGsToIMGsSETsAction;

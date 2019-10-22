@@ -2,8 +2,8 @@
 #include <iostream>
 #include <vector>
 
-// Decompress the image data compressed in 02
-void Compression::image02Decompression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height)
+// Uncompress the image data compressed in 02
+void Compression::image02Uncompression(unsigned char *compressedData, unsigned char *uncompressedData, uint16_t width, uint16_t height)
 {
     uint16_t bytesProcessed(0);
     uint16_t uncompDataPosition(0);
@@ -23,7 +23,7 @@ void Compression::image02Decompression(unsigned char *compressedData, unsigned c
                 bytesProcessed ++;
                 for (int j(0); j<counter; j++)
                 {
-                    decompressedData[uncompDataPosition] = color;
+                    uncompressedData[uncompDataPosition] = color;
                     uncompDataPosition ++;
                 }
             }
@@ -32,7 +32,7 @@ void Compression::image02Decompression(unsigned char *compressedData, unsigned c
                 counter ++;
                 for (int j(0); j<counter; j++)
                 {
-                    decompressedData[uncompDataPosition] = compressedData[bytesProcessed];
+                    uncompressedData[uncompDataPosition] = compressedData[bytesProcessed];
                     bytesProcessed ++;
                     uncompDataPosition ++;
                 }
@@ -42,7 +42,7 @@ void Compression::image02Decompression(unsigned char *compressedData, unsigned c
     }
 }
 // Compress the image data in 02 compression
-size_t Compression::image02Compression(unsigned char *compressedData, unsigned char *decompressedData, uint16_t width, uint16_t height)
+size_t Compression::image02Compression(unsigned char *compressedData, unsigned char *uncompressedData, uint16_t width, uint16_t height)
 {
     uint16_t compDataPosition(0), unCompDataPosition(0);
     for (int i(0); i<height; i++)
@@ -51,12 +51,12 @@ size_t Compression::image02Compression(unsigned char *compressedData, unsigned c
         while (lineByteProcessed < width)
         {
             uint8_t color(0), counter(0);
-            color = decompressedData[unCompDataPosition];
-            if (decompressedData[unCompDataPosition+1] != color)
+            color = uncompressedData[unCompDataPosition];
+            if (uncompressedData[unCompDataPosition+1] != color)
             {
                 while (counter < 0x7F &&
                        lineByteProcessed + counter < width &&
-                       decompressedData[unCompDataPosition + counter] != decompressedData[unCompDataPosition + counter+1])
+                       uncompressedData[unCompDataPosition + counter] != uncompressedData[unCompDataPosition + counter+1])
                 {
                     counter ++;
                 }
@@ -69,7 +69,7 @@ size_t Compression::image02Compression(unsigned char *compressedData, unsigned c
                 compDataPosition ++;
                 for (int j(0); j<counter; j++)
                 {
-                    compressedData[compDataPosition] = decompressedData[unCompDataPosition];
+                    compressedData[compDataPosition] = uncompressedData[unCompDataPosition];
                     compDataPosition ++;
                     unCompDataPosition ++;
                 }
@@ -79,7 +79,7 @@ size_t Compression::image02Compression(unsigned char *compressedData, unsigned c
             {
                 while (counter < 0x7E &&
                        lineByteProcessed + counter +1 < width &&
-                       decompressedData[unCompDataPosition + counter] == decompressedData[unCompDataPosition + counter+1])
+                       uncompressedData[unCompDataPosition + counter] == uncompressedData[unCompDataPosition + counter+1])
                 {
                     counter ++;
                 }
@@ -96,7 +96,7 @@ size_t Compression::image02Compression(unsigned char *compressedData, unsigned c
 }
 
 // Compress the image data in 04
-size_t Compression::image04Compression(unsigned char *compressedData, unsigned char *decompressedData, size_t decompressedLengh)
+size_t Compression::image04Compression(unsigned char *compressedData, unsigned char *uncompressedData, size_t uncompressedLengh)
 {
     unsigned char *compBuffer = new unsigned char[4096];
     for (int i(0); i<0xFEE; i++)
@@ -108,7 +108,7 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
     uint8_t bitmask(0), counter(0), tempCounter(0);
     std::vector<uint8_t> tempData;
     int tempDataNb(0);
-    while (decompDataPosition < decompressedLengh)
+    while (decompDataPosition < uncompressedLengh)
     {
         // if tempData full: 8 operations done
         if (tempDataNb == 8)
@@ -128,12 +128,12 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
         counter = 0;
         bufferPosToCopy = 0;
         // if serie of same value and buffer has value at pos - 1 -> hot copy
-        if (decompressedData[decompDataPosition] == compBuffer[(compBufferPosition - 1) & 0x0FFF])
+        if (uncompressedData[decompDataPosition] == compBuffer[(compBufferPosition - 1) & 0x0FFF])
         {
             tempCounter = 0;
-            while (decompressedData[decompDataPosition] == decompressedData[decompDataPosition + tempCounter] &&
+            while (uncompressedData[decompDataPosition] == uncompressedData[decompDataPosition + tempCounter] &&
                    tempCounter < 18 &&
-                   decompDataPosition + tempCounter < decompressedLengh)
+                   decompDataPosition + tempCounter < uncompressedLengh)
             {
                 tempCounter ++;
             }
@@ -149,12 +149,12 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
             bufferPos = (compBufferPosition + 0x12) & 0x0FFF;
             while (bufferPos != compBufferPosition && counter < 18)
             {
-                if (decompressedData[decompDataPosition] == compBuffer[bufferPos])
+                if (uncompressedData[decompDataPosition] == compBuffer[bufferPos])
                 {
                     tempCounter = 0;
-                    while (decompressedData[decompDataPosition + tempCounter] == compBuffer[(bufferPos + tempCounter) & 0x0FFF] &&
+                    while (uncompressedData[decompDataPosition + tempCounter] == compBuffer[(bufferPos + tempCounter) & 0x0FFF] &&
                            tempCounter < 18 &&
-                           decompDataPosition + tempCounter < decompressedLengh &&
+                           decompDataPosition + tempCounter < uncompressedLengh &&
                            ((bufferPos + tempCounter) & 0x0FFF) != compBufferPosition)
                     {
                         tempCounter ++;
@@ -179,7 +179,7 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
             tempData.push_back(byte2);
             for (int i(0); i<counter; i++)
             {
-                compBuffer[compBufferPosition] = decompressedData[decompDataPosition];
+                compBuffer[compBufferPosition] = uncompressedData[decompDataPosition];
                 decompDataPosition ++;
                 compBufferPosition = (compBufferPosition + 1) & 0x0FFF;
             }
@@ -188,8 +188,8 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
         {
             bitmask = (bitmask >> 1) | 0x80;
             tempDataNb ++;
-            tempData.push_back(decompressedData[decompDataPosition]);
-            compBuffer[compBufferPosition] = decompressedData[decompDataPosition];
+            tempData.push_back(uncompressedData[decompDataPosition]);
+            compBuffer[compBufferPosition] = uncompressedData[decompDataPosition];
             decompDataPosition ++;
             compBufferPosition = (compBufferPosition + 1) & 0x0FFF;
         }
@@ -214,8 +214,8 @@ size_t Compression::image04Compression(unsigned char *compressedData, unsigned c
     return compDataPosition;
 }
 
-// Decompress the image data compressed in 08
-void Compression::image08Decompression(unsigned char *compressedData, unsigned char *decompressedData, size_t compressedSize, size_t decompressedSize)
+// Uncompress the image data compressed in 08
+void Compression::image08Uncompression(unsigned char *compressedData, unsigned char *uncompressedData, size_t compressedSize, size_t uncompressedSize)
 {
     unsigned char data1[256] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -282,7 +282,7 @@ void Compression::image08Decompression(unsigned char *compressedData, unsigned c
     uint16_t variable = 0x0FC4;
     uint8_t byte = 0x00;
     uint16_t word = 0x0000;
-    while (uncompPosition < decompressedSize)
+    while (uncompPosition < uncompressedSize)
     {
         uint16_t variable2 = buffer2[0x0272];
         while (variable2 < 0x0273)
@@ -452,7 +452,7 @@ void Compression::image08Decompression(unsigned char *compressedData, unsigned c
         if (colorVariable < 0x0100)
         {
             uint8_t colorByte = colorVariable & 0x00FF;
-            decompressedData[uncompPosition] = colorByte;
+            uncompressedData[uncompPosition] = colorByte;
             colorBuffer[variable] = colorByte;
             variable = (variable + 1) & 0x0FFF;
             uncompPosition ++;
@@ -518,7 +518,7 @@ void Compression::image08Decompression(unsigned char *compressedData, unsigned c
             {
                 colorVariable = colorBuffer[(colBufferPos + i) & 0x0FFF] & 0x00FF;
                 uint8_t colorByte = colorVariable & 0x00FF;
-                decompressedData[uncompPosition] = colorByte;
+                uncompressedData[uncompPosition] = colorByte;
                 colorBuffer[variable] = colorByte;
                 variable = (variable + 1) & 0x0FFF;
                 uncompPosition ++;

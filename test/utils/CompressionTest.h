@@ -22,7 +22,7 @@ private slots:
     void testEncryptionDecryption();
 
 private:
-    QVector<char> readFile(const QString &fileName) const;
+    [[nodiscard]] QVector<char> readFile(const QString &fileName) const;
 };
 
 

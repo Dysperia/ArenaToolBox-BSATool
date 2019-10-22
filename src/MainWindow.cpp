@@ -68,14 +68,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(menuBar->getUpdatePreviewOverDefaultAction(), SIGNAL(toggled(bool)), this, SLOT(setUseUpdatePreviewSlot(bool)));
     connect(menuBar->getExtractRawFileAction(), SIGNAL(triggered()), this, SLOT(extractRawFileSlot()));
     connect(menuBar->getExtractRawAllFilteredFilesAction(), SIGNAL(triggered()), this, SLOT(extractRawAllFilteredFilesSlot()));
-    connect(menuBar->getExtractDecompressImageAction(), SIGNAL(triggered()), this, SLOT(extractDecompressImageSlot()));
-    connect(menuBar->getExtractDecompressAllImageAction(), SIGNAL(triggered()), this, SLOT(extractDecompressAllImageSlot()));
-    connect(menuBar->getExtractDecompressConvertImageAction(), SIGNAL(triggered()), this, SLOT(extractDecompressConvertImageSlot()));
-    connect(menuBar->getExtractDecompressConvertAllImageAction(), SIGNAL(triggered()), this, SLOT(extractDecompressConvertAllImageSlot()));
+    connect(menuBar->getExtractUncompressImageAction(), SIGNAL(triggered()), this, SLOT(extractUncompressImageSlot()));
+    connect(menuBar->getExtractUncompressAllImageAction(), SIGNAL(triggered()), this, SLOT(extractUncompressAllImageSlot()));
+    connect(menuBar->getExtractUncompressConvertImageAction(), SIGNAL(triggered()), this, SLOT(extractUncompressConvertImageSlot()));
+    connect(menuBar->getExtractUncompressConvertAllImageAction(), SIGNAL(triggered()), this, SLOT(extractUncompressConvertAllImageSlot()));
     connect(menuBar->getViewPaletteAction(), SIGNAL(triggered()), this, SLOT(showPreviewPaletteSlot()));
     connect(menuBar->getEncryptDecryptInfAction(), SIGNAL(triggered()), this, SLOT(encryptDecryptINFSlot()));
-    connect(menuBar->getDecompressExternalIMGAction(), SIGNAL(triggered()), this, SLOT(decompressExternalIMGSlot()));
-    connect(menuBar->getDecompressExternalIMGsToPNGsAction(), SIGNAL(triggered()), this, SLOT(decompressConvertExternalIMGSETSlot()));
+    connect(menuBar->getUncompressExternalIMGAction(), SIGNAL(triggered()), this, SLOT(uncompressExternalIMGSlot()));
+    connect(menuBar->getUncompressExternalIMGsToPNGsAction(), SIGNAL(triggered()), this, SLOT(uncompressConvertExternalIMGSETSlot()));
     connect(menuBar->getConvertPNGsToIMGsSETsAction(), SIGNAL(triggered()), this, SLOT(convertPNGToIMGSETSlot()));
     connect(menuBar->getViewExternalIMGAction(), SIGNAL(triggered()), this, SLOT(viewExternalIMGSlot()));
     connect(menuBar->getAboutAction(), SIGNAL(triggered()), this, SLOT(aboutSlot()));
@@ -223,10 +223,10 @@ void MainWindow::clear()
     menuBar->getAddFileAction()->setDisabled(true);
     menuBar->getUpdateFileAction()->setDisabled(true);
     menuBar->getDeleteFileAction()->setDisabled(true);
-    menuBar->getExtractDecompressImageAction()->setDisabled(true);
-    menuBar->getExtractDecompressAllImageAction()->setDisabled(true);
-    menuBar->getExtractDecompressConvertImageAction()->setDisabled(true);
-    menuBar->getExtractDecompressConvertAllImageAction()->setDisabled(true);
+    menuBar->getExtractUncompressImageAction()->setDisabled(true);
+    menuBar->getExtractUncompressAllImageAction()->setDisabled(true);
+    menuBar->getExtractUncompressConvertImageAction()->setDisabled(true);
+    menuBar->getExtractUncompressConvertAllImageAction()->setDisabled(true);
 
     imageData.clear();
     imageData.resize(1);
@@ -557,10 +557,10 @@ void MainWindow::updateQActionsState(QListWidgetItem *item)
             isUpdated = BSAFile::getInstance()->getIsFileUpdated(index);
         }
 
-        menuBar->getExtractDecompressImageAction()->setDisabled(true);
-        menuBar->getExtractDecompressAllImageAction()->setDisabled(true);
-        menuBar->getExtractDecompressConvertImageAction()->setDisabled(true);
-        menuBar->getExtractDecompressConvertAllImageAction()->setDisabled(true);
+        menuBar->getExtractUncompressImageAction()->setDisabled(true);
+        menuBar->getExtractUncompressAllImageAction()->setDisabled(true);
+        menuBar->getExtractUncompressConvertImageAction()->setDisabled(true);
+        menuBar->getExtractUncompressConvertAllImageAction()->setDisabled(true);
         if (isDeleted)
         {
             menuBar->getCancelDeleteFileAction()->setDisabled(false);
@@ -623,16 +623,16 @@ void MainWindow::updateQActionsState(QListWidgetItem *item)
         }
         if (extension == "IMG" || extension == "SET")
         {
-            menuBar->getExtractDecompressImageAction()->setDisabled(false);
-            menuBar->getExtractDecompressConvertImageAction()->setDisabled(false);
+            menuBar->getExtractUncompressImageAction()->setDisabled(false);
+            menuBar->getExtractUncompressConvertImageAction()->setDisabled(false);
         }
         int nbrOfFilters = FileFilterList.size();
         for ( int i(0); i < nbrOfFilters; i++)
         {
             if (FileFilterList[i] == "IMG" || FileFilterList[i] == "SET")
             {
-                menuBar->getExtractDecompressAllImageAction()->setDisabled(false);
-                menuBar->getExtractDecompressConvertAllImageAction()->setDisabled(false);
+                menuBar->getExtractUncompressAllImageAction()->setDisabled(false);
+                menuBar->getExtractUncompressConvertAllImageAction()->setDisabled(false);
             }
         }
     }
@@ -859,8 +859,8 @@ void MainWindow::showPreviewPaletteSlot()
     previewPaletteWindow->show();
 }
 
-// Extract and decompress IMG/SET
-void MainWindow::extractDecompressImageSlot()
+// Extract and uncompress IMG/SET
+void MainWindow::extractUncompressImageSlot()
 {
     QListWidgetItem *item = archiveFileList->currentItem();
     QString fileName = item->text();
@@ -873,17 +873,17 @@ void MainWindow::extractDecompressImageSlot()
         int index = BSAFile::getInstance()->getIndex(fileName.toStdString());
         if (BSAFile::getInstance()->getIsFileNew(index) == false)
         {
-            int ret = image.extractDecompressImage(index, cfilePath);
+            int ret = image.extractUncompressImage(index, cfilePath);
             switch (ret)
             {
             case 0:
             {
-                statusBar()->showMessage("File successfully decompressed and extracted.");
+                statusBar()->showMessage("File successfully uncompressed and extracted.");
                 break;
             }
             case 1:
             {
-                QMessageBox::warning(this, "Extract and decompress IMG/SET", "Error while extracting the file.");
+                QMessageBox::warning(this, "Extract and uncompress IMG/SET", "Error while extracting the file.");
                 statusBar()->showMessage("Error while extracting file.");
                 break;
             }
@@ -897,8 +897,8 @@ void MainWindow::extractDecompressImageSlot()
     }
 }
 
-// Extract and decompress all IMG/SET
-void MainWindow::extractDecompressAllImageSlot()
+// Extract and uncompress all IMG/SET
+void MainWindow::extractUncompressAllImageSlot()
 {
     int success(0), error(0), extractedAsRaw(0);
     // Success IMG: 0: ok, 1: error(s) occured, 2: some extracted as raw but no error, 3: error and some extracted as raw, 4: subdir not created
@@ -938,7 +938,7 @@ void MainWindow::extractDecompressAllImageSlot()
                     int index = BSAFile::getInstance()->getIndex(fileName.toStdString());
                     if (BSAFile::getInstance()->getIsFileNew(index) == false)
                     {
-                        int ret = image.extractDecompressImage(index, filePath.toStdString());
+                        int ret = image.extractUncompressImage(index, filePath.toStdString());
                         switch (ret)
                         {
                         case 0:
@@ -1009,7 +1009,7 @@ void MainWindow::extractDecompressAllImageSlot()
                     int index = BSAFile::getInstance()->getIndex(fileName.toStdString());
                     if (BSAFile::getInstance()->getIsFileNew(index) == false)
                     {
-                        int ret = image.extractDecompressImage(index, filePath.toStdString());
+                        int ret = image.extractUncompressImage(index, filePath.toStdString());
                         switch (ret)
                         {
                         case 0:
@@ -1051,7 +1051,7 @@ void MainWindow::extractDecompressAllImageSlot()
         {
         case 0:
         {
-            message += "All IMG files where decompressed and extracted successfully.";
+            message += "All IMG files where uncompressed and extracted successfully.";
             break;
         }
         case 1:
@@ -1061,7 +1061,7 @@ void MainWindow::extractDecompressAllImageSlot()
         }
         case 2:
         {
-            message += "Some IMG with unknown header where extracted as raw, all other IMG files where decompressed and extracted successfully.";
+            message += "Some IMG with unknown header where extracted as raw, all other IMG files where uncompressed and extracted successfully.";
             break;
         }
         case 3:
@@ -1080,7 +1080,7 @@ void MainWindow::extractDecompressAllImageSlot()
         {
         case 0:
         {
-            message += "All SET files where decompressed and extracted successfully.";
+            message += "All SET files where uncompressed and extracted successfully.";
             break;
         }
         case 1:
@@ -1097,18 +1097,18 @@ void MainWindow::extractDecompressAllImageSlot()
         if (IMGSuccess > 1 || SETSuccess > 1)
         {
             QMessageBox::warning(this, "Extraction of all IMG/SET", message);
-            statusBar()->showMessage("Some error(s) or warning(s) during decompression and extraction of all IMG/SET");
+            statusBar()->showMessage("Some error(s) or warning(s) during uncompression and extraction of all IMG/SET");
         }
         else
         {
             QMessageBox::information(this, "Extraction of all IMG/SET", message);
-            statusBar()->showMessage("All IMG/SET files successfully decompressed and extracted");
+            statusBar()->showMessage("All IMG/SET files successfully uncompressed and extracted");
         }
     }
 }
 
-// Extract, decompress and convert IMG/SET
-void MainWindow::extractDecompressConvertImageSlot()
+// Extract, uncompress and convert IMG/SET
+void MainWindow::extractUncompressConvertImageSlot()
 {
     QListWidgetItem *item = archiveFileList->currentItem();
     std::string fileName = item->text().toStdString();
@@ -1124,23 +1124,23 @@ void MainWindow::extractDecompressConvertImageSlot()
         int index = BSAFile::getInstance()->getIndex(fileName);
         if (BSAFile::getInstance()->getIsFileNew(index) == false)
         {
-            int ret = image.extractDecompressConvertImage(index, cfilePath);
+            int ret = image.extractUncompressConvertImage(index, cfilePath);
             switch (ret)
             {
             case 0:
             {
-                statusBar()->showMessage("File successfully decompressed, converted and extracted.");
+                statusBar()->showMessage("File successfully uncompressed, converted and extracted.");
                 break;
             }
             case 1:
             {
-                QMessageBox::warning(this, "Extract, decompress and convert IMG/SET", "Error while extracting the file.");
-                statusBar()->showMessage("Error while extracting, decompressing and converting file.");
+                QMessageBox::warning(this, "Extract, uncompress and convert IMG/SET", "Error while extracting the file.");
+                statusBar()->showMessage("Error while extracting, uncompressing and converting file.");
                 break;
             }
             case 2:
             {
-                QMessageBox::information(this, "Extract, decompress and convert IMG/SET", "IMG file had a unknown header and was not extracted");
+                QMessageBox::information(this, "Extract, uncompress and convert IMG/SET", "IMG file had a unknown header and was not extracted");
                 statusBar()->showMessage("IMG file had a unknown header, not extracted.");
                 break;
             }
@@ -1149,8 +1149,8 @@ void MainWindow::extractDecompressConvertImageSlot()
     }
 }
 
-// Extract, decompress and convert All IMG/SET
-void MainWindow::extractDecompressConvertAllImageSlot()
+// Extract, uncompress and convert All IMG/SET
+void MainWindow::extractUncompressConvertAllImageSlot()
 {
     int success(0), error(0), raw(0);
     // Success IMG: 0: ok, 1: error(s) occured, 2: some not extracted but no error, 3: error(s) and some not extracted, 4: subdir not created
@@ -1193,7 +1193,7 @@ void MainWindow::extractDecompressConvertAllImageSlot()
                         std::string saveFileName(fileName);
                         saveFileName.replace(pos, fileName.size()-pos, ".PNG");
                         QString filePath = dirPath + "/" + "IMG" + "/" + QString::fromStdString(saveFileName);
-                        int ret = image.extractDecompressConvertImage(index, filePath.toStdString());
+                        int ret = image.extractUncompressConvertImage(index, filePath.toStdString());
                         switch (ret)
                         {
                         case 0:
@@ -1267,7 +1267,7 @@ void MainWindow::extractDecompressConvertAllImageSlot()
                         std::string saveFileName(fileName);
                         saveFileName.replace(pos, fileName.size()-pos, ".PNG");
                         QString filePath = dirPath + "/" + "SET" + "/" + QString::fromStdString(saveFileName);
-                        int ret = image.extractDecompressConvertImage(index, filePath.toStdString());
+                        int ret = image.extractUncompressConvertImage(index, filePath.toStdString());
                         switch (ret)
                         {
                         case 0:
@@ -1309,7 +1309,7 @@ void MainWindow::extractDecompressConvertAllImageSlot()
         {
         case 0:
         {
-            message += "All IMG files where decompressed, converted and extracted successfully.";
+            message += "All IMG files where uncompressed, converted and extracted successfully.";
             break;
         }
         case 1:
@@ -1319,7 +1319,7 @@ void MainWindow::extractDecompressConvertAllImageSlot()
         }
         case 2:
         {
-            message += "Some IMG with unknown header where not extracted, all other IMG files where decompressed, converted and extracted successfully.";
+            message += "Some IMG with unknown header where not extracted, all other IMG files where uncompressed, converted and extracted successfully.";
             break;
         }
         case 3:
@@ -1338,7 +1338,7 @@ void MainWindow::extractDecompressConvertAllImageSlot()
         {
         case 0:
         {
-            message += "All SET files where decompressed, converted and extracted successfully.";
+            message += "All SET files where uncompressed, converted and extracted successfully.";
             break;
         }
         case 1:
@@ -1355,18 +1355,18 @@ void MainWindow::extractDecompressConvertAllImageSlot()
         if (IMGSuccess > 1 || SETSuccess > 1)
         {
             QMessageBox::warning(this, "Extraction of all IMG/SET", message);
-            statusBar()->showMessage("Some error(s) or warning(s) during decompression, conversion and extraction of all IMG/SET");
+            statusBar()->showMessage("Some error(s) or warning(s) during uncompression, conversion and extraction of all IMG/SET");
         }
         else
         {
             QMessageBox::information(this, "Extraction of all IMG/SET", message);
-            statusBar()->showMessage("All IMG/SET files successfully decompressed, converted and extracted");
+            statusBar()->showMessage("All IMG/SET files successfully uncompressed, converted and extracted");
         }
     }
 }
 
-// Decompress external IMG(s)
-void MainWindow::decompressExternalIMGSlot()
+// Uncompress external IMG(s)
+void MainWindow::uncompressExternalIMGSlot()
 {
     bool success(true), error(false), noHeadOrNotComp(false), unknownHead(false), notIMG(false);
     QStringList sourceFilesPath = QFileDialog::getOpenFileNames(this, "Choose IMG file(s) to open", lastOpenSaveFileDirectory, "IMG files (*.img)");
@@ -1379,7 +1379,7 @@ void MainWindow::decompressExternalIMGSlot()
             int fileNamePos = filePath.find_last_of("/\\");
             lastOpenSaveFileDirectory = QString::fromStdString(filePath.substr(0, fileNamePos));
             std::string fileName = filePath.substr(fileNamePos + 1);
-            int ret = image.decompressExternalIMG(fileName, filePath);
+            int ret = image.uncompressExternalIMG(fileName, filePath);
             switch (ret)
             {
             case 0:
@@ -1428,7 +1428,7 @@ void MainWindow::decompressExternalIMGSlot()
             {
                 message += "\n\nSome files not IMG files were left unmodified.";
             }
-            QMessageBox::information(this, "decompression of external IMG(s)", message);
+            QMessageBox::information(this, "uncompression of external IMG(s)", message);
         }
         else
         {
@@ -1445,7 +1445,7 @@ void MainWindow::decompressExternalIMGSlot()
             {
                 message += "\n\nSome files not IMG files were left unmodified.";
             }
-            QMessageBox::warning(this, "decompression of external IMG(s)", message);
+            QMessageBox::warning(this, "uncompression of external IMG(s)", message);
         }
     }
 }
@@ -1493,8 +1493,8 @@ void MainWindow::viewExtendedPreviewSlot()
     }
 }
 
-// Decompress and convert external IMGs/SETs to PNG
-void MainWindow::decompressConvertExternalIMGSETSlot()
+// Uncompress and convert external IMGs/SETs to PNG
+void MainWindow::uncompressConvertExternalIMGSETSlot()
 {
     bool setAll(false);
     std::string choice("PAL.COL");
@@ -1884,7 +1884,7 @@ void MainWindow::convertPNGToIMGSETSlot()
                                             uint16_t newWidth(img.width()), newHeight(img.height());
                                             ofstream.write(reinterpret_cast<char*>(&newWidth), 2);
                                             ofstream.write(reinterpret_cast<char*>(&newHeight), 2);
-                                            // The IMG created will be decompressed -> compression flag set to zero
+                                            // The IMG created will be uncompressed -> compression flag set to zero
                                             uint16_t newFlags = natFlags & 0xFF00;
                                             ofstream.write(reinterpret_cast<char*>(&newFlags), 2);
                                             uint16_t newDataSize(newWidth*newHeight);
@@ -1932,7 +1932,7 @@ void MainWindow::convertPNGToIMGSETSlot()
                                         ofstream.write(reinterpret_cast<const char*>(&natOffsets), 4);
                                         ofstream.write(reinterpret_cast<char*>(&natWidth), 2);
                                         ofstream.write(reinterpret_cast<char*>(&natHeight), 2);
-                                        // The IMG created will be decompressed -> compression flag set to zero
+                                        // The IMG created will be uncompressed -> compression flag set to zero
                                         uint16_t newFlags = natFlags & 0xFF00;
                                         ofstream.write(reinterpret_cast<char*>(&newFlags), 2);
                                         uint16_t newDataSize(natWidth*natHeight);
@@ -2075,7 +2075,7 @@ void MainWindow::convertPNGToIMGSETSlot()
                                             uint16_t newWidth(img.width()), newHeight(img.height());
                                             ofstream.write(reinterpret_cast<char*>(&newWidth), 2);
                                             ofstream.write(reinterpret_cast<char*>(&newHeight), 2);
-                                            // The IMG created will be decompressed -> compression flag set to zero, palette set or not according to user choice
+                                            // The IMG created will be uncompressed -> compression flag set to zero, palette set or not according to user choice
                                             uint16_t newFlags(0x0000);
                                             if (integratePalette)
                                             {
@@ -2170,7 +2170,7 @@ void MainWindow::convertPNGToIMGSETSlot()
                                         uint16_t newWidth(img.width()), newHeight(img.height());
                                         ofstream.write(reinterpret_cast<char*>(&newWidth), 2);
                                         ofstream.write(reinterpret_cast<char*>(&newHeight), 2);
-                                        // The IMG created will be decompressed -> compression flag set to zero, palette set or not according to user choice
+                                        // The IMG created will be uncompressed -> compression flag set to zero, palette set or not according to user choice
                                         uint16_t newFlags(0x0000);
                                         if (integratePalette)
                                         {
@@ -2598,7 +2598,7 @@ void MainWindow::test()
     uchar *palette = new uchar[768];
     ifstream.read(reinterpret_cast<char*>(sourceCompData), dataSize);
     ifstream.read(reinterpret_cast<char*>(palette), 768);
-    Compression::image04Decompression(sourceCompData, sourceUncompData, dataSize);
+    Compression::image04Uncompression(sourceCompData, sourceUncompData, dataSize);
     uint16_t newDataSize = Compression::image04Compression(newCompData, sourceUncompData, width*height);
     std::ofstream ofstream;
     ofstream.open("/home/dysperia/Desktop/TESTNEW.IMG", std::ios_base::out | std::ios_base::binary);
