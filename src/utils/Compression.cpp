@@ -97,36 +97,46 @@ QVector<char> Compression::compressLZSS(QVector<char> uncompressData) {
         // start index of duplicate in window
         quint16 startIndex(0);
         const char &nextUncompressedByte = uncompressData.constFirst();
-        // if sequence of same value and window has value at current insertion index - 1,
-        // then possible sequence of same byte and hot copy of incoming data
-        if (nextUncompressedByte == window.readAtIndex(window.getMCurrentInsertPosition() - 1u)) {
-            // computing sequence length
-            quint8 tempLength(1);
-            // computing while not the longest length and available data
-            while (tempLength < uncompressData.size() &&
-                   nextUncompressedByte == uncompressData[tempLength] &&
-                   tempLength < max_duplicate_length) {
-                tempLength++;
+        // searching for an ongoing duplicate using the possibly rewritten part of the window if at least 18 bytes left to compress
+        if (uncompressData.size() >= 18) {
+            QVector<char> snapshotFutureWindow;
+            for (int i = 1 - max_duplicate_length; i < 0; ++i) {
+                snapshotFutureWindow.push_back(window.readAtIndex(window.getMCurrentInsertPosition() + i));
             }
-            length = tempLength;
-            startIndex = window.getStandardEquivalentIndex(window.getMCurrentInsertPosition() - 1u);
+            for (int i = 0; i <= max_duplicate_length - 2; ++i) {
+                snapshotFutureWindow.push_back(uncompressData[i]);
+            }
+            for (int i = 0; i < max_duplicate_length - 1; ++i) {
+                if (nextUncompressedByte == snapshotFutureWindow[i]) {
+                    // computing sequence length
+                    quint8 tempLength(1);
+                    // computing while not the longest length and available data
+                    while (tempLength < uncompressData.size() && tempLength < max_duplicate_length &&
+                           snapshotFutureWindow[i + tempLength] == uncompressData[tempLength]) {
+                        tempLength++;
+                    }
+                    length = tempLength;
+                    startIndex = window.getStandardEquivalentIndex(window.getMCurrentInsertPosition() + 1 - max_duplicate_length + i);
+                }
+            }
         }
-        // Search through buffer in case there is a longest duplicate to copy
+        // Search through buffer in case there is a longest duplicate to copy avoiding the possibly rewritten section
         if (length < max_duplicate_length) {
             quint8 tempLength(0);
             quint16 tempStartIndex(0);
-            // we start to search after the possibly rewritten part of the window to avoid copying false data
-            tempStartIndex = window.getStandardEquivalentIndex(window.getMCurrentInsertPosition() + 0x12u);
+            tempStartIndex = window.getStandardEquivalentIndex(window.getMCurrentInsertPosition());
+            // last index before possibly using rewritten section
+            quint16 lastIndex = window.getStandardEquivalentIndex(window.getMCurrentInsertPosition() - max_duplicate_length);
             // searching a first byte match until longest found or all window searched
-            while (tempStartIndex != window.getMCurrentInsertPosition() && length < max_duplicate_length) {
+            while (tempStartIndex != lastIndex && length < max_duplicate_length) {
                 // Found a possible match
                 if (nextUncompressedByte == window.readAtIndex(tempStartIndex)) {
                     tempLength = 1;
                     // computing length for the found match, while checking if enough data available for it
                     while (tempLength < uncompressData.size() &&
-                           uncompressData[tempLength] == window.readAtIndex(tempStartIndex + tempLength) &&
                            tempLength < max_duplicate_length &&
-                           (window.getStandardEquivalentIndex(tempStartIndex + tempLength) != window.getMCurrentInsertPosition())) {
+                           uncompressData[tempLength] == window.readAtIndex(tempStartIndex + tempLength) &&
+                           window.getStandardEquivalentIndex(tempStartIndex + tempLength) != lastIndex) {
                         tempLength++;
                     }
                     // keeping only if longer than a previous one

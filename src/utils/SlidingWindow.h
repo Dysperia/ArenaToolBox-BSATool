@@ -12,7 +12,7 @@ public:
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
-    [[nodiscard]] size_t getMCurrentInsertPosition() const;
+    size_t getMCurrentInsertPosition() const;
     void setMCurrentInsertPosition(size_t mCurrentInsertPosition);
 
     const array<_type, _size> &getWindow() const;
@@ -20,7 +20,7 @@ public:
     //**************************************************************************
     // Methods
     //**************************************************************************
-    const _type &readAtIndex(const size_t &index) const;
+    const _type &readAtIndex(const int &index) const;
     void insert(const _type &newValue);
 
     /**
@@ -28,7 +28,7 @@ public:
      * @param index to get the standard from
      * @return the standard index
      */
-    [[nodiscard]] size_t getStandardEquivalentIndex(const size_t &index) const;
+    size_t getStandardEquivalentIndex(const int &index) const;
 
 private:
     //**************************************************************************
