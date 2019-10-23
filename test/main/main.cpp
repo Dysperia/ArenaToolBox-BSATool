@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     BsaFileTest bsaFileTest;
     CompressionTest compressionTest;
 
-return//    return QTest::qExec(&bsaFileTest, argc, argv) |
+    return QTest::qExec(&bsaFileTest, argc, argv) |
             QTest::qExec(&compressionTest, argc, argv);
 }
 #pragma clang diagnostic pop
