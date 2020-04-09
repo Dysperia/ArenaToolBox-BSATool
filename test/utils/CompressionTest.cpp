@@ -2,8 +2,6 @@
 #include "CompressionTest.h"
 #include "../../src/utils/Compression.h"
 
-#include <c++/iostream>
-
 void CompressionTest::testLZSSUncompression() {
     QWARN("Should uncompress the file and get the original data");
     QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedLZSS.data"));
@@ -19,18 +17,6 @@ void CompressionTest::testLZSSCompression() {
     QWARN("Should compress then uncompress the file and get the original data");
     QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedLZSS.data"));
     QVERIFY(!uncompressedDataFromFile.isEmpty());
-
-    QVector<char> compressedDataFromFile = readFile(QStringLiteral("ressources/compressedLZSS.data"));
-    QVERIFY(!compressedDataFromFile.isEmpty());
-    QVector<char> compressedDataFromAlgorithm = Compression::compressLZSS(uncompressedDataFromFile);
-    for (int i = 0; i < compressedDataFromFile.size(); ++i) {
-        const char &fromFile = compressedDataFromFile[i];
-        const char &fromAlgo = compressedDataFromAlgorithm[i];
-        if (fromFile != fromAlgo && i < 100) {
-            cout << i << " ";
-        }
-    }
-    cout << "\n";
 
     QVector<char> compressedThenUncompressedDataFromAlgorithm = Compression::uncompressLZSS(Compression::compressLZSS(uncompressedDataFromFile));
     QVERIFY(!compressedThenUncompressedDataFromAlgorithm.isEmpty());
