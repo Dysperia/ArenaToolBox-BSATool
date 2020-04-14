@@ -3,6 +3,7 @@
 
 #include <QtCore/QVector>
 #include <deque>
+#include "SlidingWindow.h"
 
 using namespace std;
 
@@ -31,6 +32,28 @@ private:
      * @return the next byte
      */
     static char getNextByte(deque<char> &data);
+
+    /**
+     * Search for a duplicate using the possibly soon rewritten part of the sliding window
+     * @param uncompressDataDeque data from which read the ongoing data to compress
+     * @param max_duplicate_length max length for a duplicate to copy
+     * @param window sliding window
+     * @param length of the duplicate. The variable is set only if a longest duplicate is found
+     * @param startIndex of the duplicate. The variable is set only if a longest duplicate is found
+     */
+    static void compressLZSS_searchForHotCopy(const deque<char> &uncompressDataDeque, quint8 max_duplicate_length,
+            const SlidingWindow<char, 4096> &window, quint8 &length, quint16 &startIndex);
+
+    /**
+     * Search for a duplicate in the sliding window, avoiding the last max_duplicate_length of the window
+     * @param uncompressDataDeque data from which read the ongoing data to compress
+     * @param max_duplicate_length max length for a duplicate to copy
+     * @param window sliding window
+     * @param length of the duplicate. The variable is set only if a longest duplicate is found
+     * @param startIndex of the duplicate. The variable is set only if a longest duplicate is found
+     */
+    static void compressLZSS_searchDuplicateInWindow(const deque<char> &uncompressDataDeque,
+            quint8 max_duplicate_length, const SlidingWindow<char, 4096> &window, quint8 & length, quint16 & startIndex);
 
 public:
     //**************************************************************************
