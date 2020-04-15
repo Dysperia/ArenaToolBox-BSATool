@@ -111,11 +111,11 @@ QVector<char> Compression::compressLZSS(const QVector<char>& uncompressData) {
         quint16 startIndex(0);
         const char &nextUncompressedByte = uncompressDataDeque.front();
         // searching for an ongoing duplicate using the possibly rewritten part of the window
-        compressLZSS_searchForHotCopy(uncompressDataDeque, max_duplicate_length, window, length,
+        searchForHotCopyInSlidingWindow(uncompressDataDeque, max_duplicate_length, window, length,
                                       startIndex);
         // Search through buffer in case there is a longest duplicate to copy avoiding the possibly
         // rewritten section already search before
-        compressLZSS_searchDuplicateInWindow(uncompressDataDeque, max_duplicate_length, window, length, startIndex);
+        searchDuplicateInSlidingWindow(uncompressDataDeque, max_duplicate_length, window, length, startIndex);
         // Writing compressed data to buffer
         if (length > 2) {
             // next flag is 0
@@ -156,7 +156,7 @@ QVector<char> Compression::compressLZSS(const QVector<char>& uncompressData) {
     return compressedData;
 }
 
-void Compression::compressLZSS_searchForHotCopy(const deque<char> &uncompressDataDeque,
+void Compression::searchForHotCopyInSlidingWindow(const deque<char> &uncompressDataDeque,
         const quint8 max_duplicate_length, const SlidingWindow<char, 4096> &window, quint8 &length, quint16 &startIndex) {
     // search longest possible considering max duplicate length and remaining uncompressed data
     quint8 max_possible_duplicate_length(uncompressDataDeque.size() < max_duplicate_length ? uncompressDataDeque.size() : max_duplicate_length);
@@ -194,7 +194,7 @@ void Compression::compressLZSS_searchForHotCopy(const deque<char> &uncompressDat
     }
 }
 
-void Compression::compressLZSS_searchDuplicateInWindow(const deque<char> &uncompressDataDeque,
+void Compression::searchDuplicateInSlidingWindow(const deque<char> &uncompressDataDeque,
         const quint8 max_duplicate_length, const SlidingWindow<char, 4096> &window, quint8 & length,
         quint16 & startIndex) {
     // search for duplicate if longest not found

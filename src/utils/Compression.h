@@ -41,18 +41,18 @@ private:
      * @param length of the duplicate. The variable is set only if a longest duplicate is found
      * @param startIndex of the duplicate. The variable is set only if a longest duplicate is found
      */
-    static void compressLZSS_searchForHotCopy(const deque<char> &uncompressDataDeque, quint8 max_duplicate_length,
+    static void searchForHotCopyInSlidingWindow(const deque<char> &uncompressDataDeque, quint8 max_duplicate_length,
             const SlidingWindow<char, 4096> &window, quint8 &length, quint16 &startIndex);
 
     /**
-     * Search for a duplicate in the sliding window, avoiding the last max_duplicate_length of the window
+     * Search for a duplicate in the sliding window, avoiding the last max_duplicate_length bytes of the window
      * @param uncompressDataDeque data from which read the ongoing data to compress
      * @param max_duplicate_length max length for a duplicate to copy
      * @param window sliding window
      * @param length of the duplicate. The variable is set only if a longest duplicate is found
      * @param startIndex of the duplicate. The variable is set only if a longest duplicate is found
      */
-    static void compressLZSS_searchDuplicateInWindow(const deque<char> &uncompressDataDeque,
+    static void searchDuplicateInSlidingWindow(const deque<char> &uncompressDataDeque,
             quint8 max_duplicate_length, const SlidingWindow<char, 4096> &window, quint8 & length, quint16 & startIndex);
 
 public:
