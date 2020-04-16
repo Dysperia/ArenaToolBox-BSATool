@@ -11,9 +11,21 @@ using namespace std;
  * Compression class contains various helpers used to compress and uncompress
  * the data. It also contains a helper to encrypt/decrypt INF file
  */
-class Compression
-{
+class Compression {
 private:
+    //**************************************************************************
+    // Structures
+    //**************************************************************************
+    /**
+     * Store the result of a duplicate search in a sliding window
+     * Length is the duplicate length and startIndex is the start offset in the
+     * sliding window
+     */
+    struct DuplicateSearchResult {
+        quint8 length;
+        quint16 startIndex;
+    };
+
     //**************************************************************************
     // Methods
     //**************************************************************************
@@ -34,26 +46,37 @@ private:
     static char getNextByte(deque<char> &data);
 
     /**
-     * Search for a duplicate using the possibly soon rewritten part of the sliding window
+     * Search for a duplicate in the possibly soon rewritten part of the sliding window
      * @param uncompressDataDeque data from which read the ongoing data to compress
      * @param max_duplicate_length max length for a duplicate to copy
      * @param window sliding window
-     * @param length of the duplicate. The variable is set only if a longest duplicate is found
-     * @param startIndex of the duplicate. The variable is set only if a longest duplicate is found
+     * @return the search result
      */
-    static void searchForHotCopyInSlidingWindow(const deque<char> &uncompressDataDeque, quint8 max_duplicate_length,
-            const SlidingWindow<char, 4096> &window, quint8 &length, quint16 &startIndex);
+    static DuplicateSearchResult searchDuplicateInSlidingWindowLookAheadOnly(const deque<char> &uncompressDataDeque,
+                                                                             quint8 max_duplicate_length,
+                                                                             const SlidingWindow<char, 4096> &window);
 
     /**
      * Search for a duplicate in the sliding window, avoiding the last max_duplicate_length bytes of the window
      * @param uncompressDataDeque data from which read the ongoing data to compress
      * @param max_duplicate_length max length for a duplicate to copy
      * @param window sliding window
-     * @param length of the duplicate. The variable is set only if a longest duplicate is found
-     * @param startIndex of the duplicate. The variable is set only if a longest duplicate is found
+     * @return the search result
      */
-    static void searchDuplicateInSlidingWindow(const deque<char> &uncompressDataDeque,
-            quint8 max_duplicate_length, const SlidingWindow<char, 4096> &window, quint8 & length, quint16 & startIndex);
+    static DuplicateSearchResult searchDuplicateInSlidingWindowNoLookAhead(const deque<char> &uncompressDataDeque,
+                                                                           quint8 max_duplicate_length,
+                                                                           const SlidingWindow<char, 4096> &window);
+
+    /**
+     * Search for a duplicate in the sliding window
+     * @param uncompressDataDeque data from which read the ongoing data to compress
+     * @param max_duplicate_length max length for a duplicate to copy
+     * @param window sliding window
+     * @return the search result
+     */
+    static DuplicateSearchResult searchDuplicateInSlidingWindow(const deque<char> &uncompressDataDeque,
+                                                                quint8 max_duplicate_length,
+                                                                const SlidingWindow<char, 4096> &window);
 
 public:
     //**************************************************************************
@@ -64,14 +87,14 @@ public:
      * @param compressedData to uncompress
      * @return the uncompressed data
      */
-    static QVector<char> uncompressLZSS(const QVector<char>& compressedData);
+    static QVector<char> uncompressLZSS(const QVector<char> &compressedData);
 
     /**
      * Compressed data with a LZSS algorithm
      * @param uncompressedData to compress
      * @return the compressed data
      */
-    static QVector<char> compressLZSS(const QVector<char>& uncompressData);
+    static QVector<char> compressLZSS(const QVector<char> &uncompressData);
 
     /**
      * Encrypt data according to the encryption key given. The same key is
@@ -79,7 +102,8 @@ public:
      * @param data to encrypt or decrypt
      * @param cryptKey encryption / decryption key
      */
-    static QVector<char> encryptDecrypt(const QVector<char>& data, QVector<quint8> cryptKey = {0xEA, 0x7B, 0x4E, 0xBD, 0x19, 0xC9, 0x38, 0x99});
+    static QVector<char> encryptDecrypt(const QVector<char> &data,
+                                        QVector<quint8> cryptKey = {0xEA, 0x7B, 0x4E, 0xBD, 0x19, 0xC9, 0x38, 0x99});
 };
 
 #endif // BSATOOL_COMPRESSION_H
