@@ -30,22 +30,6 @@ private:
     // Methods
     //**************************************************************************
     /**
-     * Extract the front byte of the vector as an unsigned byte and remove it
-     * from the vector
-     * @param compressedData data from which extract the front byte
-     * @return the next unsigned byte
-     */
-    static uchar getNextUnsignedByte(deque<char> &compressedData);
-
-    /**
-     * Extract the front byte of the vector and remove it
-     * from the vector
-     * @param compressedData data from which extract the front byte
-     * @return the next byte
-     */
-    static char getNextByte(deque<char> &data);
-
-    /**
      * Search for a duplicate in the possibly soon rewritten part of the sliding window
      * @param uncompressDataDeque data from which read the ongoing data to compress
      * @param max_duplicate_length max length for a duplicate to copy
@@ -95,6 +79,13 @@ public:
      * @return the compressed data
      */
     static QVector<char> compressLZSS(const QVector<char> &uncompressData);
+
+    /**
+     * Uncompressed data with a deflate algorithm
+     * @param compressedData to uncompress
+     * @return the uncompressed data
+     */
+    static QVector<char> uncompressDeflate(const QVector<char> &compressedData);
 
     /**
      * Encrypt data according to the encryption key given. The same key is

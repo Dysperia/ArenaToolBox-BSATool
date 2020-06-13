@@ -1,0 +1,163 @@
+#include "HuffmanTree.h"
+
+using namespace std;
+
+//******************************************************************************
+// Constructors
+//******************************************************************************
+HuffmanTree::HuffmanTree() {
+    // Initializing leaves
+    for (uint16_t i(0); i < 314; i++) {
+        mFreq[i] = 1;
+        mTree[i] = 627 + i;
+        mRevTree[i + 627] = i;
+    }
+    // initializing other nodes
+    uint16_t mFreqIdx = 0;
+    for (uint16_t i(314); i <= 626; i++) {
+        mFreq[i] = mFreq[mFreqIdx] + mFreq[mFreqIdx + 1];
+        mTree[i] = mFreqIdx;
+        mRevTree[mFreqIdx + 1] = i;
+        mRevTree[mFreqIdx] = i;
+        mFreqIdx += 2;
+    }
+    mFreq[627] = 0xFFFF;
+    // Root as no parent -> 0
+    mRevTree[626] = 0;
+}
+
+//**************************************************************************
+// Methods
+//**************************************************************************
+void HuffmanTree::resetTreeAtFreqTooHigh() {
+    // Reset because total freq too high on root
+    if (mFreq[0x0272] == 0x8000) {
+        // sub_31_60D start
+        int16_t parentIdx = 0x0000;
+        uint16_t freqValue;
+        uint16_t local3;
+        int16_t idx;
+        int16_t childIdx = 0x0000;
+        // for the entire tree
+        while (childIdx < 0x0273) {
+            // if not leaf
+            if (mTree[childIdx] < 0x0273) {
+                mFreq[parentIdx] = (mFreq[childIdx] + 1u) >> 1u;
+                mTree[parentIdx] = mTree[childIdx];
+                parentIdx++;
+            }
+            childIdx++;
+        }
+
+        childIdx = 0x0000;
+        parentIdx = 0x013A;
+        // on parent or right sibling node
+        while (parentIdx < 0x0273) {
+            idx = childIdx + 1;
+            mFreq[parentIdx] = mFreq[childIdx] + mFreq[idx];
+            freqValue = mFreq[parentIdx];
+
+            idx = parentIdx - 1;
+            while (mFreq[idx] > freqValue) {
+                idx--;
+            }
+            idx++;
+            local3 = (parentIdx - idx);
+            // sub_00_7718 start
+            // sub_00_7736 start
+            if (local3 < 1) {
+                for (uint16_t i(0); i < local3; i++) {
+                    mFreq[idx + 1 + local3 - 1 - i] = mFreq[idx + local3 - 1 - i];
+                }
+            } else {
+                for (uint16_t i(0); i < (local3 >> 2u); i++) {
+                    mFreq[idx + 1 + i * 2] = mFreq[idx + i * 2];
+                    mFreq[idx + 1 + i * 2 + 1] = mFreq[idx + i * 2 + 1];
+                }
+                for (uint16_t i(0); i < (local3 & 0x0003u); i++) {
+                    mFreq[idx + 1 + i + (local3 >> 2u)] = mFreq[idx + i + (local3 >> 2u)];
+                }
+            }
+            // sub_00_7736 end
+            // sub_00_7718 end
+            mFreq[idx] = freqValue;
+            // sub_00_7718 start
+            // sub_00_7736 start
+            if (local3 < 2) {
+                for (uint16_t i(0); i < local3; i++) {
+                    mTree[idx + 1 + local3 - 1 - i] = mTree[idx + local3 - 1 - i];
+                }
+            } else {
+                for (uint16_t i(0); i < (local3 >> 2u); i++) {
+                    mTree[idx + 1 + i * 2] = mTree[idx + i * 2];
+                }
+                for (uint16_t i(0); i < (local3 & 0x0003u); i++) {
+                    mTree[idx + 1 + i] = mTree[idx + i];
+                }
+            }
+            // sub_00_7736 end
+            // sub_00_7718 end
+            mTree[idx] = childIdx;
+            childIdx += 2;
+            parentIdx++;
+        }
+        // rebuilding reverse tree
+        childIdx = 0x0000;
+        while (childIdx < 0x0273) {
+            idx = mTree[childIdx];
+            if (idx < 0x0273) {
+                mRevTree[idx + 1] = childIdx;
+            }
+            mRevTree[idx] = childIdx;
+            childIdx++;
+        }
+        // sub_31_60D end
+    }
+}
+
+void HuffmanTree::increaseFreqLeaf(const quint16 &leaf) {
+// keeping tree ordered while increasing freq
+    uint16_t parentNodeIdx = mRevTree[leaf];
+    do {
+        mFreq[parentNodeIdx] += 1;
+        uint16_t parentNodeFreq = mFreq[parentNodeIdx];
+        uint16_t nextNodeIdx = parentNodeIdx + 1;
+        if (mFreq[nextNodeIdx] < parentNodeFreq) {
+            while (mFreq[nextNodeIdx] < parentNodeFreq) {
+                nextNodeIdx++;
+            }
+            nextNodeIdx--;
+            mFreq[parentNodeIdx] = mFreq[nextNodeIdx];
+            mFreq[nextNodeIdx] = parentNodeFreq;
+            uint16_t leftChildIdx = mTree[parentNodeIdx];
+            mRevTree[leftChildIdx] = nextNodeIdx;
+            // if not a leaf
+            if (leftChildIdx < 0x0273) {
+                mRevTree[leftChildIdx + 1] = nextNodeIdx;
+            }
+            uint16_t nextNodeLeftChild = mTree[nextNodeIdx];
+            mTree[nextNodeIdx] = leftChildIdx;
+            mRevTree[nextNodeLeftChild] = parentNodeIdx;
+            if (nextNodeLeftChild < 0x0273) {
+                mRevTree[nextNodeLeftChild + 1] = parentNodeIdx;
+            }
+            mTree[parentNodeIdx] = nextNodeLeftChild;
+            parentNodeIdx = nextNodeIdx;
+        }
+        parentNodeIdx = mRevTree[parentNodeIdx];
+    } while (parentNodeIdx != 0x0000);
+}
+
+quint16 HuffmanTree::findLeaf(BitsReader &bitsReader) {
+    // searching leaf in tree from input
+    uint16_t leaf = mTree[0x0272];
+    while (leaf < 0x0273) {
+        uint16_t bits = bitsReader.getBits();
+        bitsReader.removeBits(1);
+        uint16_t childChoice = bits >> 15u;
+        leaf = mTree[leaf + childChoice];
+    }
+    resetTreeAtFreqTooHigh();
+    increaseFreqLeaf(leaf);
+    return leaf;
+}

@@ -38,6 +38,10 @@ set(BSATool_SRCS
         "main/main.cpp"
         "utils/Compression.cpp"
         "utils/Compression.h"
+        "utils/HuffmanTree.cpp"
+        "utils/HuffmanTree.h"
+        "utils/BitsReader.cpp"
+        "utils/BitsReader.h"
         "utils/SlidingWindow.h")
 set(BSATool_MAIN "main/main.cpp")
 

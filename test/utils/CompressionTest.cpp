@@ -1,6 +1,7 @@
 #include <QtTest/QtTest>
 #include "CompressionTest.h"
 #include "../../src/utils/Compression.h"
+#include "CompressionTestNativeDeflate.cpp"
 
 void CompressionTest::testLZSSUncompression() {
     QWARN("Should uncompress the file and get the original data");
@@ -21,6 +22,32 @@ void CompressionTest::testLZSSCompression() {
     QVector<char> compressedThenUncompressedDataFromAlgorithm = Compression::uncompressLZSS(Compression::compressLZSS(uncompressedDataFromFile));
     QVERIFY(!compressedThenUncompressedDataFromAlgorithm.isEmpty());
     QCOMPARE(compressedThenUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
+}
+
+void CompressionTest::testDeflateUncompression() {
+    QWARN("Should uncompress the file and get the original data");
+    QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedDeflate.data"));
+    QVERIFY(!uncompressedDataFromFile.isEmpty());
+    QVector<char> compressedDataFromFile = readFile(QStringLiteral("ressources/compressedDeflate.data"));
+    QVERIFY(!compressedDataFromFile.isEmpty());
+    QVector<char> uncompressedDataFromAlgorithm = Compression::uncompressDeflate(compressedDataFromFile);
+    QVERIFY(!uncompressedDataFromAlgorithm.isEmpty());
+    QCOMPARE(uncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
+}
+
+void CompressionTest::testNativeDeflateUncompression() {
+    QWARN("Should uncompress natively the file and get the original data");
+    QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedDeflate.data"));
+    QVERIFY(!uncompressedDataFromFile.isEmpty());
+    QVector<char> compressedDataFromFile = readFile(QStringLiteral("ressources/compressedDeflate.data"));
+    QVERIFY(!compressedDataFromFile.isEmpty());
+    QVector<char> uncompressedDataFromAlgorithm = nativeDeflateUncompression(compressedDataFromFile, uncompressedDataFromFile.size());
+    QVERIFY(!uncompressedDataFromAlgorithm.isEmpty());
+    QCOMPARE(uncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
+}
+
+void CompressionTest::testDeflateCompression() {
+
 }
 
 void CompressionTest::testEncryptionDecryption() {

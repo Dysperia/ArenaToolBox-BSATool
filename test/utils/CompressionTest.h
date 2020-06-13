@@ -17,6 +17,18 @@ private slots:
      */
     void testLZSSCompression();
     /**
+     * @brief test deflate uncompression
+     */
+    void testDeflateUncompression();
+    /**
+     * @brief test deflate native uncompression
+     */
+    void testNativeDeflateUncompression();
+    /**
+     * @brief test deflate compression
+     */
+    void testDeflateCompression();
+    /**
      * @brief test encryption decryption
      */
     void testEncryptionDecryption();
