@@ -18,6 +18,19 @@ template<typename _type, size_t _size>
 class SlidingWindow {
 public:
     //**************************************************************************
+    // Structures
+    //**************************************************************************
+    /**
+     * Store the result of a duplicate search in a sliding window
+     * Length is the duplicate length and startIndex is the start offset in the
+     * sliding window
+     */
+    struct DuplicateSearchResult {
+        size_t length;
+        size_t startIndex;
+    };
+
+    //**************************************************************************
     // Getters/setters
     //**************************************************************************
     /**
@@ -32,9 +45,15 @@ public:
      */
     const array<_type, _size> &getWindow() const;
 
-    //**************************************************************************
-    // Methods
-    //**************************************************************************
+    /**
+     * Search for a duplicate in the sliding window
+     * @param uncompressDataDeque data from which read the ongoing data to compress
+     * @param max_duplicate_length max length for a duplicate to copy
+     * @return the search result
+     */
+    DuplicateSearchResult searchDuplicateInSlidingWindow(const deque<_type> &uncompressDataDeque,
+                                                         size_t max_duplicate_length);
+
     /**
      * Read the data at a given index in the window
      * @param index Index from which to read. If it is not in the range [0, _size-1] it will become using
@@ -69,6 +88,27 @@ private:
      * Array used to internally build the sliding window
      */
     array<_type, _size> mWindow{};
+
+    //**************************************************************************
+    // Methods
+    //**************************************************************************
+    /**
+     * Search for a duplicate in the possibly soon rewritten part of the sliding window
+     * @param uncompressDataDeque data from which read the ongoing data to compress
+     * @param max_duplicate_length max length for a duplicate to copy
+     * @return the search result
+     */
+    DuplicateSearchResult searchDuplicateInSlidingWindowLookAheadOnly(const deque<_type> &uncompressDataDeque,
+                                                                      size_t max_duplicate_length);
+
+    /**
+     * Search for a duplicate in the sliding window, avoiding the last max_duplicate_length bytes of the window
+     * @param uncompressDataDeque data from which read the ongoing data to compress
+     * @param max_duplicate_length max length for a duplicate to copy
+     * @return the search result
+     */
+    DuplicateSearchResult searchDuplicateInSlidingWindowNoLookAhead(const deque<_type> &uncompressDataDeque,
+                                                                    size_t max_duplicate_length);
 };
 
 #include "SlidingWindow.cpp"

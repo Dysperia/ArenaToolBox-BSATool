@@ -12,56 +12,6 @@ using namespace std;
  * the data. It also contains a helper to encrypt/decrypt INF file
  */
 class Compression {
-private:
-    //**************************************************************************
-    // Structures
-    //**************************************************************************
-    /**
-     * Store the result of a duplicate search in a sliding window
-     * Length is the duplicate length and startIndex is the start offset in the
-     * sliding window
-     */
-    struct DuplicateSearchResult {
-        quint8 length;
-        quint16 startIndex;
-    };
-
-    //**************************************************************************
-    // Methods
-    //**************************************************************************
-    /**
-     * Search for a duplicate in the possibly soon rewritten part of the sliding window
-     * @param uncompressDataDeque data from which read the ongoing data to compress
-     * @param max_duplicate_length max length for a duplicate to copy
-     * @param window sliding window
-     * @return the search result
-     */
-    static DuplicateSearchResult searchDuplicateInSlidingWindowLookAheadOnly(const deque<char> &uncompressDataDeque,
-                                                                             quint8 max_duplicate_length,
-                                                                             const SlidingWindow<char, 4096> &window);
-
-    /**
-     * Search for a duplicate in the sliding window, avoiding the last max_duplicate_length bytes of the window
-     * @param uncompressDataDeque data from which read the ongoing data to compress
-     * @param max_duplicate_length max length for a duplicate to copy
-     * @param window sliding window
-     * @return the search result
-     */
-    static DuplicateSearchResult searchDuplicateInSlidingWindowNoLookAhead(const deque<char> &uncompressDataDeque,
-                                                                           quint8 max_duplicate_length,
-                                                                           const SlidingWindow<char, 4096> &window);
-
-    /**
-     * Search for a duplicate in the sliding window
-     * @param uncompressDataDeque data from which read the ongoing data to compress
-     * @param max_duplicate_length max length for a duplicate to copy
-     * @param window sliding window
-     * @return the search result
-     */
-    static DuplicateSearchResult searchDuplicateInSlidingWindow(const deque<char> &uncompressDataDeque,
-                                                                quint8 max_duplicate_length,
-                                                                const SlidingWindow<char, 4096> &window);
-
 public:
     //**************************************************************************
     // Methods

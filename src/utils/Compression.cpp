@@ -5,6 +5,9 @@
 #include "HuffmanTree.h"
 #include "BitsReader.h"
 
+// alias
+typedef SlidingWindow<char, 4096> SWChar4096;
+
 //**************************************************************************
 // Methods
 //**************************************************************************
@@ -15,7 +18,7 @@ QVector<char> Compression::uncompressLZSS(const QVector<char> &compressedData) {
         compressDataDeque.push_back(byte);
     }
     // init sliding window
-    SlidingWindow<char, 4096> window;
+    SWChar4096 window;
     for (int i(0); i < 0xFEE; ++i) {
         window.insert(0x20);
     }
@@ -67,7 +70,7 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
     // cannot be higher than 18 because length-3 should take at most 4 bits
     const quint8 max_duplicate_length(18);
     // init sliding window of maximum size since offset are encoded using at most 12 bits
-    SlidingWindow<char, 4096> window;
+    SWChar4096 window;
     for (int i(0); i < 0xFEE; ++i) {
         window.insert(0x20);
     }
@@ -94,8 +97,8 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
             compressedBytesBuffer.clear();
         }
         // search for a duplicate
-        const DuplicateSearchResult &duplicate = searchDuplicateInSlidingWindow(uncompressDataDeque,
-                                                                                max_duplicate_length, window);
+        const SWChar4096::DuplicateSearchResult &duplicate = window.searchDuplicateInSlidingWindow(uncompressDataDeque,
+                                                                                                   max_duplicate_length);
         // Writing compressed data to buffer
         if (duplicate.length > 2) {
             // next flag is 0
@@ -183,7 +186,7 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
         compressDataDeque.push_back(byte);
     }
     // init sliding window
-    SlidingWindow<char, 4096> window;
+    SWChar4096 window;
     for (int i(0); i < 4036; ++i) {
         window.insert(0x20);
     }
@@ -201,7 +204,7 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
             uncompressedData.push_back(colorByte);
             window.insert(colorByte);
         }
-        // copy string from window
+            // copy string from window
         else {
             // Reading index for offset tables
             quint16 offsetTableIdx = bitsReader.getBits() >> 8u;
@@ -217,14 +220,14 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
                 bitsReader.removeBits(1);
                 offsetToCopyLowBits = (offsetToCopyLowBits << 1u) + (bits >> 15u);
             }
-            // gettting offset from high and low bits
+            // getting offset from high and low bits
             quint16 offsetFromCurrentPosition = (offsetToCopyLowBits & 0x003Fu) | offsetToCopyHighBits;
             // string start position in window
             quint16 copyPosition = (window.getMCurrentInsertPosition() - offsetFromCurrentPosition - 1) & 0x0FFFu;
             // getting length from leaf value (minus 256 because 256 color leaves before length leaves)
             // the length value stored in leaves is the length - 3
             quint16 nbToCopy = colorOrNbToCopy - 256 + 3;
-            // copy
+            // string copy
             for (quint16 i(0); i < nbToCopy; i++) {
                 quint8 colorByte = window.readAtIndex(copyPosition + i);
                 uncompressedData.push_back(colorByte);
@@ -233,95 +236,6 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
         }
     }
     return uncompressedData;
-}
-
-Compression::DuplicateSearchResult Compression::searchDuplicateInSlidingWindowLookAheadOnly(
-        const deque<char> &uncompressDataDeque, const quint8 max_duplicate_length,
-        const SlidingWindow<char, 4096> &window) {
-    // search longest possible considering max duplicate length and remaining uncompressed data
-    quint8 max_possible_duplicate_length(
-            uncompressDataDeque.size() < max_duplicate_length ? uncompressDataDeque.size() : max_duplicate_length);
-    // building preview window using current data and future one
-    QVector<char> snapshotFutureWindow;
-    // end of current buffer
-    for (int i(-max_duplicate_length); i < 0; ++i) {
-        snapshotFutureWindow.push_back(window.readAtIndex(window.getMCurrentInsertPosition() + i));
-    }
-    // data that will next be written in buffer
-    for (size_t i(0); i < max_possible_duplicate_length - 1; ++i) {
-        snapshotFutureWindow.push_back(uncompressDataDeque[i]);
-    }
-    // searching for duplicate
-    DuplicateSearchResult result = {0, 0};
-    const char &nextUncompressedByte = uncompressDataDeque.front();
-    for (int i(0); i < max_duplicate_length && result.length < max_possible_duplicate_length; ++i) {
-        // found start for a match
-        if (nextUncompressedByte == snapshotFutureWindow[i]) {
-            // computing sequence length
-            quint8 tempLength(1);
-            // computing while not the longest length and available data
-            while (tempLength < max_possible_duplicate_length &&
-                   snapshotFutureWindow[i + tempLength] == uncompressDataDeque[tempLength]) {
-                tempLength++;
-            }
-            // writing result if longer
-            if (tempLength > result.length) {
-                result.length = tempLength;
-                result.startIndex = window.getStandardEquivalentIndex(
-                        window.getMCurrentInsertPosition() + i - max_duplicate_length);
-            }
-        }
-    }
-    return result;
-}
-
-Compression::DuplicateSearchResult Compression::searchDuplicateInSlidingWindowNoLookAhead(
-        const deque<char> &uncompressDataDeque, const quint8 max_duplicate_length,
-        const SlidingWindow<char, 4096> &window) {
-    DuplicateSearchResult result = {0, 0};
-    quint8 tempLength(0);
-    quint16 tempStartIndex(0);
-    // searching a first byte match until longest found or all window searched
-    // starting at offset 1 from current position to avoid the window current index
-    const char &nextUncompressedByte = uncompressDataDeque.front();
-    for (int i = 1; i < 4096 - max_duplicate_length && result.length < max_duplicate_length; ++i) {
-        tempStartIndex = window.getStandardEquivalentIndex(window.getMCurrentInsertPosition() + i);
-        // Found a possible match
-        if (nextUncompressedByte == window.readAtIndex(tempStartIndex)) {
-            tempLength = 1;
-            // computing length for the found match, while checking if enough data available for it
-            while (tempLength < uncompressDataDeque.size() &&
-                   tempLength < max_duplicate_length &&
-                   uncompressDataDeque[tempLength] == window.readAtIndex(tempStartIndex + tempLength)) {
-                tempLength++;
-            }
-            // keeping only if longer than a previous one
-            if (tempLength > result.length) {
-                result.length = tempLength;
-                result.startIndex = tempStartIndex;
-            }
-        }
-    }
-    return result;
-}
-
-Compression::DuplicateSearchResult Compression::searchDuplicateInSlidingWindow(const deque<char> &uncompressDataDeque,
-                                                                               const quint8 max_duplicate_length,
-                                                                               const SlidingWindow<char, 4096> &window) {
-    // searching for an ongoing duplicate using the possibly rewritten part of the window
-    const DuplicateSearchResult &lookAhead = searchDuplicateInSlidingWindowLookAheadOnly(uncompressDataDeque,
-                                                                                         max_duplicate_length,
-                                                                                         window);
-    DuplicateSearchResult noLookAhead = {0, 0};
-    // not longest found
-    if (lookAhead.length < max_duplicate_length) {
-        // Search through buffer in case there is a longest duplicate to copy avoiding the possibly
-        // rewritten section already search before
-        noLookAhead = searchDuplicateInSlidingWindowNoLookAhead(uncompressDataDeque,
-                                                                max_duplicate_length,
-                                                                window);
-    }
-    return lookAhead.length > noLookAhead.length ? lookAhead : noLookAhead;
 }
 
 QVector<char> Compression::encryptDecrypt(const QVector<char> &data, QVector<quint8> cryptKey) {
