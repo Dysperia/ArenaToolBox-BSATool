@@ -7,14 +7,14 @@ using namespace std;
 //******************************************************************************
 HuffmanTree::HuffmanTree() {
     // Initializing leaves
-    for (uint16_t i(0); i < 314; i++) {
+    for (quint16 i(0); i < 314; i++) {
         mFreq[i] = 1;
         mTree[i] = 627 + i;
         mRevTree[i + 627] = i;
     }
     // initializing other nodes
-    uint16_t mFreqIdx = 0;
-    for (uint16_t i(314); i <= 626; i++) {
+    quint16 mFreqIdx = 0;
+    for (quint16 i(314); i <= 626; i++) {
         mFreq[i] = mFreq[mFreqIdx] + mFreq[mFreqIdx + 1];
         mTree[i] = mFreqIdx;
         mRevTree[mFreqIdx + 1] = i;
@@ -33,11 +33,11 @@ void HuffmanTree::resetTreeAtFreqTooHigh() {
     // Reset because total freq too high on root
     if (mFreq[0x0272] == 0x8000) {
         // sub_31_60D start
-        int16_t parentIdx = 0x0000;
-        uint16_t freqValue;
-        uint16_t local3;
-        int16_t idx;
-        int16_t childIdx = 0x0000;
+        quint16 parentIdx = 0x0000;
+        quint16 freqValue;
+        quint16 local3;
+        quint16 idx;
+        quint16 childIdx = 0x0000;
         // for the entire tree
         while (childIdx < 0x0273) {
             // if not leaf
@@ -66,15 +66,15 @@ void HuffmanTree::resetTreeAtFreqTooHigh() {
             // sub_00_7718 start
             // sub_00_7736 start
             if (local3 < 1) {
-                for (uint16_t i(0); i < local3; i++) {
+                for (quint16 i(0); i < local3; i++) {
                     mFreq[idx + 1 + local3 - 1 - i] = mFreq[idx + local3 - 1 - i];
                 }
             } else {
-                for (uint16_t i(0); i < (local3 >> 2u); i++) {
+                for (quint16 i(0); i < (local3 >> 2u); i++) {
                     mFreq[idx + 1 + i * 2] = mFreq[idx + i * 2];
                     mFreq[idx + 1 + i * 2 + 1] = mFreq[idx + i * 2 + 1];
                 }
-                for (uint16_t i(0); i < (local3 & 0x0003u); i++) {
+                for (quint16 i(0); i < (local3 & 0x0003u); i++) {
                     mFreq[idx + 1 + i + (local3 >> 2u)] = mFreq[idx + i + (local3 >> 2u)];
                 }
             }
@@ -84,14 +84,14 @@ void HuffmanTree::resetTreeAtFreqTooHigh() {
             // sub_00_7718 start
             // sub_00_7736 start
             if (local3 < 2) {
-                for (uint16_t i(0); i < local3; i++) {
+                for (quint16 i(0); i < local3; i++) {
                     mTree[idx + 1 + local3 - 1 - i] = mTree[idx + local3 - 1 - i];
                 }
             } else {
-                for (uint16_t i(0); i < (local3 >> 2u); i++) {
+                for (quint16 i(0); i < (local3 >> 2u); i++) {
                     mTree[idx + 1 + i * 2] = mTree[idx + i * 2];
                 }
-                for (uint16_t i(0); i < (local3 & 0x0003u); i++) {
+                for (quint16 i(0); i < (local3 & 0x0003u); i++) {
                     mTree[idx + 1 + i] = mTree[idx + i];
                 }
             }
@@ -117,11 +117,11 @@ void HuffmanTree::resetTreeAtFreqTooHigh() {
 
 void HuffmanTree::increaseFreqLeaf(const quint16 &leaf) {
 // keeping tree ordered while increasing freq
-    uint16_t parentNodeIdx = mRevTree[leaf];
+    quint16 parentNodeIdx = mRevTree[leaf];
     do {
         mFreq[parentNodeIdx] += 1;
-        uint16_t parentNodeFreq = mFreq[parentNodeIdx];
-        uint16_t nextNodeIdx = parentNodeIdx + 1;
+        quint16 parentNodeFreq = mFreq[parentNodeIdx];
+        quint16 nextNodeIdx = parentNodeIdx + 1;
         if (mFreq[nextNodeIdx] < parentNodeFreq) {
             while (mFreq[nextNodeIdx] < parentNodeFreq) {
                 nextNodeIdx++;
@@ -129,13 +129,13 @@ void HuffmanTree::increaseFreqLeaf(const quint16 &leaf) {
             nextNodeIdx--;
             mFreq[parentNodeIdx] = mFreq[nextNodeIdx];
             mFreq[nextNodeIdx] = parentNodeFreq;
-            uint16_t leftChildIdx = mTree[parentNodeIdx];
+            quint16 leftChildIdx = mTree[parentNodeIdx];
             mRevTree[leftChildIdx] = nextNodeIdx;
             // if not a leaf
             if (leftChildIdx < 0x0273) {
                 mRevTree[leftChildIdx + 1] = nextNodeIdx;
             }
-            uint16_t nextNodeLeftChild = mTree[nextNodeIdx];
+            quint16 nextNodeLeftChild = mTree[nextNodeIdx];
             mTree[nextNodeIdx] = leftChildIdx;
             mRevTree[nextNodeLeftChild] = parentNodeIdx;
             if (nextNodeLeftChild < 0x0273) {
@@ -150,14 +150,27 @@ void HuffmanTree::increaseFreqLeaf(const quint16 &leaf) {
 
 quint16 HuffmanTree::findLeaf(BitsReader &bitsReader) {
     // searching leaf in tree from input
-    uint16_t leaf = mTree[0x0272];
+    quint16 leaf = mTree[0x0272];
     while (leaf < 0x0273) {
-        uint16_t bits = bitsReader.getBits();
+        quint16 bits = bitsReader.getBits();
         bitsReader.removeBits(1);
-        uint16_t childChoice = bits >> 15u;
+        quint16 childChoice = bits >> 15u;
         leaf = mTree[leaf + childChoice];
     }
     resetTreeAtFreqTooHigh();
     increaseFreqLeaf(leaf);
     return leaf;
+}
+
+void HuffmanTree::writePathForLeaf(BitsWriter &bitsWriter, const quint16 &leaf) {
+    quint16 node = mRevTree[leaf];
+    quint8 left = 0u;
+    quint8 right = 1u;
+    while (mRevTree[node] != 0) {
+        quint16 parent = mRevTree[node];
+        bitsWriter.addBits(mTree[parent] == node ? left : right, 1u);
+        node = parent;
+    }
+    resetTreeAtFreqTooHigh();
+    increaseFreqLeaf(leaf);
 }

@@ -4,7 +4,7 @@
 
 #include <QtCore/QVector>
 #include <array>
-#include "BitsReader.h"
+#include "BitsStreams.h"
 
 using namespace std;
 
@@ -96,6 +96,15 @@ public:
      * @return the found leaf's unprocessed value
      */
     quint16 findLeaf(BitsReader &bitsReader);
+
+    /**
+     * Writing bits of the path from the root to the given leaf to the given writer. The leaf's
+     * frequency is increased by one, the tree resets if total frequency too high and the tree is processed to remained
+     * ordered.
+     * @param bitsWriter Writer from which write the bits used to navigate the tree (0 = left child, 1 = right child)
+     * @param leaf the leaf's unprocessed value
+     */
+    void writePathForLeaf(BitsWriter &bitsWriter, const quint16 &leaf);
 };
 
 

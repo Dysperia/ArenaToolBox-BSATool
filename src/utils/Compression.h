@@ -38,6 +38,13 @@ public:
     static QVector<char> uncompressDeflate(const QVector<char> &compressedData);
 
     /**
+     * Compressed data with a deflate algorithm
+     * @param uncompressedData to compress
+     * @return the compressed data
+     */
+    static QVector<char> compressDeflate(const QVector<char> &uncompressedData);
+
+    /**
      * Encrypt data according to the encryption key given. The same key is
      * used to encrypt and decrypt using a incrementing counter and xor operation
      * @param data to encrypt or decrypt

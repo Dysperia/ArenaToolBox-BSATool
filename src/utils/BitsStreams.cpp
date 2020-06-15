@@ -1,8 +1,8 @@
 #include <error/Status.h>
-#include "BitsReader.h"
+#include "BitsStreams.h"
 
 //**************************************************************************
-// Class Methods
+// Statics
 //**************************************************************************
 uchar BitsReader::getNextUnsignedByte(deque<char> &data) {
     char nextByte = getNextByte(data);
@@ -23,35 +23,63 @@ char BitsReader::getNextByte(deque<char> &data) {
 //**************************************************************************
 BitsReader::BitsReader(deque<char> &source): mSource(source) {}
 
+BitsWriter::BitsWriter(QVector<char> &destination): mDestination(destination) {}
+
 //**************************************************************************
 // Getters/setters
 //**************************************************************************
 quint8 BitsReader::getRemainingBits() const {
-    return mRemainingBits;
+    return mBitsBuffer.mRemainingBits;
 }
 
 quint16 BitsReader::getBits() {
     // if needed, getting 8 new bits to ensure having at least 8 usable
-    while (mRemainingBits <= 0x08) {
+    while (mBitsBuffer.mRemainingBits <= NB_BITS_IN_BYTE) {
         quint16 nextBits;
         if (!mSource.empty()) {
             nextBits = getNextUnsignedByte(mSource) & 0x00FFu;
         } else {
             nextBits = 0x0000u;
         }
-        quint8 nbGarbageBitsInHighByte = 0x08u - mRemainingBits;
+        quint8 nbGarbageBitsInHighByte = NB_BITS_IN_BYTE - mBitsBuffer.mRemainingBits;
         quint16 movedNewBits = nextBits << nbGarbageBitsInHighByte;
-        mBits = movedNewBits | mBits;
-        mRemainingBits += 8;
+        mBitsBuffer.mBits = movedNewBits | mBitsBuffer.mBits;
+        mBitsBuffer.mRemainingBits += 8;
     }
-    return mBits;
+    return mBitsBuffer.mBits;
 }
 
 //**************************************************************************
 // Methods
 //**************************************************************************
 void BitsReader::removeBits(const quint8 &nbBitsToRemove) {
-    quint8 minNb = min(mRemainingBits, nbBitsToRemove);
-    mBits = mBits << minNb;
-    mRemainingBits -= minNb;
+    quint8 minNb = min(mBitsBuffer.mRemainingBits, nbBitsToRemove);
+    mBitsBuffer.mBits = mBitsBuffer.mBits << minNb;
+    mBitsBuffer.mRemainingBits -= minNb;
+}
+
+void BitsWriter::addBits(const quint8 byte, const quint8 nbBits) {
+    // if needed, flushing bits to ensure having less than 8 usable
+    while (mBitsBuffer.mRemainingBits >= NB_BITS_IN_BYTE) {
+        flushHighByte();
+    }
+    quint8 nbGarbageBitsInHighByte = NB_BITS_IN_BYTE - mBitsBuffer.mRemainingBits;
+    quint16 movedNewBits = byte << nbGarbageBitsInHighByte;
+    mBitsBuffer.mBits = movedNewBits | mBitsBuffer.mBits;
+    mBitsBuffer.mRemainingBits += nbBits;
+}
+
+void BitsWriter::flush() {
+    while (mBitsBuffer.mRemainingBits > 0) {
+        flushHighByte();
+    }
+}
+
+void BitsWriter::flushHighByte() {
+    if (mBitsBuffer.mRemainingBits > 0) {
+        quint8 highByte = mBitsBuffer.mBits >> NB_BITS_IN_BYTE;
+        mDestination.push_back(reinterpret_cast<char &>(highByte));
+        mBitsBuffer.mBits <<= NB_BITS_IN_BYTE;
+        mBitsBuffer.mRemainingBits -= min(mBitsBuffer.mRemainingBits, NB_BITS_IN_BYTE);
+    }
 }
