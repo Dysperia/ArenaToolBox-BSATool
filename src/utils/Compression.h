@@ -35,7 +35,7 @@ public:
      * @param compressedData to uncompress
      * @return the uncompressed data
      */
-    static QVector<char> uncompressDeflate(const QVector<char> &compressedData);
+    static QVector<char> uncompressDeflate(const QVector<char> &compressedData, const quint16 &uncompressedSize);
 
     /**
      * Compressed data with a deflate algorithm

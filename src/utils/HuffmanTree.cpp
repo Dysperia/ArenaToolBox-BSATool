@@ -132,26 +132,26 @@ void HuffmanTree::increaseFreqLeaf(const quint16 &leaf) {
             quint16 leftChildIdx = mTree[parentNodeIdx];
             mRevTree[leftChildIdx] = nextNodeIdx;
             // if not a leaf
-            if (leftChildIdx < 0x0273) {
+            if (leftChildIdx < 627) {
                 mRevTree[leftChildIdx + 1] = nextNodeIdx;
             }
             quint16 nextNodeLeftChild = mTree[nextNodeIdx];
             mTree[nextNodeIdx] = leftChildIdx;
             mRevTree[nextNodeLeftChild] = parentNodeIdx;
-            if (nextNodeLeftChild < 0x0273) {
+            if (nextNodeLeftChild < 627) {
                 mRevTree[nextNodeLeftChild + 1] = parentNodeIdx;
             }
             mTree[parentNodeIdx] = nextNodeLeftChild;
             parentNodeIdx = nextNodeIdx;
         }
         parentNodeIdx = mRevTree[parentNodeIdx];
-    } while (parentNodeIdx != 0x0000);
+    } while (parentNodeIdx != 0);
 }
 
 quint16 HuffmanTree::findLeaf(BitsReader &bitsReader) {
     // searching leaf in tree from input
-    quint16 leaf = mTree[0x0272];
-    while (leaf < 0x0273) {
+    quint16 leaf = mTree[626];
+    while (leaf < 627) {
         quint16 bits = bitsReader.getBits();
         bitsReader.removeBits(1);
         quint16 childChoice = bits >> 15u;
@@ -163,13 +163,17 @@ quint16 HuffmanTree::findLeaf(BitsReader &bitsReader) {
 }
 
 void HuffmanTree::writePathForLeaf(BitsWriter &bitsWriter, const quint16 &leaf) {
+    deque<quint16> path;
     quint16 node = mRevTree[leaf];
-    quint8 left = 0u;
-    quint8 right = 1u;
-    while (mRevTree[node] != 0) {
+    quint8 left = 0;
+    quint8 right = 0x80u;
+    while (node < 626) {
         quint16 parent = mRevTree[node];
-        bitsWriter.addBits(mTree[parent] == node ? left : right, 1u);
+        path.push_front(mTree[parent] == node ? left : right);
         node = parent;
+    }
+    for (auto direction : path) {
+        bitsWriter.addBits(direction, 1u);
     }
     resetTreeAtFreqTooHigh();
     increaseFreqLeaf(leaf);

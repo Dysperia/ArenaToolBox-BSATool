@@ -139,7 +139,7 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
     return compressedData;
 }
 
-QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData) {
+QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData, const quint16 &uncompressedSize) {
     quint8 offsetHighBits[256] = {
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -195,7 +195,7 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
     // bits reader to manage reading of incoming bits from compressed data
     BitsReader bitsReader(compressDataDeque);
     // decompressing data from source
-    while (!compressDataDeque.empty()) {
+    while (uncompressedData.size() < uncompressedSize) {
         // searching leaf value in tree from input. The real value is the leaf value minus 627
         quint16 colorOrNbToCopy = huffmanTree.findLeaf(bitsReader) - 627;
         // single byte copy
@@ -304,36 +304,41 @@ QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData
         // string copy
         if (duplicate.length > 2) {
             // computing offset from current insert position to save in compressed data
-            quint16 offsetFromCurrentPosition = (duplicate.startIndex - window.getMCurrentInsertPosition() + 1) & 0x0FFFu;
-            quint16 tableIdx = 1000u;
+            quint16 offsetFromCurrentPosition = (window.getMCurrentInsertPosition() - duplicate.startIndex - 1) & 0x0FFFu;
+            // offset low bits
+            quint16 offsetToCopyLowBits = offsetFromCurrentPosition & 0x003Fu;
+            // offset high bits
+            quint16 offsetToCopyHighBits = offsetFromCurrentPosition >> 6u;
+            // Getting index
+            quint16 tableIdx = 1000u; // 1000 is an impossible value  : index is in range 0-255
             for (quint16 i(0); i<256 && tableIdx == 1000u; i++) {
-                // init offset low bits
-                quint16 offsetToCopyLowBits = offsetFromCurrentPosition & 0x003Fu;
-                // init offset high bits
-                quint16 offsetToCopyHighBits = offsetHighBits[i] << 6u;
-                // getting missing bits and added them if needed to get the full offset low bits
-                quint16 nbBitsToReadAndAdd = nbBitsMissingInOffsetLowBits[i] - 2u;
-                if (offsetFromCurrentPosition == (offsetToCopyLowBits | offsetToCopyHighBits) &&
-                    (offsetToCopyLowBits >> nbBitsToReadAndAdd) == i) {
-                    tableIdx = i;
+                if (offsetHighBits[i] == offsetToCopyHighBits) {
+                    tableIdx = i; // first possible index
                 }
             }
+            quint8 nbBitsToGetFromStream = nbBitsMissingInOffsetLowBits[tableIdx] - 2u;
+            tableIdx += offsetToCopyLowBits >> nbBitsToGetFromStream; // real index
+            // Writing data
             huffmanTree.writePathForLeaf(bitsWriter, duplicate.length - 3 + 256 + 627);
             bitsWriter.addBits(tableIdx, 8);
-            quint8 nbBitsToGetFromStream = nbBitsMissingInOffsetLowBits[tableIdx] - 2u;
             quint8 nbGarbageBits = NB_BITS_IN_BYTE - nbBitsToGetFromStream;
             quint8 offsetBitsToGetFromStream = offsetFromCurrentPosition << nbGarbageBits;
             bitsWriter.addBits(offsetBitsToGetFromStream, nbBitsToGetFromStream);
+            for (quint16 i(0); i < duplicate.length; i++) {
+                window.insert(uncompressDataDeque.front());
+                uncompressDataDeque.pop_front();
+            }
         }
         // single byte copy
         else {
             quint8 colorByte = uncompressDataDeque.front();
+            uncompressDataDeque.pop_front();
             huffmanTree.writePathForLeaf(bitsWriter, colorByte + 627);
             window.insert(colorByte);
-            uncompressDataDeque.pop_front();
         }
     }
-    return uncompressedData;
+    bitsWriter.flush();
+    return compressedData;
 }
 
 QVector<char> Compression::encryptDecrypt(const QVector<char> &data, QVector<quint8> cryptKey) {
