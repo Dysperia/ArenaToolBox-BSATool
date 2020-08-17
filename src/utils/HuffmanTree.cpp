@@ -1,4 +1,5 @@
 #include "HuffmanTree.h"
+#include <cstring>
 
 using namespace std;
 
@@ -31,121 +32,90 @@ HuffmanTree::HuffmanTree() {
 //**************************************************************************
 void HuffmanTree::resetTreeAtFreqTooHigh() {
     // Reset because total freq too high on root
-    if (mFreq[0x0272] == 0x8000) {
-        // sub_31_60D start
-        quint16 parentIdx = 0x0000;
-        quint16 freqValue;
-        quint16 local3;
-        quint16 idx;
-        quint16 childIdx = 0x0000;
-        // for the entire tree
-        while (childIdx < 0x0273) {
-            // if not leaf
-            if (mTree[childIdx] < 0x0273) {
-                mFreq[parentIdx] = (mFreq[childIdx] + 1u) >> 1u;
-                mTree[parentIdx] = mTree[childIdx];
-                parentIdx++;
+    if (mFreq[626] == 0x8000) {
+        // gathering leaf at the beginning and halving their freq
+        quint16 nextLeafFreeIndex = 0;
+        for (quint16 currentNode(0); currentNode < 627; currentNode++) {
+            // if leaf
+            if (mTree[currentNode] >= 627) {
+                mFreq[nextLeafFreeIndex] = (mFreq[currentNode] + 1) / 2;
+                mTree[nextLeafFreeIndex] = mTree[currentNode];
+                nextLeafFreeIndex++;
             }
-            childIdx++;
         }
 
-        childIdx = 0x0000;
-        parentIdx = 0x013A;
-        // on parent or right sibling node
-        while (parentIdx < 0x0273) {
-            idx = childIdx + 1;
-            mFreq[parentIdx] = mFreq[childIdx] + mFreq[idx];
-            freqValue = mFreq[parentIdx];
-
-            idx = parentIdx - 1;
-            while (mFreq[idx] > freqValue) {
-                idx--;
+        // for other nodes, rebuilding remaining tree
+        quint16 currentLeftChild = 0;
+        for (quint16 currentNode(314); currentNode < 627; currentNode++) {
+            // current node freq is sum of children
+            mFreq[currentNode] = mFreq[currentLeftChild] + mFreq[currentLeftChild + 1];
+            quint16 currentNodeFreq = mFreq[currentNode];
+            // currentNode has been lowered in freq -> searching superior freq before in case tree broken
+            quint16 farthestPreviousWithHigherFreq = currentNode - 1;
+            while (mFreq[farthestPreviousWithHigherFreq] > currentNodeFreq) {
+                farthestPreviousWithHigherFreq--;
             }
-            idx++;
-            local3 = (parentIdx - idx);
-            // sub_00_7718 start
-            // sub_00_7736 start
-            if (local3 < 1) {
-                for (quint16 i(0); i < local3; i++) {
-                    mFreq[idx + 1 + local3 - 1 - i] = mFreq[idx + local3 - 1 - i];
-                }
-            } else {
-                for (quint16 i(0); i < (local3 >> 2u); i++) {
-                    mFreq[idx + 1 + i * 2] = mFreq[idx + i * 2];
-                    mFreq[idx + 1 + i * 2 + 1] = mFreq[idx + i * 2 + 1];
-                }
-                for (quint16 i(0); i < (local3 & 0x0003u); i++) {
-                    mFreq[idx + 1 + i + (local3 >> 2u)] = mFreq[idx + i + (local3 >> 2u)];
-                }
-            }
-            // sub_00_7736 end
-            // sub_00_7718 end
-            mFreq[idx] = freqValue;
-            // sub_00_7718 start
-            // sub_00_7736 start
-            if (local3 < 2) {
-                for (quint16 i(0); i < local3; i++) {
-                    mTree[idx + 1 + local3 - 1 - i] = mTree[idx + local3 - 1 - i];
-                }
-            } else {
-                for (quint16 i(0); i < (local3 >> 2u); i++) {
-                    mTree[idx + 1 + i * 2] = mTree[idx + i * 2];
-                }
-                for (quint16 i(0); i < (local3 & 0x0003u); i++) {
-                    mTree[idx + 1 + i] = mTree[idx + i];
-                }
-            }
-            // sub_00_7736 end
-            // sub_00_7718 end
-            mTree[idx] = childIdx;
-            childIdx += 2;
-            parentIdx++;
+            farthestPreviousWithHigherFreq++;
+            // swaping node to keep tree organized if needed and setting up current parent
+            quint16 nbBytesToSwap = (currentNode - farthestPreviousWithHigherFreq) * 2;
+            memmove(&mFreq[farthestPreviousWithHigherFreq + 1], &mFreq[farthestPreviousWithHigherFreq], nbBytesToSwap);
+            mFreq[farthestPreviousWithHigherFreq] = currentNodeFreq;
+            memmove(&mTree[farthestPreviousWithHigherFreq + 1], &mTree[farthestPreviousWithHigherFreq], nbBytesToSwap);
+            mTree[farthestPreviousWithHigherFreq] = currentLeftChild;
+            // moving to next children
+            currentLeftChild += 2;
         }
+
         // rebuilding reverse tree
-        childIdx = 0x0000;
-        while (childIdx < 0x0273) {
-            idx = mTree[childIdx];
-            if (idx < 0x0273) {
-                mRevTree[idx + 1] = childIdx;
+        for (quint16 currentNode(0); currentNode < 627; currentNode++) {
+            quint16 leftChild = mTree[currentNode];
+            if (leftChild < 627) {
+                mRevTree[leftChild + 1] = currentNode;
             }
-            mRevTree[idx] = childIdx;
-            childIdx++;
+            mRevTree[leftChild] = currentNode;
         }
-        // sub_31_60D end
     }
 }
 
 void HuffmanTree::increaseFreqLeaf(const quint16 &leaf) {
-// keeping tree ordered while increasing freq
-    quint16 parentNodeIdx = mRevTree[leaf];
+    // keeping tree ordered while increasing freq
+    quint16 currentNode = mRevTree[leaf];
     do {
-        mFreq[parentNodeIdx] += 1;
-        quint16 parentNodeFreq = mFreq[parentNodeIdx];
-        quint16 nextNodeIdx = parentNodeIdx + 1;
-        if (mFreq[nextNodeIdx] < parentNodeFreq) {
-            while (mFreq[nextNodeIdx] < parentNodeFreq) {
-                nextNodeIdx++;
+        mFreq[currentNode] += 1;
+        quint16 currentNodeFreq = mFreq[currentNode];
+        quint16 LastNodeWithLowerFreq = currentNode + 1;
+        // if current node was the last with that frequency : nothing to do
+        if (mFreq[LastNodeWithLowerFreq] < currentNodeFreq) {
+            // searching last node with old value
+            while (mFreq[LastNodeWithLowerFreq] < currentNodeFreq) {
+                LastNodeWithLowerFreq++;
             }
-            nextNodeIdx--;
-            mFreq[parentNodeIdx] = mFreq[nextNodeIdx];
-            mFreq[nextNodeIdx] = parentNodeFreq;
-            quint16 leftChildIdx = mTree[parentNodeIdx];
-            mRevTree[leftChildIdx] = nextNodeIdx;
-            // if not a leaf
-            if (leftChildIdx < 627) {
-                mRevTree[leftChildIdx + 1] = nextNodeIdx;
+            LastNodeWithLowerFreq--;
+            // switching nodes and their subtrees
+            // nodes freq
+            mFreq[currentNode] = mFreq[LastNodeWithLowerFreq];
+            mFreq[LastNodeWithLowerFreq] = currentNodeFreq;
+            // subtrees parent reference in reverse tree
+            quint16 currentNodeLeftChild = mTree[currentNode];
+            mRevTree[currentNodeLeftChild] = LastNodeWithLowerFreq;
+            // if not a leaf, there is a right child to update
+            if (currentNodeLeftChild < 627) {
+                mRevTree[currentNodeLeftChild + 1] = LastNodeWithLowerFreq;
             }
-            quint16 nextNodeLeftChild = mTree[nextNodeIdx];
-            mTree[nextNodeIdx] = leftChildIdx;
-            mRevTree[nextNodeLeftChild] = parentNodeIdx;
-            if (nextNodeLeftChild < 627) {
-                mRevTree[nextNodeLeftChild + 1] = parentNodeIdx;
+            quint16 lastNodeWithLowerFreqLeftChild = mTree[LastNodeWithLowerFreq];
+            mRevTree[lastNodeWithLowerFreqLeftChild] = currentNode;
+            // if not a leaf, there is a right child to update
+            if (lastNodeWithLowerFreqLeftChild < 627) {
+                mRevTree[lastNodeWithLowerFreqLeftChild + 1] = currentNode;
             }
-            mTree[parentNodeIdx] = nextNodeLeftChild;
-            parentNodeIdx = nextNodeIdx;
+            // subtrees parent reference in main tree
+            mTree[LastNodeWithLowerFreq] = currentNodeLeftChild;
+            mTree[currentNode] = lastNodeWithLowerFreqLeftChild;
+            currentNode = LastNodeWithLowerFreq;
         }
-        parentNodeIdx = mRevTree[parentNodeIdx];
-    } while (parentNodeIdx != 0);
+        // getting parent node and starting again up to the root
+        currentNode = mRevTree[currentNode];
+    } while (currentNode != 0);
 }
 
 quint16 HuffmanTree::findLeaf(BitsReader &bitsReader) {

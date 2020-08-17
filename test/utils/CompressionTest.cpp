@@ -2,7 +2,6 @@
 #include <iostream>
 #include "CompressionTest.h"
 #include "../../src/utils/Compression.h"
-#include "CompressionTestNativeDeflate.cpp"
 
 void CompressionTest::testLZSSUncompression() {
     QWARN("Should uncompress the file and get the original data");
@@ -38,14 +37,14 @@ void CompressionTest::testDeflateUncompression() {
     QCOMPARE(uncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
 }
 
-void CompressionTest::testNativeDeflateUncompression() {
-    QWARN("Should uncompress natively the file and get the original data");
-    QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedDeflate.data"));
+void CompressionTest::testDeflateUncompressionWithReset() {
+    QWARN("Should uncompress the file and get the original data");
+    QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedDeflateWorstCase.data"));
     QVERIFY(!uncompressedDataFromFile.isEmpty());
-    QVector<char> compressedDataFromFile = readFile(QStringLiteral("ressources/compressedDeflate.data"));
+    QVector<char> compressedDataFromFile = readFile(QStringLiteral("ressources/compressedDeflateWorstCase.data"));
     QVERIFY(!compressedDataFromFile.isEmpty());
-    QVector<char> uncompressedDataFromAlgorithm = nativeDeflateUncompression(compressedDataFromFile,
-                                                                             uncompressedDataFromFile.size());
+    QVector<char> uncompressedDataFromAlgorithm = Compression::uncompressDeflate(compressedDataFromFile,
+                                                                                 uncompressedDataFromFile.size());
     QVERIFY(!uncompressedDataFromAlgorithm.isEmpty());
     QCOMPARE(uncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
 }
@@ -67,12 +66,25 @@ void CompressionTest::testDeflateCompression() {
         }
     }
     QCOMPARE(compressedThenUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
+}
 
+void CompressionTest::testDeflateCompressionWithReset() {
+    QWARN("Should compress then uncompress the file with reset and get the original data");
+    QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedDeflateWorstCase.data"));
+    QVERIFY(!uncompressedDataFromFile.isEmpty());
+
+    QVector<char> compressedDataFromAlgorithm = Compression::compressDeflate(uncompressedDataFromFile);
     QVERIFY(!compressedDataFromAlgorithm.isEmpty());
-    QVector<char> compressedThenNativeUncompressedDataFromAlgorithm = nativeDeflateUncompression(
+
+    QVector<char> compressedThenUncompressedDataFromAlgorithm = Compression::uncompressDeflate(
             compressedDataFromAlgorithm, uncompressedDataFromFile.size());
-    QVERIFY(!compressedThenNativeUncompressedDataFromAlgorithm.isEmpty());
-    QCOMPARE(compressedThenNativeUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
+    QVERIFY(!compressedThenUncompressedDataFromAlgorithm.isEmpty());
+    for (int i(0); i < min(compressedThenUncompressedDataFromAlgorithm.size(), uncompressedDataFromFile.size()); i++) {
+        if (compressedThenUncompressedDataFromAlgorithm[i] != uncompressedDataFromFile[i]) {
+            cout << i << "\n";
+        }
+    }
+    QCOMPARE(compressedThenUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
 }
 
 void CompressionTest::testEncryptionDecryption() {

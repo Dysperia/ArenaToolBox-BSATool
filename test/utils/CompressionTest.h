@@ -20,14 +20,12 @@ private slots:
      * @brief test deflate uncompression
      */
     void testDeflateUncompression();
-    /**
-     * @brief test deflate native uncompression
-     */
-    void testNativeDeflateUncompression();
+    void testDeflateUncompressionWithReset();
     /**
      * @brief test deflate compression
      */
     void testDeflateCompression();
+    void testDeflateCompressionWithReset();
     /**
      * @brief test encryption decryption
      */
