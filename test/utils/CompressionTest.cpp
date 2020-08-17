@@ -1,5 +1,4 @@
 #include <QtTest/QtTest>
-#include <iostream>
 #include "CompressionTest.h"
 #include "../../src/utils/Compression.h"
 
