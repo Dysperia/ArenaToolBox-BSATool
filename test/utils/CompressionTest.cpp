@@ -60,11 +60,6 @@ void CompressionTest::testDeflateCompression() {
     QVector<char> compressedThenUncompressedDataFromAlgorithm = Compression::uncompressDeflate(
             compressedDataFromAlgorithm, uncompressedDataFromFile.size());
     QVERIFY(!compressedThenUncompressedDataFromAlgorithm.isEmpty());
-    for (int i(0); i < min(compressedThenUncompressedDataFromAlgorithm.size(), uncompressedDataFromFile.size()); i++) {
-        if (compressedThenUncompressedDataFromAlgorithm[i] != uncompressedDataFromFile[i]) {
-            cout << i << "\n";
-        }
-    }
     QCOMPARE(compressedThenUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
 }
 
@@ -79,11 +74,6 @@ void CompressionTest::testDeflateCompressionWithReset() {
     QVector<char> compressedThenUncompressedDataFromAlgorithm = Compression::uncompressDeflate(
             compressedDataFromAlgorithm, uncompressedDataFromFile.size());
     QVERIFY(!compressedThenUncompressedDataFromAlgorithm.isEmpty());
-    for (int i(0); i < min(compressedThenUncompressedDataFromAlgorithm.size(), uncompressedDataFromFile.size()); i++) {
-        if (compressedThenUncompressedDataFromAlgorithm[i] != uncompressedDataFromFile[i]) {
-            cout << i << "\n";
-        }
-    }
     QCOMPARE(compressedThenUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
 }
 
