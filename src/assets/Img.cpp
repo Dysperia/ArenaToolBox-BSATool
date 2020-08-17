@@ -57,6 +57,28 @@ Img::Img(const QVector<char> &imgData, const Palette &palette)
                 Logger::getInstance().log(Logger::MessageType::ERROR, e.message());
             }
         }
+        else if (mCompressionFlag == 0x08) {
+            QVector<char> compressedImageData(mDataSize-2);
+            quint16 uncompressedSize = 0;
+            imgDataStream >> uncompressedSize;
+            imgDataStream.readRawData(compressedImageData.data(), mDataSize-2);
+            try {
+                mImageData = Compression::uncompressDeflate(compressedImageData, uncompressedSize);
+                mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, mWidth, QImage::Format_Indexed8);
+                if (mPaletteFlag == 1) {
+                    QVector<char> paletteDescription(768);
+                    imgDataStream.readRawData(paletteDescription.data(), 768);
+                    mPalette = Palette(paletteDescription, true);
+                    mQImage.setColorTable(mPalette.getColorTable());
+                }
+                else {
+                    mQImage.setColorTable(mPalette.getColorTable());
+                }
+            }
+            catch (Status &e) {
+                Logger::getInstance().log(Logger::MessageType::ERROR, e.message());
+            }
+        }
     }
 }
 
