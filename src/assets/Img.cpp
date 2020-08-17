@@ -27,15 +27,6 @@ Img::Img(const QVector<char> &imgData, const Palette &palette)
             imgDataStream.readRawData(compressedImageData.data(), mDataSize);
             mImageData = compressedImageData;
             mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, mWidth, QImage::Format_Indexed8);
-            if (mPaletteFlag == 1) {
-                QVector<char> paletteDescription(768);
-                imgDataStream.readRawData(paletteDescription.data(), 768);
-                mPalette = Palette(paletteDescription, true);
-                mQImage.setColorTable(mPalette.getColorTable());
-            }
-            else {
-                mQImage.setColorTable(mPalette.getColorTable());
-            }
         }
         else if (mCompressionFlag == 0x04) {
             QVector<char> compressedImageData(mDataSize);
@@ -43,15 +34,6 @@ Img::Img(const QVector<char> &imgData, const Palette &palette)
             try {
                 mImageData = Compression::uncompressLZSS(compressedImageData);
                 mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, mWidth, QImage::Format_Indexed8);
-                if (mPaletteFlag == 1) {
-                    QVector<char> paletteDescription(768);
-                    imgDataStream.readRawData(paletteDescription.data(), 768);
-                    mPalette = Palette(paletteDescription, true);
-                    mQImage.setColorTable(mPalette.getColorTable());
-                }
-                else {
-                    mQImage.setColorTable(mPalette.getColorTable());
-                }
             }
             catch (Status &e) {
                 Logger::getInstance().log(Logger::MessageType::ERROR, e.message());
@@ -65,19 +47,24 @@ Img::Img(const QVector<char> &imgData, const Palette &palette)
             try {
                 mImageData = Compression::uncompressDeflate(compressedImageData, uncompressedSize);
                 mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, mWidth, QImage::Format_Indexed8);
-                if (mPaletteFlag == 1) {
-                    QVector<char> paletteDescription(768);
-                    imgDataStream.readRawData(paletteDescription.data(), 768);
-                    mPalette = Palette(paletteDescription, true);
-                    mQImage.setColorTable(mPalette.getColorTable());
-                }
-                else {
-                    mQImage.setColorTable(mPalette.getColorTable());
-                }
             }
             catch (Status &e) {
                 Logger::getInstance().log(Logger::MessageType::ERROR, e.message());
             }
+        }
+        else {
+            Logger::getInstance().log(Logger::MessageType::ERROR, QStringLiteral("This image is not supported"));
+            return;
+        }
+        // palette setup. Integrated preferred if exists no matter the parameter
+        if (mPaletteFlag == 1) {
+            QVector<char> paletteDescription(768);
+            imgDataStream.readRawData(paletteDescription.data(), 768);
+            mPalette = Palette(paletteDescription, true);
+            mQImage.setColorTable(mPalette.getColorTable());
+        }
+        else {
+            mQImage.setColorTable(mPalette.getColorTable());
         }
     }
 }
