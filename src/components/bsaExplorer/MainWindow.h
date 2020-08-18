@@ -7,6 +7,7 @@
 
 #include <QMainWindow>
 #include <QtWidgets/QListWidgetItem>
+#include <configuration/ApplicationConfiguration.h>
 
 /**
  * @brief the main window of the application, used to explore and edit the bsa
@@ -44,6 +45,11 @@ private:
      * @brief file displayer
      */
     FileDisplayer *mFileDisplayer;
+
+    /**
+     * @brief application configuration
+     */
+    ApplicationConfiguration mApplicationConfiguration;
 
     //**************************************************************************
     // Methods

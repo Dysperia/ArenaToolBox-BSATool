@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     mMenuBar->updateActionsFromBsaArchiveState(mBsaArchive.isOpened());
 
     // Central widget
-    QWidget *mainZone = new QWidget;
+    auto *mainZone = new QWidget;
     setCentralWidget(mainZone);
     auto *mainGrid = new QGridLayout;
     mainZone->setLayout(mainGrid);
@@ -92,7 +92,7 @@ void MainWindow::openBsa() {
     this->askUserToConfirmClosingOfOpenedBsa();
     if (!mBsaArchive.isOpened())
     {
-        QString bsaDirectory(QDir::homePath());
+        QString bsaDirectory(mApplicationConfiguration.getLastOpenedBsaFolder());
         QString archiveFilePath = QFileDialog::getOpenFileName(this, "Open BSA archive",
                                                                bsaDirectory, "BSA archives (*.bsa *.BSA)");
         if (archiveFilePath != nullptr)
@@ -103,6 +103,9 @@ void MainWindow::openBsa() {
                                                  .arg(archiveFilePath)
                                                  .arg(mBsaArchive.getFileNumber())
                                                  .arg(mBsaArchive.getModifiedSize()));
+            if (mBsaArchive.isOpened()) {
+                mApplicationConfiguration.setLastOpenedBsaFolder(archiveFilePath);
+            }
         }
     }
 }
