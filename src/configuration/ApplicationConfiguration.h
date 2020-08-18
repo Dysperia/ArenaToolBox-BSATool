@@ -3,7 +3,9 @@
 
 #include <QtCore/QSettings>
 
-// TODO new class
+/**
+ * This class is used to describe and persist user application settings
+ */
 class ApplicationConfiguration : QSettings
 {
 public:
