@@ -8,11 +8,8 @@
 /**
  * @brief Class used to display the various file types found in a bsa archive.
  */
-class FileDisplayer : public QVBoxLayout
-{
-    Q_OBJECT
-signals:
-
+class FileDisplayer : public QVBoxLayout {
+Q_OBJECT
 public:
     //**************************************************************************
     // Constructors
@@ -23,11 +20,16 @@ public:
      */
     explicit FileDisplayer(QWidget *parent = Q_NULLPTR);
 
-    //**************************************************************************
-    // Getters/setters
-    //**************************************************************************
-
 public slots:
+
+    //**************************************************************************
+    // Slots
+    //**************************************************************************
+    /**
+     * Display a visual for the given file
+     * @param file to display
+     * @param fileData : binary data of the file
+     */
     void display(const BsaFile &file, const QVector<char> &fileData);
 
 private:
@@ -37,7 +39,11 @@ private:
     /**
      * @brief Image displayer
      */
-    ImageDisplayer *mImageDisplayer;
+    ImageDisplayer mImageDisplayer;
+    /**
+     * @brief Default "no content" displayer
+     */
+    QLabel defaultDisplayer;
 };
 
 #endif // BSATOOL_FILEDISPLAYER_H

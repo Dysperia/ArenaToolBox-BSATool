@@ -12,11 +12,10 @@ const QString ALL_TYPE = QString("All types"); // NOLINT(cert-err58-cpp)
 //******************************************************************************
 // Constructors
 //******************************************************************************
-FileListViewer::FileListViewer(QWidget *parent)
-{
+FileListViewer::FileListViewer(QWidget *parent) {
     // Building full widget
     auto *filterLayout = new QHBoxLayout;
-    QLabel *filterLabel = new QLabel("File type");
+    auto *filterLabel = new QLabel("File type");
     mFileExtensionFilter = new QComboBox;
     mFileExtensionFilter->addItem(ALL_TYPE);
     filterLayout->addWidget(filterLabel);
@@ -32,24 +31,33 @@ FileListViewer::FileListViewer(QWidget *parent)
 //******************************************************************************
 // Getters/setters
 //******************************************************************************
-QVBoxLayout *FileListViewer::fileListViewerWithFilterWidget() const
-{
+QVBoxLayout *FileListViewer::fileListViewerWithFilterWidget() const {
     return mFileListViewerWithFilterWidget;
 }
 
 //**************************************************************************
 // Methods
 //**************************************************************************
-void FileListViewer::updateViewFromFilterChange(const QString& filter) {
-    for (int i=0; i<this->count(); i++) {
-        auto *item = (FileListViewerItem*) this->item(i);
-        item->setHidden(filter != ALL_TYPE && !item->bsaFile().fileName()
-                                  .toUpper().endsWith('.' + filter));
+void selectFirstVisible(FileListViewer *list) {
+    for (int i = 0; i < list->count(); i++) {
+        auto *item = (FileListViewerItem *) list->item(i);
+        if (!item->isHidden()) {
+            list->setCurrentItem(item);
+            return;
+        }
     }
 }
 
-void FileListViewer::updateViewFromFileList(const QVector<BsaFile>& fileList)
-{
+void FileListViewer::updateViewFromFilterChange(const QString &filter) {
+    for (int i = 0; i < this->count(); i++) {
+        auto *item = (FileListViewerItem *) this->item(i);
+        item->setHidden(filter != ALL_TYPE && !item->bsaFile().fileName()
+                .toUpper().endsWith('.' + filter));
+    }
+    selectFirstVisible(this);
+}
+
+void FileListViewer::updateViewFromFileList(const QVector<BsaFile> &fileList) {
     QString currentItemText = this->currentItem() == nullptr ? "" : this->currentItem()->text();
     QString currentFilter = mFileExtensionFilter->currentText();
     QStringList extensions;
@@ -60,8 +68,7 @@ void FileListViewer::updateViewFromFileList(const QVector<BsaFile>& fileList)
         QString extension;
         if (lastPointPosition == -1) {
             extension = QString("No type");
-        }
-        else {
+        } else {
             extension = file.fileName().mid(lastPointPosition + 1).toUpper();
         }
         if (!extensions.contains(extension)) {
@@ -77,9 +84,12 @@ void FileListViewer::updateViewFromFileList(const QVector<BsaFile>& fileList)
 
     // TODO check if it is working when files can be modified
     mFileExtensionFilter->addItems(extensions);
-    QList<QListWidgetItem*> itemList = this->findItems(currentItemText, Qt::MatchExactly);
-    if (extensions.contains(currentFilter) && itemList.size() == 1) {
+    QList<QListWidgetItem *> itemList = this->findItems(currentItemText, Qt::MatchExactly);
+    // selecting previously selected item if exists, the first in the list otherwise
+    if (extensions.contains(currentFilter) && itemList.size() == 1 && !itemList.at(0)->isHidden()) {
         mFileExtensionFilter->setCurrentText(currentFilter);
         this->setCurrentItem(itemList.at(0));
+    } else {
+        selectFirstVisible(this);
     }
 }
