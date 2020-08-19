@@ -115,7 +115,7 @@ private:
     // Methods
     //******************************************************************************
     /**
-     * Validate image data by comparing pixel number and image date (height * width). If validation passed, a non null
+     * Validate image data by comparing pixel number and image size (height * width). If validation passed, a non null
      * QImage is created
      */
     void validatePixelDataAndCreateImage();
