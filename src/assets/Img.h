@@ -17,8 +17,6 @@
  * - Image data size : 2 bytes
  * Then follows the image data and after the palette data if any
  */
-
-// TODO new class
 class Img
 {
 public:
@@ -42,35 +40,31 @@ public:
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
-    quint16 offsetX() const;
+    [[nodiscard]] quint16 offsetX() const;
     void setOffsetX(const quint16 &offsetX);
 
-    quint16 offsetY() const;
+    [[nodiscard]] quint16 offsetY() const;
     void setOffsetY(const quint16 &offsetY);
 
-    quint16 width() const;
+    [[nodiscard]] quint16 width() const;
     void setWidth(const quint16 &width);
 
-    quint16 height() const;
+    [[nodiscard]] quint16 height() const;
     void setHeight(const quint16 &height);
 
-    quint8 compressionFlag() const;
+    [[nodiscard]] quint8 compressionFlag() const;
     void setCompressionFlag(const quint8 &compressionFlag);
 
-    quint8 paletteFlag() const;
+    [[nodiscard]] quint8 paletteFlag() const;
     void setPaletteFlag(const quint8 &paletteFlag);
 
-    quint16 dataSize() const;
+    [[nodiscard]] quint16 dataSize() const;
     void setDataSize(const quint16 &dataSize);
 
-    Palette palette() const;
+    [[nodiscard]] Palette palette() const;
     void setPalette(const Palette &palette);
 
-    QImage qImage() const;
-
-    //**************************************************************************
-    // Methods
-    //**************************************************************************
+    [[nodiscard]] QImage qImage() const;
 
 private:
     //**************************************************************************
@@ -116,6 +110,15 @@ private:
      * @brief QImage version of this img, mainly used for display
      */
     QImage mQImage;
+
+    //******************************************************************************
+    // Methods
+    //******************************************************************************
+    /**
+     * Validate image data by comparing pixel number and image date (height * width). If validation passed, a non null
+     * QImage is created
+     */
+    void validatePixelDataAndCreateImage();
 };
 
 #endif // BSATOOL_IMG_H
