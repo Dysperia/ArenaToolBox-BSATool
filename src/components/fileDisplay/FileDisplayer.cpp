@@ -1,4 +1,5 @@
 #include <assets/FileType.h>
+#include <utils/Compression.h>
 #include "FileDisplayer.h"
 
 //**************************************************************************
@@ -11,8 +12,11 @@ FileDisplayer::FileDisplayer(QWidget *parent) : QVBoxLayout(parent) {
 
     this->mImageDisplayer.setVisible(false);
 
+    this->mTextDisplayer.setVisible(false);
+
     this->addWidget(&this->defaultDisplayer);
     this->addWidget(&this->mImageDisplayer);
+    this->addWidget(&this->mTextDisplayer);
 }
 
 //**************************************************************************
@@ -21,6 +25,7 @@ FileDisplayer::FileDisplayer(QWidget *parent) : QVBoxLayout(parent) {
 void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) {
     this->defaultDisplayer.setVisible(false);
     this->mImageDisplayer.setVisible(false);
+    this->mTextDisplayer.setVisible(false);
 
     if (FileType::getExtension(file) == FileType::SET) {
         this->mImageDisplayer.setVisible(true);
@@ -30,6 +35,12 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
         this->mImageDisplayer.setVisible(true);
         Img img = file.size() == 4096 ? Img(fileData, 64, 64) : Img(fileData);
         this->mImageDisplayer.display(img);
+    } else if (FileType::getExtension(file) == FileType::INF) {
+        this->mTextDisplayer.setVisible(true);
+        QVector<char> decryptInf = Compression::encryptDecrypt(fileData);
+        decryptInf.push_back('\0');
+        QString text = QString("Decrypted inf file : \n\n") + decryptInf.data();
+        this->mTextDisplayer.display(text);
     } else {
         this->defaultDisplayer.setVisible(true);
     }

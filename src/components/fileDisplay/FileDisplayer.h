@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include "ImageDisplayer.h"
 #include "bsa/BsaFile.h"
+#include "TextDisplayer.h"
 
 /**
  * @brief Class used to display the various file types found in a bsa archive.
@@ -40,6 +41,10 @@ private:
      * @brief Image displayer
      */
     ImageDisplayer mImageDisplayer;
+    /**
+     * @brief Text file displayer
+     */
+    TextDisplayer mTextDisplayer;
     /**
      * @brief Default "no content" displayer
      */
