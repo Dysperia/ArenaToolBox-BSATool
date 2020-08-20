@@ -30,6 +30,8 @@ QString FileType::getDescriptionForExtension(const FileType::Extension extension
             return "Interior map";
         case SET:
             return "Texture set";
+        case TXT:
+            return "Text file";
         case RMD:
             return "Exterior map";
         case UNKNOWN:
@@ -69,6 +71,9 @@ FileType::Extension FileType::getExtension(const BsaFile &file)
     }
     else if (file.getExtension().compare("SET", Qt::CaseInsensitive) == 0) {
         return Extension::SET;
+    }
+    else if (file.getExtension().compare("TXT", Qt::CaseInsensitive) == 0) {
+        return Extension::TXT;
     }
     else if (file.getExtension().compare("RMD", Qt::CaseInsensitive) == 0) {
         return Extension::RMD;

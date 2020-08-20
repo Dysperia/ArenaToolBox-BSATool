@@ -16,7 +16,7 @@ public:
     /**
      * enum describing some known file extension encountered in bsa archive
      */
-    enum Extension {CFA, IMG, CIF, INF, XFM, XMI, VOC, DFA, MIF, SET, RMD, UNKNOWN};
+    enum Extension {CFA, IMG, CIF, INF, XFM, XMI, VOC, DFA, MIF, SET, TXT, RMD, UNKNOWN};
 
     //**************************************************************************
     // Methods

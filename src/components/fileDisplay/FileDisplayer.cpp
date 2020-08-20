@@ -35,11 +35,11 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
         this->mImageDisplayer.setVisible(true);
         Img img = file.size() == 4096 ? Img(fileData, 64, 64) : Img(fileData);
         this->mImageDisplayer.display(img);
-    } else if (FileType::getExtension(file) == FileType::INF) {
+    } else if (FileType::getExtension(file) == FileType::INF || FileType::getExtension(file) == FileType::TXT) {
         this->mTextDisplayer.setVisible(true);
-        QVector<char> decryptInf = Compression::encryptDecrypt(fileData);
-        decryptInf.push_back('\0');
-        QString text = QString("Decrypted inf file : \n\n") + decryptInf.data();
+        QVector<char> decryptedText = Compression::encryptDecrypt(fileData);
+        decryptedText.push_back('\0');
+        QString text = QString("Encrypted / Decrypted file : \n\n") + decryptedText.data();
         this->mTextDisplayer.display(text);
     } else {
         this->defaultDisplayer.setVisible(true);
