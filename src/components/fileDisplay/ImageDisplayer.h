@@ -12,7 +12,6 @@
  */
 class ImageDisplayer : public QScrollArea {
 public:
-
     //**************************************************************************
     // Statics
     //**************************************************************************
@@ -44,13 +43,9 @@ public:
     void display(Img &img);
 
     /**
-     * Adjust the scroll bars values to keep the image actual center when zooming
-     * @param scrollBar to adjust
-     * @param factor used when zooming
-     * @param imageLength zoomed new image length in the scrollBar's direction
-     * @param updateScrollBarMaximum true if the scrollBar maximum value must be updated in advance
+     * Display the default "no preview" text
      */
-    void adjustScrollBar(QScrollBar *scrollBar, double factor, int imageLength, bool updateScrollBarMaximum);
+    void displayDefaultText();
 
     /**
      * Mouse wheel event listener used to zoom. Zooming is disabled if the user is moving the image
@@ -77,6 +72,18 @@ public:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
+    //**************************************************************************
+    // Statics
+    //**************************************************************************
+    /**
+     * Adjust the scroll bars values to keep the image actual center when zooming
+     * @param scrollBar to adjust
+     * @param factor used when zooming
+     * @param imageLength zoomed new image length in the scrollBar's direction
+     * @param updateScrollBarMaximum true if the scrollBar maximum value must be updated in advance
+     */
+    static void adjustScrollBar(QScrollBar *scrollBar, double factor, int imageLength, bool updateScrollBarMaximum);
+
     //**************************************************************************
     // Attributes
     //**************************************************************************
@@ -116,10 +123,6 @@ private:
     //**************************************************************************
     // Methods
     //**************************************************************************
-    /**
-     * Diusplay the default "no preview" text
-     */
-    void setDefaultText();
 
     /**
      * Return whether an image can be displayed

@@ -82,9 +82,9 @@ private slots:
 
     /**
      * @brief update the interface when a file is selected
-     * @param currentItem the current selection
+     * @param currentItem the current file selection
      */
-    void updateOnFileSelected(QListWidgetItem *currentItem);
+    void updateOnFileSelected(const BsaFile& currentItem);
 };
 
 #endif // BSATOOL_MAINWINDOW_H

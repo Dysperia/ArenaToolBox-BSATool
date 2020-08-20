@@ -11,7 +11,6 @@ FileDisplayer::FileDisplayer(QWidget *parent) : QVBoxLayout(parent) {
     this->defaultDisplayer.setText(QString("No preview available for this file."));
 
     this->mImageDisplayer.setVisible(false);
-
     this->mTextDisplayer.setVisible(false);
 
     this->addWidget(&this->defaultDisplayer);

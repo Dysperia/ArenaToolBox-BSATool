@@ -11,7 +11,10 @@ const BsaFile BsaFile::INVALID_BSAFILE(0, 0, "INVALID", 0); // NOLINT(cert-err58
 // Constructors
 //******************************************************************************
 
-BsaFile::BsaFile() = default;
+BsaFile::BsaFile():
+        mSize(BsaFile::INVALID_BSAFILE.size()), mStartOffsetInArchive(BsaFile::INVALID_BSAFILE.startOffsetInArchive()),
+        mFileName(BsaFile::INVALID_BSAFILE.fileName()), mIndex(BsaFile::INVALID_BSAFILE.index()) {
+};
 
 BsaFile::BsaFile(const quint32 &size,
                  const qint64 &startOffsetInArchive,

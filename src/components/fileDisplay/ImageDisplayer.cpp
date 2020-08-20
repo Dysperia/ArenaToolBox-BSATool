@@ -12,13 +12,13 @@ ImageDisplayer::ImageDisplayer(QWidget *parent) : QScrollArea(parent) {
     this->setMinimumSize(322, 202);
     this->setWidget(&this->mLabel);
 
-    setDefaultText();
+    displayDefaultText();
 }
 
 //**************************************************************************
 // Methods
 //**************************************************************************
-void ImageDisplayer::setDefaultText() {
+void ImageDisplayer::displayDefaultText() {
     mLabel.setText(QString("No preview available for this file."));
     mLabel.resize(this->size().width() - 2, this->size().height() - 2);
 }
@@ -27,7 +27,7 @@ void ImageDisplayer::display(Img &img) {
     mRatio = 1.0;
     this->mQImage = img.qImage();
     if (this->mQImage.isNull()) {
-        setDefaultText();
+        displayDefaultText();
     } else {
         mPixmap = QPixmap();
         if (mPixmap.convertFromImage(this->mQImage)) {
@@ -39,7 +39,7 @@ void ImageDisplayer::display(Img &img) {
                 zoom(1.0 / std::max(ratioWidth, ratioHeight));
             }
         } else {
-            setDefaultText();
+            displayDefaultText();
         }
     }
 }

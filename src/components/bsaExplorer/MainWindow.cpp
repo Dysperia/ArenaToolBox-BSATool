@@ -11,8 +11,7 @@
 //******************************************************************************
 // Constructors
 //******************************************************************************
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive() {
     // Menu bar
     mMenuBar = new MenuBar();
     setMenuBar(mMenuBar);
@@ -38,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     auto *mainGrid = new QGridLayout;
     mainZone->setLayout(mainGrid);
     auto *fileListViewer = new FileListViewer;
-    mainGrid->addLayout(fileListViewer->fileListViewerWithFilterWidget(),0,0);
+    mainGrid->addWidget(fileListViewer, 0, 0);
 
     // Connecting fileListViewer and bsaArchive
     connect(&mBsaArchive, &BsaArchive::fileListModified, fileListViewer, &FileListViewer::updateViewFromFileList);
@@ -46,9 +45,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
     // File display
     mFileDisplayer = new FileDisplayer;
     mainGrid->addLayout(mFileDisplayer, 0, 1);
+    mainGrid->setColumnStretch(1, 1);
 
     // Connecting fileDisplayer and fileListViewer
-    connect(fileListViewer, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), SLOT(updateOnFileSelected(QListWidgetItem *)));
+    connect(fileListViewer, SIGNAL(currentFileItemChanged(BsaFile, BsaFile)), SLOT(updateOnFileSelected(const BsaFile&)));
 
     // Console
     QDockWidget *consoleDock = new ConsoleDock;
@@ -59,50 +59,43 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive()
 //**************************************************************************
 // Methods
 //**************************************************************************
-void MainWindow::askUserToConfirmClosingOfOpenedBsa()
-{
-    if (mBsaArchive.isOpened())
-    {
+void MainWindow::askUserToConfirmClosingOfOpenedBsa() {
+    if (mBsaArchive.isOpened()) {
         int ret = QMessageBox::question(this, "Open a BSA",
                                         "A BSA archive is already opened.\n"
                                         "If you open a new one, unsaved changes of the previous BSA will be discarded.\n"
                                         "Do you really want to open an other BSA archive?");
-        if (ret == QMessageBox::Yes)
-        {
+        if (ret == QMessageBox::Yes) {
             Status status = mBsaArchive.closeArchive();
             Logger::getInstance().logErrorOrInfo(status, QString("Archive closed."));
         }
     }
 }
 
-void MainWindow::newBsa()
-{
+void MainWindow::newBsa() {
     this->askUserToConfirmClosingOfOpenedBsa();
-    if (!mBsaArchive.isOpened())
-    {
+    if (!mBsaArchive.isOpened()) {
         Status status = mBsaArchive.createNewArchive();
         Logger::getInstance().logErrorOrInfo(status,
                                              QString("Archive created. %1 files, size: %2 bytes")
-                                             .arg(mBsaArchive.getFileNumber())
-                                             .arg(mBsaArchive.getModifiedSize()));
+                                                     .arg(mBsaArchive.getFileNumber())
+                                                     .arg(mBsaArchive.getModifiedSize()));
     }
 }
 
 void MainWindow::openBsa() {
     this->askUserToConfirmClosingOfOpenedBsa();
-    if (!mBsaArchive.isOpened())
-    {
+    if (!mBsaArchive.isOpened()) {
         QString bsaDirectory(mApplicationConfiguration.getLastOpenedBsaFolder());
         QString archiveFilePath = QFileDialog::getOpenFileName(this, "Open BSA archive",
                                                                bsaDirectory, "BSA archives (*.bsa *.BSA)");
-        if (archiveFilePath != nullptr)
-        {
+        if (archiveFilePath != nullptr) {
             Status status = mBsaArchive.openArchive(archiveFilePath);
             Logger::getInstance().logErrorOrInfo(status,
                                                  QString("Archive opened : %1. %2 files, size: %3 bytes")
-                                                 .arg(archiveFilePath)
-                                                 .arg(mBsaArchive.getFileNumber())
-                                                 .arg(mBsaArchive.getModifiedSize()));
+                                                         .arg(archiveFilePath)
+                                                         .arg(mBsaArchive.getFileNumber())
+                                                         .arg(mBsaArchive.getModifiedSize()));
             if (mBsaArchive.isOpened()) {
                 mApplicationConfiguration.setLastOpenedBsaFolder(archiveFilePath);
             }
@@ -111,33 +104,27 @@ void MainWindow::openBsa() {
 }
 
 void MainWindow::saveBsa() {
-    if (mBsaArchive.isOpened())
-    {
+    if (mBsaArchive.isOpened()) {
         QString bsaDirectory(QDir::homePath());
         QString saveFilePath = QFileDialog::getSaveFileName(this, "Save BSA archive",
-                                                               bsaDirectory, "BSA archives (*.bsa *.BSA)");
-        if (saveFilePath != nullptr)
-        {
+                                                            bsaDirectory, "BSA archives (*.bsa *.BSA)");
+        if (saveFilePath != nullptr) {
             Status status = mBsaArchive.saveArchive(saveFilePath);
             Logger::getInstance().logErrorOrInfo(status,
                                                  QString("Archive saved to %1")
-                                                 .arg(saveFilePath));
+                                                         .arg(saveFilePath));
         }
     }
 }
 
-void MainWindow::closeBsa()
-{
-    if (mBsaArchive.isOpened())
-    {
-        if (mBsaArchive.isModified())
-        {
+void MainWindow::closeBsa() {
+    if (mBsaArchive.isOpened()) {
+        if (mBsaArchive.isModified()) {
             int ret = QMessageBox::question(this, "Close BSA",
                                             "The opened BSA archive is modified.\n"
                                             "If you close it, changes will be lost.\n"
                                             "Do you really want to close this archive?");
-            if (ret == QMessageBox::No)
-            {
+            if (ret == QMessageBox::No) {
                 return;
             }
         }
@@ -146,13 +133,11 @@ void MainWindow::closeBsa()
     }
 }
 
-void MainWindow::updateOnFileSelected(QListWidgetItem *currentItem)
-{
-    auto *currentFileListItem = dynamic_cast<FileListViewerItem *>(currentItem);
-    if (currentFileListItem != nullptr)
-    {
-        const BsaFile &file = currentFileListItem->bsaFile();
-        const QVector<char> &fileData = mBsaArchive.getFileData(file);
-        mFileDisplayer->display(file, fileData);
+void MainWindow::updateOnFileSelected(const BsaFile& currentItem) {
+    if (currentItem != BsaFile::INVALID_BSAFILE) {
+        const QVector<char> &fileData = mBsaArchive.getFileData(currentItem);
+        mFileDisplayer->display(currentItem, fileData);
+    } else {
+        mFileDisplayer->display(currentItem, QVector<char>());
     }
 }

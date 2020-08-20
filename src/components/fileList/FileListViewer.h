@@ -12,10 +12,11 @@
  * A QComboBox is added to filter the displayed file according to the files
  * possible extensions
  */
-class FileListViewer : public QListWidget
+class FileListViewer : public QWidget
 {
     Q_OBJECT
 signals:
+    void currentFileItemChanged(BsaFile current, BsaFile previous);
 
 public:
     //**************************************************************************
@@ -27,17 +28,18 @@ public:
      */
     explicit FileListViewer(QWidget *parent = Q_NULLPTR);
 
-    //**************************************************************************
-    // Getters/setters
-    //**************************************************************************
-    QVBoxLayout *fileListViewerWithFilterWidget() const;
-
 public slots:
     /**
      * @brief update the list from the bsa file list
      * @param fileList list of the bsa archive files
      */
     void updateViewFromFileList(const QVector<BsaFile>& fileList);
+    /**
+     * @brief emit a signal to notify a change in the current item in the file list
+     * @param current item
+     * @param previous item
+     */
+    void emitCurrentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
 private:
     //**************************************************************************
@@ -47,11 +49,10 @@ private:
      * @brief the file extension filter
      */
     QComboBox *mFileExtensionFilter;
-
     /**
-     * @brief the widget actually displaying the file list
+     * @brief the file list widget
      */
-    QVBoxLayout *mFileListViewerWithFilterWidget;
+    QListWidget *mFileList;
 
 private slots:
     /**
