@@ -20,6 +20,8 @@ set(BSATool_SRCS
         "components/fileList/FileListViewerItem.h"
         "components/fileDisplay/ImageDisplayer.cpp"
         "components/fileDisplay/ImageDisplayer.h"
+        "components/fileDisplay/ImagesCollectionDisplayer.cpp"
+        "components/fileDisplay/ImagesCollectionDisplayer.h"
         "components/fileDisplay/TextDisplayer.cpp"
         "components/fileDisplay/TextDisplayer.h"
         "components/bsaExplorer/MainWindow.cpp"

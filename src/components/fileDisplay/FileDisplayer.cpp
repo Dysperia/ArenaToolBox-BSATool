@@ -12,10 +12,12 @@ FileDisplayer::FileDisplayer(QWidget *parent) : QVBoxLayout(parent) {
 
     this->mImageDisplayer.setVisible(false);
     this->mTextDisplayer.setVisible(false);
+    this->mImagesCollectionDisplayer.setVisible(false);
 
     this->addWidget(&this->defaultDisplayer);
     this->addWidget(&this->mImageDisplayer);
     this->addWidget(&this->mTextDisplayer);
+    this->addWidget(&this->mImagesCollectionDisplayer);
 }
 
 //**************************************************************************
@@ -25,6 +27,7 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
     this->defaultDisplayer.setVisible(false);
     this->mImageDisplayer.setVisible(false);
     this->mTextDisplayer.setVisible(false);
+    this->mImagesCollectionDisplayer.setVisible(false);
 
     if (FileType::getExtension(file) == FileType::SET) {
         this->mImageDisplayer.setVisible(true);
@@ -40,6 +43,17 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
         decryptedText.push_back('\0');
         QString text = QString("Encrypted / Decrypted file : \n\n") + decryptedText.data();
         this->mTextDisplayer.display(text);
+    } else if (FileType::getExtension(file) == FileType::CIF) {
+        this->mImagesCollectionDisplayer.setVisible(true);
+        QVector<Img> framesToDisplay;
+        QDataStream stream(QByteArray((fileData.constData()), fileData.size()));
+        bool cifValid = true;
+        while (!stream.atEnd() && stream.status() == QDataStream::Status::Ok && cifValid) {
+            Img img(stream);
+            framesToDisplay.push_back(img);
+            cifValid = !img.qImage().isNull();
+        }
+        this->mImagesCollectionDisplayer.display(framesToDisplay);
     } else {
         this->defaultDisplayer.setVisible(true);
     }

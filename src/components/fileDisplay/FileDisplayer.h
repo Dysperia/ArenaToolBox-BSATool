@@ -5,6 +5,7 @@
 #include "ImageDisplayer.h"
 #include "bsa/BsaFile.h"
 #include "TextDisplayer.h"
+#include "ImagesCollectionDisplayer.h"
 
 /**
  * @brief Class used to display the various file types found in a bsa archive.
@@ -41,6 +42,10 @@ private:
      * @brief Image displayer
      */
     ImageDisplayer mImageDisplayer;
+    /**
+     * @brief Images collection displayer
+     */
+    ImagesCollectionDisplayer mImagesCollectionDisplayer;
     /**
      * @brief Text file displayer
      */

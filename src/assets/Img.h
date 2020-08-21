@@ -24,12 +24,23 @@ public:
     // Constructors
     //**************************************************************************
     /**
+     * @brief constructor of an empty invalid IMG (null QImage)
+     */
+    Img() = default;
+    /**
      * @brief constructor of IMG with parsing of the header. The well
      * initialization can be checked with the potentially Null status of the
      * QImage
      * @param imgData data of the IMG file
      */
     explicit Img(const QVector<char> &imgData, const Palette &palette = Palette());
+    /**
+     * @brief constructor of IMG with parsing of the header. The well
+     * initialization can be checked with the potentially Null status of the
+     * QImage
+     * @param imgData data of the IMG file
+     */
+    explicit Img(QDataStream &imgData, const Palette &palette = Palette());
     /**
      * @brief constructor of IMG without parsing of the header. The well
      * initialization can be checked with the potentially Null status of the
@@ -119,6 +130,29 @@ private:
      * QImage is created
      */
     void validatePixelDataAndCreateImage();
+
+    /**
+     * Validate the length of the stream
+     * @param stream to check
+     * @return true if the stream is at least this size
+     */
+    static bool isStreamAtLeastThisSize(QDataStream &stream, int byteNumber);
+
+    /**
+     * Init image from the given stream and palette
+     * @param stream containing image data
+     * @param palette color table to use
+     */
+    void initFromStreamAndPalette(QDataStream &imgDataStream, const Palette &palette);
+
+    /**
+     * Read data from stream and log an error if the operation is not a success
+     * @param imgDataStream stream to read
+     * @param rawData data destination
+     * @param size byte number to read
+     * @return true if success, false otherwise
+     */
+    bool readDataFromStream(QDataStream &imgDataStream, QVector<char> &rawData, quint16 size) const;
 };
 
 #endif // BSATOOL_IMG_H
