@@ -23,7 +23,7 @@ void ImageDisplayer::displayDefaultText() {
     mLabel.resize(this->size().width() - 2, this->size().height() - 2);
 }
 
-void ImageDisplayer::display(Img &img) {
+void ImageDisplayer::display(const Img &img) {
     mRatio = 1.0;
     this->mQImage = img.qImage();
     if (this->mQImage.isNull()) {

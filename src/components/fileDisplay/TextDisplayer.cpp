@@ -14,7 +14,7 @@ TextDisplayer::TextDisplayer(QWidget *parent) : QScrollArea(parent) {
 //**************************************************************************
 // Methods
 //**************************************************************************
-void TextDisplayer::display(QString &text) {
+void TextDisplayer::display(const QString &text) {
     mLabel.setText(text);
     mLabel.adjustSize();
 }

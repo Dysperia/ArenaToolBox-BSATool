@@ -40,7 +40,7 @@ public:
      * Display an img or the default text if the img cannot be displayed
      * @param img to display
      */
-    void display(Img &img);
+    void display(const Img &img);
 
     /**
      * Display the default "no preview" text

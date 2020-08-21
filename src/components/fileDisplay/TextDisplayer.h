@@ -25,7 +25,7 @@ public:
      * Display the given text
      * @param text to display
      */
-    void display(QString &text);
+    void display(const QString &text);
 
 private:
 
