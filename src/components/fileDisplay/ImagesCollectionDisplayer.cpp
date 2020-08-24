@@ -70,24 +70,29 @@ void ImagesCollectionDisplayer::updateButtonBar() {
 
 void ImagesCollectionDisplayer::goFirst() {
     mCurrentIndex = 0;
-    mImageDisplayer.display(mImageList.at(mCurrentIndex));
-    updateButtonBar();
+    displayCurrentSelectedImageAndUpdateButtons();
 }
 
 void ImagesCollectionDisplayer::goPrevious() {
-    mCurrentIndex--;
-    mImageDisplayer.display(mImageList.at(mCurrentIndex));
-    updateButtonBar();
+    if (mCurrentIndex > 0) {
+        mCurrentIndex--;
+    }
+    displayCurrentSelectedImageAndUpdateButtons();
 }
 
 void ImagesCollectionDisplayer::goNext() {
-    mCurrentIndex++;
-    mImageDisplayer.display(mImageList.at(mCurrentIndex));
-    updateButtonBar();
+    if (mCurrentIndex < mImageList.size() - 1) {
+        mCurrentIndex++;
+    }
+    displayCurrentSelectedImageAndUpdateButtons();
 }
 
 void ImagesCollectionDisplayer::goLast() {
     mCurrentIndex = mImageList.size() - 1;
+    displayCurrentSelectedImageAndUpdateButtons();
+}
+
+void ImagesCollectionDisplayer::displayCurrentSelectedImageAndUpdateButtons() {
     mImageDisplayer.display(mImageList.at(mCurrentIndex));
     updateButtonBar();
 }

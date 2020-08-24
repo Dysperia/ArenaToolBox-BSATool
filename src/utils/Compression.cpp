@@ -228,14 +228,15 @@ QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData
         // string copy
         if (duplicate.length > 2) {
             // computing offset from current insert position to save in compressed data
-            quint16 offsetFromCurrentPosition = (window.getMCurrentInsertPosition() - duplicate.startIndex - 1) & 0x0FFFu;
+            quint16 offsetFromCurrentPosition =
+                    (window.getMCurrentInsertPosition() - duplicate.startIndex - 1) & 0x0FFFu;
             // offset low bits
             quint16 offsetToCopyLowBits = offsetFromCurrentPosition & 0x003Fu;
             // offset high bits
             quint16 offsetToCopyHighBits = offsetFromCurrentPosition >> 6u;
             // Getting index
             quint16 tableIdx = 1000u; // 1000 is an impossible value  : index is in range 0-255
-            for (quint16 i(0); i<256 && tableIdx == 1000u; i++) {
+            for (quint16 i(0); i < 256 && tableIdx == 1000u; i++) {
                 if (OFFSET_HIGH_BITS[i] == offsetToCopyHighBits) {
                     tableIdx = i; // first possible index
                 }
@@ -253,7 +254,7 @@ QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData
                 uncompressDataDeque.pop_front();
             }
         }
-        // single byte copy
+            // single byte copy
         else {
             quint8 colorByte = uncompressDataDeque.front();
             uncompressDataDeque.pop_front();
@@ -262,6 +263,114 @@ QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData
         }
     }
     bitsWriter.flush();
+    return compressedData;
+}
+
+QVector<char>
+Compression::uncompressRLEByLine(const QVector<char> &compressedData, const quint16 &width, const quint16 &height) {
+    // deque to allow fast first element removal and random element access
+    deque<char> compressDataDeque;
+    for (const auto &byte : compressedData) {
+        compressDataDeque.push_back(byte);
+    }
+    // uncompressed data
+    QVector<char> uncompressedData;
+    // For each line of pixels
+    for (int line(0); line < height; line++) {
+        // while not done with this line
+        quint16 bytesLeftToProduce = width;
+        while (bytesLeftToProduce > 0) {
+            // getting number of bytes for this operation
+            quint8 counter = BitsReader::getNextUnsignedByte(compressDataDeque);
+            // stream of same colors
+            if (counter >= 128) {
+                counter = (counter & 0x7Fu) + 1u;
+                char color = BitsReader::getNextByte(compressDataDeque);
+                for (int i(0); i < counter; i++) {
+                    uncompressedData.push_back(color);
+                }
+            }
+                // stream of different colors
+            else {
+                counter++;
+                for (int i(0); i < counter; i++) {
+                    uncompressedData.push_back(BitsReader::getNextByte(compressDataDeque));
+                }
+            }
+            bytesLeftToProduce -= counter;
+        }
+    }
+    return uncompressedData;
+}
+
+QVector<char>
+Compression::compressRLEByLine(const QVector<char> &uncompressedData, const quint16 &width, const quint16 &height) {
+    // deque to allow fast first element removal and random element access
+    deque<char> uncompressDataDeque;
+    for (const auto &byte : uncompressedData) {
+        uncompressDataDeque.push_back(byte);
+    }
+    // compressed data
+    QVector<char> compressedData;
+    // For each line of pixels
+    for (int line(0); line < height; line++) {
+        // while not done with this line
+        quint16 bytesLeftToConsume = width;
+        while (bytesLeftToConsume > 0) {
+            // if only one byte remaining
+            if (bytesLeftToConsume == 1) {
+                quint8 counterValueToWrite(0);
+                compressedData.push_back(counterValueToWrite);
+                compressedData.push_back(BitsReader::getNextByte(uncompressDataDeque));
+                bytesLeftToConsume--;
+            }
+            // need to explore the sequence
+            else {
+                quint8 counter(0);
+                // need at least two bytes in data to explore sequence
+                if (uncompressDataDeque.size() < 2) {
+                    throw Status(-1, QStringLiteral("Unexpected end of data"));
+                }
+                // stream of different color
+                if (uncompressDataDeque[counter] != uncompressDataDeque[counter + 1]) {
+                    // computing sequence length
+                    while (uncompressDataDeque.size() - counter >= 2 &&
+                           uncompressDataDeque[counter] != uncompressDataDeque[counter + 1] &&
+                           counter < 128 &&
+                           bytesLeftToConsume - counter > 0) {
+                        counter++;
+                    }
+                    // adding last byte of this line if possible because line per line
+                    if (counter < 128 && bytesLeftToConsume - counter == 1 && !uncompressDataDeque.empty()) {
+                        counter++;
+                    }
+                    // Writing compressed data and consuming uncompressed
+                    compressedData.push_back(counter - 1);
+                    for (int i(0); i < counter; i++) {
+                        compressedData.push_back(BitsReader::getNextByte(uncompressDataDeque));
+                    }
+                    bytesLeftToConsume -= counter;
+                }
+                // stream of same color
+                else {
+                    // computing sequence length
+                    while (uncompressDataDeque.size() - counter > 0 &&
+                           uncompressDataDeque[0] == uncompressDataDeque[counter] &&
+                           counter < 128 &&
+                           bytesLeftToConsume - counter > 0) {
+                        counter++;
+                    }
+                    // Writing compressed data and consuming uncompressed
+                    compressedData.push_back((counter - 1u) | 0x80u);
+                    compressedData.push_back(uncompressDataDeque[0]);
+                    for (int i(0); i < counter; i++) {
+                        uncompressDataDeque.pop_front();
+                    }
+                    bytesLeftToConsume -= counter;
+                }
+            }
+        }
+    }
     return compressedData;
 }
 

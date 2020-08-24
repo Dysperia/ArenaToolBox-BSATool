@@ -27,6 +27,14 @@ private slots:
     void testDeflateCompression();
     void testDeflateCompressionWithReset();
     /**
+     * @brief test RLE by line uncompression
+     */
+    void testRLEByLineUncompression();
+    /**
+     * @brief test RLE by line compression
+     */
+    void testRLEByLineCompression();
+    /**
      * @brief test encryption decryption
      */
     void testEncryptionDecryption();

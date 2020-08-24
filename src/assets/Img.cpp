@@ -144,6 +144,17 @@ void Img::initFromStreamAndPalette(QDataStream &imgDataStream, const Palette &pa
             mImageData = rawData;
             validatePixelDataAndCreateImage();
         }
+    } else if (mCompressionFlag == 0x02) {
+        if (readDataFromStream(imgDataStream, rawData, mDataSize)) {
+            try {
+                mImageData = Compression::uncompressRLEByLine(rawData, mWidth, mHeight);
+                validatePixelDataAndCreateImage();
+            }
+            catch (Status &e) {
+                Logger::getInstance().log(Logger::MessageType::ERROR, e.message());
+                return;
+            }
+        }
     } else if (mCompressionFlag == 0x04) {
         if (readDataFromStream(imgDataStream, rawData, mDataSize)) {
             try {

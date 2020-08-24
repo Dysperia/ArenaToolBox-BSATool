@@ -92,6 +92,20 @@ public:
     static QVector<char> compressDeflate(const QVector<char> &uncompressedData);
 
     /**
+     * Uncompressed data with a run length algorithm running by line of data in the image
+     * @param compressedData to uncompress
+     * @return the uncompressed data
+     */
+    static QVector<char> uncompressRLEByLine(const QVector<char> &compressedData, const quint16 &width, const quint16 &height);
+
+    /**
+     * Compressed data with a run length algorithm running by line of data in the image
+     * @param uncompressedData to compress
+     * @return the compressed data
+     */
+    static QVector<char> compressRLEByLine(const QVector<char> &uncompressedData, const quint16 &width, const quint16 &height);
+
+    /**
      * Encrypt data according to the encryption key given. The same key is
      * used to encrypt and decrypt using a incrementing counter and xor operation
      * @param data to encrypt or decrypt

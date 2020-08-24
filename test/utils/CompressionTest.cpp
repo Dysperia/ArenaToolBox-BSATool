@@ -76,6 +76,28 @@ void CompressionTest::testDeflateCompressionWithReset() {
     QCOMPARE(compressedThenUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
 }
 
+void CompressionTest::testRLEByLineUncompression() {
+    QWARN("Should uncompress the file and get the original data");
+    QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedRLEByLine.data"));
+    QVERIFY(!uncompressedDataFromFile.isEmpty());
+    QVector<char> compressedDataFromFile = readFile(QStringLiteral("ressources/compressedRLEByLine.data"));
+    QVERIFY(!compressedDataFromFile.isEmpty());
+    QVector<char> uncompressedDataFromAlgorithm = Compression::uncompressRLEByLine(compressedDataFromFile, 61, 147);
+    QVERIFY(!uncompressedDataFromAlgorithm.isEmpty());
+    QCOMPARE(uncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
+}
+
+void CompressionTest::testRLEByLineCompression() {
+    QWARN("Should compress then uncompress the file and get the original data");
+    QVector<char> uncompressedDataFromFile = readFile(QStringLiteral("ressources/uncompressedRLEByLine.data"));
+    QVERIFY(!uncompressedDataFromFile.isEmpty());
+
+    QVector<char> compressedThenUncompressedDataFromAlgorithm = Compression::uncompressRLEByLine(
+            Compression::compressRLEByLine(uncompressedDataFromFile, 61, 147), 61, 147);
+    QVERIFY(!compressedThenUncompressedDataFromAlgorithm.isEmpty());
+    QCOMPARE(compressedThenUncompressedDataFromAlgorithm == uncompressedDataFromFile, true);
+}
+
 void CompressionTest::testEncryptionDecryption() {
     QWARN("Should decrypt the file and get the original data");
     QVector<char> decryptedDataFromFile = readFile(QStringLiteral("ressources/decryptedINF.data"));
