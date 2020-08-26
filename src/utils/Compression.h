@@ -106,6 +106,20 @@ public:
     static QVector<char> compressRLEByLine(const QVector<char> &uncompressedData, const quint16 &width, const quint16 &height);
 
     /**
+     * Uncompressed data with a run length algorithm
+     * @param compressedData to uncompress
+     * @return the uncompressed data
+     */
+    static QVector<char> uncompressRLE(const QVector<char> &compressedData, const quint16 &uncompressedSize);
+
+    /**
+     * Compressed data with a run length algorithm
+     * @param uncompressedData to compress
+     * @return the compressed data
+     */
+    static QVector<char> compressRLE(const QVector<char> &uncompressedData);
+
+    /**
      * Encrypt data according to the encryption key given. The same key is
      * used to encrypt and decrypt using a incrementing counter and xor operation
      * @param data to encrypt or decrypt

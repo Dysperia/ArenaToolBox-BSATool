@@ -324,7 +324,7 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const quin
                 compressedData.push_back(BitsReader::getNextByte(uncompressDataDeque));
                 bytesLeftToConsume--;
             }
-            // need to explore the sequence
+                // need to explore the sequence
             else {
                 quint8 counter(0);
                 // need at least two bytes in data to explore sequence
@@ -351,7 +351,7 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const quin
                     }
                     bytesLeftToConsume -= counter;
                 }
-                // stream of same color
+                    // stream of same color
                 else {
                     // computing sequence length
                     while (uncompressDataDeque.size() - counter > 0 &&
@@ -372,6 +372,14 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const quin
         }
     }
     return compressedData;
+}
+
+QVector<char> Compression::uncompressRLE(const QVector<char> &compressedData, const quint16 &uncompressedSize) {
+    return uncompressRLEByLine(compressedData, uncompressedSize, 1);
+}
+
+QVector<char> Compression::compressRLE(const QVector<char> &uncompressedData) {
+    return uncompressRLEByLine(uncompressedData, uncompressedData.size(), 1);
 }
 
 QVector<char> Compression::encryptDecrypt(const QVector<char> &data, QVector<quint8> cryptKey) {
