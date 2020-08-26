@@ -23,9 +23,9 @@ void ImageDisplayer::displayDefaultText() {
     mLabel.resize(this->size().width() - 2, this->size().height() - 2);
 }
 
-void ImageDisplayer::display(const Img &img) {
+void ImageDisplayer::display(const QImage &image) {
     mRatio = 1.0;
-    this->mQImage = img.qImage();
+    this->mQImage = image.copy();
     if (this->mQImage.isNull()) {
         displayDefaultText();
     } else {

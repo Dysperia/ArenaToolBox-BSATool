@@ -47,9 +47,9 @@ public:
     //**************************************************************************
     /**
      * Display a img collection or the default text if the collection cannot be displayed. It starts at the first image
-     * @param imgCollection to display
+     * @param imageCollection to display
      */
-    void display(const QVector<Img> &imgCollection);
+    void display(const QVector<QImage> &imageCollection);
 
     /**
      * Update the disabled state of the buttons and the current index label
@@ -63,7 +63,7 @@ private:
     /**
      * List of images to display
      */
-    QVector<Img> mImageList;
+    QVector<QImage> mImageList;
 
     /**
      * List of "going left" buttons

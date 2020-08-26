@@ -49,6 +49,22 @@ public:
     Img(QVector<char> imgData, quint16 width, quint16 height, Palette palette = Palette());
 
     //**************************************************************************
+    // Methods
+    //**************************************************************************
+    /**
+     * Validate the length of the stream
+     * @param stream to check
+     * @return true if the stream is at least this size
+     */
+    static bool isStreamAtLeastThisSize(QDataStream &stream, const int &byteNumber);
+    /**
+     * Validate the length of the stream and throw a Status instance if not long enough
+     * @param stream to check
+     * @throw Status if not long enough
+     */
+    static void verifyStream(QDataStream &stream, const int &byteNumber);
+
+    //**************************************************************************
     // Getters/setters
     //**************************************************************************
     [[nodiscard]] quint16 offsetX() const;
@@ -68,9 +84,6 @@ public:
 
     [[nodiscard]] quint8 paletteFlag() const;
     void setPaletteFlag(const quint8 &paletteFlag);
-
-    [[nodiscard]] quint16 dataSize() const;
-    void setDataSize(const quint16 &dataSize);
 
     [[nodiscard]] Palette palette() const;
     void setPalette(const Palette &palette);
@@ -106,10 +119,6 @@ private:
      */
     quint8 mPaletteFlag = 0;
     /**
-     * @brief size of the image data
-     */
-    quint16 mDataSize = 0;
-    /**
      * @brief color palette
      */
     Palette mPalette;
@@ -130,13 +139,6 @@ private:
      * QImage is created
      */
     void validatePixelDataAndCreateImage();
-
-    /**
-     * Validate the length of the stream
-     * @param stream to check
-     * @return true if the stream is at least this size
-     */
-    static bool isStreamAtLeastThisSize(QDataStream &stream, int byteNumber);
 
     /**
      * Init image from the given stream and palette

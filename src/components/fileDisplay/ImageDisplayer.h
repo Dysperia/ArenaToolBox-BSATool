@@ -40,7 +40,7 @@ public:
      * Display an img or the default text if the img cannot be displayed
      * @param img to display
      */
-    void display(const Img &img);
+    void display(const QImage &image);
 
     /**
      * Display the default "no preview" text

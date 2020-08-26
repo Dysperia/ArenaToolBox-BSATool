@@ -1,5 +1,6 @@
 #include <assets/FileType.h>
 #include <utils/Compression.h>
+#include <assets/Dfa.h>
 #include "FileDisplayer.h"
 
 //**************************************************************************
@@ -32,11 +33,11 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
     if (FileType::getExtension(file) == FileType::SET) {
         this->mImageDisplayer.setVisible(true);
         Img img(fileData, 64, static_cast<quint16>(file.size() / 64));
-        this->mImageDisplayer.display(img);
+        this->mImageDisplayer.display(img.qImage());
     } else if (FileType::getExtension(file) == FileType::IMG) {
         this->mImageDisplayer.setVisible(true);
         Img img = file.size() == 4096 ? Img(fileData, 64, 64) : Img(fileData);
-        this->mImageDisplayer.display(img);
+        this->mImageDisplayer.display(img.qImage());
     } else if (FileType::getExtension(file) == FileType::INF || FileType::getExtension(file) == FileType::TXT) {
         this->mTextDisplayer.setVisible(true);
         QVector<char> decryptedText = Compression::encryptDecrypt(fileData);
@@ -45,15 +46,22 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
         this->mTextDisplayer.display(text);
     } else if (FileType::getExtension(file) == FileType::CIF) {
         this->mImagesCollectionDisplayer.setVisible(true);
-        QVector<Img> framesToDisplay;
+        QVector<Img> imgsToDisplay;
         QDataStream stream(QByteArray((fileData.constData()), fileData.size()));
         bool cifValid = true;
         while (!stream.atEnd() && stream.status() == QDataStream::Status::Ok && cifValid) {
-            Img img(stream);
-            framesToDisplay.push_back(img);
-            cifValid = !img.qImage().isNull();
+            imgsToDisplay.push_back(Img(stream));
+            cifValid = !imgsToDisplay.last().qImage().isNull();
+        }
+        QVector<QImage> framesToDisplay;
+        for (const auto& img : imgsToDisplay) {
+            framesToDisplay.push_back(img.qImage());
         }
         this->mImagesCollectionDisplayer.display(framesToDisplay);
+    } else if (FileType::getExtension(file) == FileType::DFA) {
+        this->mImagesCollectionDisplayer.setVisible(true);
+        Dfa dfa(fileData);
+        this->mImagesCollectionDisplayer.display(dfa.qImages());
     } else {
         this->defaultDisplayer.setVisible(true);
     }

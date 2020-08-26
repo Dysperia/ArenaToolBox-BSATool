@@ -47,9 +47,12 @@ QPushButton *ImagesCollectionDisplayer::createButton(const QString& text) const 
 //**************************************************************************
 // Methods
 //**************************************************************************
-void ImagesCollectionDisplayer::display(const QVector<Img> &imgCollection) {
-    mImageList = imgCollection;
-    if (imgCollection.empty()) {
+void ImagesCollectionDisplayer::display(const QVector<QImage> &imageCollection) {
+    mImageList.clear();
+    for (const auto &image : imageCollection) {
+        mImageList.push_back(image.copy());
+    }
+    if (mImageList.empty()) {
         mImageDisplayer.displayDefaultText();
         updateButtonBar();
     }
