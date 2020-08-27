@@ -23,20 +23,28 @@ void ImageDisplayer::displayDefaultText() {
     mLabel.resize(this->size().width() - 2, this->size().height() - 2);
 }
 
-void ImageDisplayer::display(const QImage &image) {
-    mRatio = 1.0;
+void ImageDisplayer::display(const QImage &image, bool resetZoom) {
+    if (resetZoom) {
+        mRatio = 1.0;
+    }
     this->mQImage = image.copy();
     if (this->mQImage.isNull()) {
         displayDefaultText();
     } else {
         mPixmap = QPixmap();
         if (mPixmap.convertFromImage(this->mQImage)) {
-            this->mLabel.setPixmap(mPixmap);
-            this->mLabel.resize(mPixmap.size());
-            double ratioWidth = 1.0 * mPixmap.size().width() / (this->size().width() - 2);
-            double ratioHeight = 1.0 * mPixmap.size().height() / (this->size().height() - 2);
-            if (ratioHeight > 1.0 || ratioWidth > 1.0) {
-                zoom(1.0 / std::max(ratioWidth, ratioHeight));
+            if (resetZoom) {
+                this->mLabel.setPixmap(mPixmap);
+                this->mLabel.resize(mPixmap.size());
+                double ratioWidth = 1.0 * mPixmap.size().width() / (this->size().width() - 2);
+                double ratioHeight = 1.0 * mPixmap.size().height() / (this->size().height() - 2);
+                if (ratioHeight > 1.0 || ratioWidth > 1.0) {
+                    zoom(1.0 / std::max(ratioWidth, ratioHeight));
+                }
+            }
+            else {
+                mLabel.setPixmap(mPixmap.scaled(mPixmap.size() * mRatio, Qt::KeepAspectRatio, Qt::FastTransformation));
+                mLabel.resize(mLabel.pixmap()->size());
             }
         } else {
             displayDefaultText();
@@ -73,7 +81,7 @@ void ImageDisplayer::zoom(double factor) {
     QSize newImageSize = mPixmap.size() * mRatio;
     adjustScrollBar(horizontalScrollBar(), factor, newImageSize.width(), isZoomIn && newImageSize.width() > this->width());
     adjustScrollBar(verticalScrollBar(), factor, newImageSize.height(), isZoomIn && newImageSize.height() > this->height());
-    mLabel.setPixmap(mPixmap.scaled(mPixmap.size() * mRatio, Qt::KeepAspectRatio, Qt::FastTransformation));
+    mLabel.setPixmap(mPixmap.scaled(newImageSize, Qt::KeepAspectRatio, Qt::FastTransformation));
     mLabel.resize(mLabel.pixmap()->size());
 }
 

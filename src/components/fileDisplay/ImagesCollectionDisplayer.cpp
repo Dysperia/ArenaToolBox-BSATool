@@ -57,7 +57,8 @@ void ImagesCollectionDisplayer::display(const QVector<QImage> &imageCollection) 
         updateButtonBar();
     }
     else {
-        goFirst();
+        mCurrentIndex = 0;
+        displayCurrentSelectedImageAndUpdateButtons(true);
     }
 }
 
@@ -95,7 +96,7 @@ void ImagesCollectionDisplayer::goLast() {
     displayCurrentSelectedImageAndUpdateButtons();
 }
 
-void ImagesCollectionDisplayer::displayCurrentSelectedImageAndUpdateButtons() {
-    mImageDisplayer.display(mImageList.at(mCurrentIndex));
+void ImagesCollectionDisplayer::displayCurrentSelectedImageAndUpdateButtons(bool resetZoom) {
+    mImageDisplayer.display(mImageList.at(mCurrentIndex), resetZoom);
     updateButtonBar();
 }

@@ -49,14 +49,14 @@ public:
      * Display a img collection or the default text if the collection cannot be displayed. It starts at the first image
      * @param imageCollection to display
      */
-    void display(const QVector<QImage> &imageCollection);
+    virtual void display(const QVector<QImage> &imageCollection);
 
     /**
      * Update the disabled state of the buttons and the current index label
      */
     void updateButtonBar();
 
-private:
+protected:
     //**************************************************************************
     // Attributes
     //**************************************************************************
@@ -103,7 +103,7 @@ private:
     /**
      * display the image corresponding to the current index if it exists and update the buttons state
      */
-    void displayCurrentSelectedImageAndUpdateButtons();
+    void displayCurrentSelectedImageAndUpdateButtons(bool resetZoom = false);
 };
 
 

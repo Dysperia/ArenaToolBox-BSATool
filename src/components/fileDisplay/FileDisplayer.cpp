@@ -14,11 +14,13 @@ FileDisplayer::FileDisplayer(QWidget *parent) : QVBoxLayout(parent) {
     this->mImageDisplayer.setVisible(false);
     this->mTextDisplayer.setVisible(false);
     this->mImagesCollectionDisplayer.setVisible(false);
+    this->mAnimationDisplayer.setVisible(false);
 
     this->addWidget(&this->defaultDisplayer);
     this->addWidget(&this->mImageDisplayer);
     this->addWidget(&this->mTextDisplayer);
     this->addWidget(&this->mImagesCollectionDisplayer);
+    this->addWidget(&this->mAnimationDisplayer);
 }
 
 //**************************************************************************
@@ -29,6 +31,7 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
     this->mImageDisplayer.setVisible(false);
     this->mTextDisplayer.setVisible(false);
     this->mImagesCollectionDisplayer.setVisible(false);
+    this->mAnimationDisplayer.setVisible(false);
 
     if (FileType::getExtension(file) == FileType::SET) {
         this->mImageDisplayer.setVisible(true);
@@ -59,9 +62,9 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
         }
         this->mImagesCollectionDisplayer.display(framesToDisplay);
     } else if (FileType::getExtension(file) == FileType::DFA) {
-        this->mImagesCollectionDisplayer.setVisible(true);
+        this->mAnimationDisplayer.setVisible(true);
         Dfa dfa(fileData);
-        this->mImagesCollectionDisplayer.display(dfa.qImages());
+        this->mAnimationDisplayer.display(dfa.qImages());
     } else {
         this->defaultDisplayer.setVisible(true);
     }
