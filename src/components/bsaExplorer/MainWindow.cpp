@@ -86,7 +86,7 @@ void MainWindow::newBsa() {
 void MainWindow::openBsa() {
     this->askUserToConfirmClosingOfOpenedBsa();
     if (!mBsaArchive.isOpened()) {
-        QString bsaDirectory(mApplicationConfiguration.getLastOpenedBsaFolder());
+        QString bsaDirectory(mApplicationConfiguration.getLastOpenedBsa());
         QString archiveFilePath = QFileDialog::getOpenFileName(this, "Open BSA archive",
                                                                bsaDirectory, "BSA archives (*.bsa *.BSA)");
         if (archiveFilePath != nullptr) {
@@ -97,7 +97,7 @@ void MainWindow::openBsa() {
                                                          .arg(mBsaArchive.getFileNumber())
                                                          .arg(mBsaArchive.getModifiedSize()));
             if (mBsaArchive.isOpened()) {
-                mApplicationConfiguration.setLastOpenedBsaFolder(archiveFilePath);
+                mApplicationConfiguration.setLastOpenedBsa(archiveFilePath);
             }
         }
     }

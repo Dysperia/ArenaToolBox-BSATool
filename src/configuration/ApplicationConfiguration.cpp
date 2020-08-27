@@ -12,10 +12,10 @@ ApplicationConfiguration::ApplicationConfiguration(): QSettings("ArenaToolBox", 
 //**************************************************************************
 // Methods
 //**************************************************************************
-QString ApplicationConfiguration::getLastOpenedBsaFolder() const {
-    return this->value(LAST_OPENED_BSA_FOLDER, QDir::homePath()).toString();
+QString ApplicationConfiguration::getLastOpenedBsa() const {
+    return this->value(LAST_OPENED_BSA, QDir::homePath()).toString();
 }
 
-void ApplicationConfiguration::setLastOpenedBsaFolder(const QString &lastOpenedBsaFolder) {
-    this->setValue(LAST_OPENED_BSA_FOLDER, lastOpenedBsaFolder);
+void ApplicationConfiguration::setLastOpenedBsa(const QString &lastOpenedBsa) {
+    this->setValue(LAST_OPENED_BSA, lastOpenedBsa);
 }
