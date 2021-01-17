@@ -37,7 +37,7 @@ public:
     Dfa() = default;
     /**
      * @brief constructor of Dfa
-     * @param data data of the IMG file
+     * @param data data of the file
      */
     explicit Dfa(const QVector<char> &data, const Palette &palette = Palette());
 
