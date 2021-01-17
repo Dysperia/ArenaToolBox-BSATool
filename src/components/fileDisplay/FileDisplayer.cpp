@@ -1,6 +1,7 @@
 #include <assets/FileType.h>
 #include <utils/Compression.h>
 #include <assets/Dfa.h>
+#include <assets/Cfa.h>
 #include "FileDisplayer.h"
 
 //**************************************************************************
@@ -61,6 +62,10 @@ void FileDisplayer::display(const BsaFile &file, const QVector<char> &fileData) 
             framesToDisplay.push_back(img.qImage());
         }
         this->mImagesCollectionDisplayer.display(framesToDisplay);
+    } else if (FileType::getExtension(file) == FileType::CFA) {
+        this->mAnimationDisplayer.setVisible(true);
+        Cfa cfa(fileData);
+        this->mAnimationDisplayer.display(cfa.qImages());
     } else if (FileType::getExtension(file) == FileType::DFA) {
         this->mAnimationDisplayer.setVisible(true);
         Dfa dfa(fileData);

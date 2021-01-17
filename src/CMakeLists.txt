@@ -2,6 +2,8 @@
 set(BSATool_SRCS
         "assets/FileType.cpp"
         "assets/FileType.h"
+        "assets/Cfa.cpp"
+        "assets/Cfa.h"
         "assets/Dfa.cpp"
         "assets/Dfa.h"
         "assets/Img.cpp"
