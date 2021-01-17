@@ -50,6 +50,7 @@ void AnimationDisplayer::toggleAnimation() {
 void AnimationDisplayer::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
     if (mStoppedByHideEvent) {
+        mStoppedByHideEvent = false;
         toggleAnimation();
     }
 }
