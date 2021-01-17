@@ -99,7 +99,7 @@ public:
      * usable. Refer to getRemainingBits() to know how many bits are usable
      * @return the bits
      */
-    quint16 getBits();
+    quint8 getBits();
 };
 
 /**

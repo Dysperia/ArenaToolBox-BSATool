@@ -122,9 +122,9 @@ quint16 HuffmanTree::findLeaf(BitsReader &bitsReader) {
     // searching leaf in tree from input
     quint16 leaf = mTree[626];
     while (leaf < 627) {
-        quint16 bits = bitsReader.getBits();
+        quint8 bits = bitsReader.getBits();
         bitsReader.removeBits(1);
-        quint16 childChoice = bits >> 15u;
+        quint16 childChoice = bits >> 7u;
         leaf = mTree[leaf + childChoice];
     }
     resetTreeAtFreqTooHigh();

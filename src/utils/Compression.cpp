@@ -139,7 +139,7 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
     return compressedData;
 }
 
-QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData, const quint16 &uncompressedSize) {
+QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData, const uint &uncompressedSize) {
     // init huffman tree
     HuffmanTree huffmanTree = HuffmanTree();
     // deque to allow fast first element removal and random element access
@@ -169,7 +169,7 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
             // copy string from window
         else {
             // Reading index for offset tables
-            quint16 offsetTableIdx = bitsReader.getBits() >> 8u;
+            quint8 offsetTableIdx = bitsReader.getBits();
             bitsReader.removeBits(8);
             // init offset low bits
             quint16 offsetToCopyLowBits = offsetTableIdx;
@@ -178,9 +178,9 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
             // getting missing bits and added them if needed to get the full offset low bits
             quint16 nbBitsToReadAndAdd = (NB_BITS_MISSING_IN_OFFSET_LOW_BITS[offsetTableIdx] & 0x00FFu) - 2u;
             for (; nbBitsToReadAndAdd > 0; nbBitsToReadAndAdd--) {
-                quint16 bits = bitsReader.getBits();
+                quint8 bits = bitsReader.getBits();
                 bitsReader.removeBits(1);
-                offsetToCopyLowBits = (offsetToCopyLowBits << 1u) + (bits >> 15u);
+                offsetToCopyLowBits = (offsetToCopyLowBits << 1u) + (bits >> 7u);
             }
             // getting offset from high and low bits
             quint16 offsetFromCurrentPosition = (offsetToCopyLowBits & 0x003Fu) | offsetToCopyHighBits;
@@ -267,7 +267,7 @@ QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData
 }
 
 QVector<char>
-Compression::uncompressRLEByLine(const QVector<char> &compressedData, const quint16 &width, const quint16 &height) {
+Compression::uncompressRLEByLine(const QVector<char> &compressedData, const uint &width, const uint &height) {
     // deque to allow fast first element removal and random element access
     deque<char> compressDataDeque;
     for (const auto &byte : compressedData) {
@@ -278,7 +278,7 @@ Compression::uncompressRLEByLine(const QVector<char> &compressedData, const quin
     // For each line of pixels
     for (int line(0); line < height; line++) {
         // while not done with this line
-        quint16 bytesLeftToProduce = width;
+        uint bytesLeftToProduce = width;
         while (bytesLeftToProduce > 0) {
             // getting number of bytes for this operation
             quint8 counter = BitsReader::getNextUnsignedByte(compressDataDeque);
@@ -304,7 +304,7 @@ Compression::uncompressRLEByLine(const QVector<char> &compressedData, const quin
 }
 
 QVector<char>
-Compression::compressRLEByLine(const QVector<char> &uncompressedData, const quint16 &width, const quint16 &height) {
+Compression::compressRLEByLine(const QVector<char> &uncompressedData, const uint &width, const uint &height) {
     // deque to allow fast first element removal and random element access
     deque<char> uncompressDataDeque;
     for (const auto &byte : uncompressedData) {
@@ -315,7 +315,7 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const quin
     // For each line of pixels
     for (int line(0); line < height; line++) {
         // while not done with this line
-        quint16 bytesLeftToConsume = width;
+        uint bytesLeftToConsume = width;
         while (bytesLeftToConsume > 0) {
             // if only one byte remaining
             if (bytesLeftToConsume == 1) {
@@ -374,12 +374,12 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const quin
     return compressedData;
 }
 
-QVector<char> Compression::uncompressRLE(const QVector<char> &compressedData, const quint16 &uncompressedSize) {
+QVector<char> Compression::uncompressRLE(const QVector<char> &compressedData, const uint &uncompressedSize) {
     return uncompressRLEByLine(compressedData, uncompressedSize, 1);
 }
 
 QVector<char> Compression::compressRLE(const QVector<char> &uncompressedData) {
-    return uncompressRLEByLine(uncompressedData, uncompressedData.size(), 1);
+    return compressRLEByLine(uncompressedData, uncompressedData.size(), 1);
 }
 
 QVector<char> Compression::encryptDecrypt(const QVector<char> &data, QVector<quint8> cryptKey) {

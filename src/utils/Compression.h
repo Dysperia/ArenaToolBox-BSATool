@@ -82,7 +82,7 @@ public:
      * @param compressedData to uncompress
      * @return the uncompressed data
      */
-    static QVector<char> uncompressDeflate(const QVector<char> &compressedData, const quint16 &uncompressedSize);
+    static QVector<char> uncompressDeflate(const QVector<char> &compressedData, const uint &uncompressedSize);
 
     /**
      * Compressed data with a deflate algorithm
@@ -96,21 +96,21 @@ public:
      * @param compressedData to uncompress
      * @return the uncompressed data
      */
-    static QVector<char> uncompressRLEByLine(const QVector<char> &compressedData, const quint16 &width, const quint16 &height);
+    static QVector<char> uncompressRLEByLine(const QVector<char> &compressedData, const uint &width, const uint &height);
 
     /**
      * Compressed data with a run length algorithm running by line of data in the image
      * @param uncompressedData to compress
      * @return the compressed data
      */
-    static QVector<char> compressRLEByLine(const QVector<char> &uncompressedData, const quint16 &width, const quint16 &height);
+    static QVector<char> compressRLEByLine(const QVector<char> &uncompressedData, const uint &width, const uint &height);
 
     /**
      * Uncompressed data with a run length algorithm
      * @param compressedData to uncompress
      * @return the uncompressed data
      */
-    static QVector<char> uncompressRLE(const QVector<char> &compressedData, const quint16 &uncompressedSize);
+    static QVector<char> uncompressRLE(const QVector<char> &compressedData, const uint &uncompressedSize);
 
     /**
      * Compressed data with a run length algorithm

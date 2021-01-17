@@ -32,7 +32,7 @@ quint8 BitsReader::getRemainingBits() const {
     return mBitsBuffer.mRemainingBits;
 }
 
-quint16 BitsReader::getBits() {
+quint8 BitsReader::getBits() {
     // if needed, getting 8 new bits to ensure having at least 8 usable
     while (mBitsBuffer.mRemainingBits <= NB_BITS_IN_BYTE) {
         quint16 nextBits;
@@ -46,7 +46,7 @@ quint16 BitsReader::getBits() {
         mBitsBuffer.mBits = movedNewBits | mBitsBuffer.mBits;
         mBitsBuffer.mRemainingBits += 8;
     }
-    return mBitsBuffer.mBits;
+    return mBitsBuffer.mBits >> NB_BITS_IN_BYTE;
 }
 
 //**************************************************************************
