@@ -10,7 +10,7 @@ AnimationDisplayer::AnimationDisplayer(QWidget *parent) : ImagesCollectionDispla
     mPlayAnimationButton = new QPushButton("Start animation");
     connect(mPlayAnimationButton, SIGNAL(clicked(bool)), SLOT(toggleAnimation()));
     layout->addWidget(mPlayAnimationButton);
-    mTimer.setInterval(1000 / 12);
+    mTimer.setInterval(1000 / 6);
     connect(&mTimer, SIGNAL(timeout()), SLOT(goNextForAnimation()));
 }
 
