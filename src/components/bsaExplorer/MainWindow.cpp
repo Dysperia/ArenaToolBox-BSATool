@@ -3,7 +3,6 @@
 #include "components/console/ConsoleDock.h"
 #include "components/fileList/FileListViewer.h"
 #include "log/Logger.h"
-#include "components/fileList/FileListViewerItem.h"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -11,25 +10,16 @@
 //******************************************************************************
 // Constructors
 //******************************************************************************
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive() {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Menu bar
     mMenuBar = new MenuBar();
     setMenuBar(mMenuBar);
+    mArchiveConfigurationLoader.loadConfiguration(mApplicationConfiguration.getLastLoadedArchConf());
+    mMenuBar->updateConfigurationActions(mArchiveConfigurationLoader.getConfigurationList(), mArchiveConfigurationLoader.getCurrent().getName());
 
     // Toolbar
     auto *toolBar = new ToolBar(mMenuBar);
     addToolBar(toolBar);
-
-    // Connecting MenuBar/ToolBar actions
-    connect(mMenuBar->getNewBSAFileAction(), SIGNAL(triggered()), SLOT(newBsa()));
-    connect(mMenuBar->getOpenBSAFileAction(), SIGNAL(triggered()), SLOT(openBsa()));
-    connect(mMenuBar->getSaveBSAFileAction(), SIGNAL(triggered()), SLOT(saveBsa()));
-    connect(mMenuBar->getCloseBSAFileAction(), SIGNAL(triggered()), SLOT(closeBsa()));
-
-    // Connecting actions update slots
-    connect(&mBsaArchive, &BsaArchive::archiveOpened, mMenuBar, &MenuBar::updateActionsFromBsaArchiveState);
-    connect(&mBsaArchive, &BsaArchive::archiveClosed, mMenuBar, &MenuBar::updateActionsFromBsaArchiveState);
-    mMenuBar->updateActionsFromBsaArchiveState(mBsaArchive.isOpened());
 
     // Central widget
     auto *mainZone = new QWidget;
@@ -39,21 +29,36 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), mBsaArchive() {
     auto *fileListViewer = new FileListViewer;
     mainGrid->addWidget(fileListViewer, 0, 0);
 
-    // Connecting fileListViewer and bsaArchive
-    connect(&mBsaArchive, &BsaArchive::fileListModified, fileListViewer, &FileListViewer::updateViewFromFileList);
-
     // File display
     mFileDisplayer = new FileDisplayer;
     mainGrid->addLayout(mFileDisplayer, 0, 1);
     mainGrid->setColumnStretch(1, 1);
 
-    // Connecting fileDisplayer and fileListViewer
-    connect(fileListViewer, SIGNAL(currentFileItemChanged(BsaFile, BsaFile)), SLOT(updateOnFileSelected(const BsaFile&)));
-
     // Console
     QDockWidget *consoleDock = new ConsoleDock;
     this->addDockWidget(Qt::BottomDockWidgetArea, consoleDock);
     mMenuBar->getViewMenu()->addAction(consoleDock->toggleViewAction());
+
+    // Charging archive configuration from user choice
+    connect(mMenuBar, SIGNAL(configurationChange(QString)), &mArchiveConfigurationLoader, SLOT(loadConfiguration(QString)));
+    connect(mMenuBar, SIGNAL(configurationChange(QString)), &mApplicationConfiguration, SLOT(setLastLoadedArchConf(QString)));
+
+    // Connecting MenuBar actions
+    connect(mMenuBar->getNewBSAFileAction(), SIGNAL(triggered()), SLOT(newBsa()));
+    connect(mMenuBar->getOpenBSAFileAction(), SIGNAL(triggered()), SLOT(openBsa()));
+    connect(mMenuBar->getSaveBSAFileAction(), SIGNAL(triggered()), SLOT(saveBsa()));
+    connect(mMenuBar->getCloseBSAFileAction(), SIGNAL(triggered()), SLOT(closeBsa()));
+
+    // Updating MenuBar actions state according to BSA state
+    connect(&mBsaArchive, &BsaArchive::archiveOpened, mMenuBar, &MenuBar::updateActionsFromBsaArchiveState);
+    connect(&mBsaArchive, &BsaArchive::archiveClosed, mMenuBar, &MenuBar::updateActionsFromBsaArchiveState);
+    mMenuBar->updateActionsFromBsaArchiveState(mBsaArchive.isOpened());
+
+    // Updating file list when BSA change
+    connect(&mBsaArchive, &BsaArchive::fileListModified, fileListViewer, &FileListViewer::updateViewFromFileList);
+
+    // Displaying selected file
+    connect(fileListViewer, SIGNAL(currentFileItemChanged(BsaFile,BsaFile)), SLOT(updateOnFileSelected(BsaFile)));
 }
 
 //**************************************************************************
@@ -136,8 +141,8 @@ void MainWindow::closeBsa() {
 void MainWindow::updateOnFileSelected(const BsaFile& currentItem) {
     if (currentItem != BsaFile::INVALID_BSAFILE) {
         const QVector<char> &fileData = mBsaArchive.getFileData(currentItem);
-        mFileDisplayer->display(currentItem, fileData);
+        mFileDisplayer->display(currentItem, fileData, mArchiveConfigurationLoader.getCurrent());
     } else {
-        mFileDisplayer->display(currentItem, QVector<char>());
+        mFileDisplayer->display(currentItem, QVector<char>(), mArchiveConfigurationLoader.getCurrent());
     }
 }

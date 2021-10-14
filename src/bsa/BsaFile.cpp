@@ -46,7 +46,7 @@ bool BsaFile::operator !=(const BsaFile &bsaFile) const
 QString BsaFile::getExtension() const {
     int idx = mFileName.lastIndexOf('.');
     if (idx == -1 || idx == mFileName.length()) {
-        return QString();
+        return {};
     }
     else {
         return mFileName.mid(idx + 1);

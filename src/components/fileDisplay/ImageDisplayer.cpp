@@ -44,7 +44,7 @@ void ImageDisplayer::display(const QImage &image, bool resetZoom) {
             }
             else {
                 mLabel.setPixmap(mPixmap.scaled(mPixmap.size() * mRatio, Qt::KeepAspectRatio, Qt::FastTransformation));
-                mLabel.resize(mLabel.pixmap()->size());
+                mLabel.resize(mLabel.pixmap().size());
             }
         } else {
             displayDefaultText();
@@ -82,7 +82,7 @@ void ImageDisplayer::zoom(double factor) {
     adjustScrollBar(horizontalScrollBar(), factor, newImageSize.width(), isZoomIn && newImageSize.width() > this->width());
     adjustScrollBar(verticalScrollBar(), factor, newImageSize.height(), isZoomIn && newImageSize.height() > this->height());
     mLabel.setPixmap(mPixmap.scaled(newImageSize, Qt::KeepAspectRatio, Qt::FastTransformation));
-    mLabel.resize(mLabel.pixmap()->size());
+    mLabel.resize(mLabel.pixmap().size());
 }
 
 void ImageDisplayer::mouseMoveEvent(QMouseEvent *event) {

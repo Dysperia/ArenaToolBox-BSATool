@@ -1,8 +1,11 @@
+#ghp_4xRfMdCFujawzmxseweqR2wHsWZySb2nJkcj
+
 cmake_minimum_required(VERSION 3.1.0)
 
 project(BSATool)
 
 set(CMAKE_CXX_STANDARD 17)
+add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060000)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

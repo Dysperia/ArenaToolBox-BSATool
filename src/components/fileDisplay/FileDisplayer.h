@@ -2,6 +2,7 @@
 #define BSATOOL_FILEDISPLAYER_H
 
 #include <QVBoxLayout>
+#include <configuration/ArchiveConfiguration.h>
 #include "ImageDisplayer.h"
 #include "bsa/BsaFile.h"
 #include "TextDisplayer.h"
@@ -32,8 +33,9 @@ public slots:
      * Display a visual for the given file
      * @param file to display
      * @param fileData : binary data of the file
+     * @param configuration : BSA archive configuration
      */
-    void display(const BsaFile &file, const QVector<char> &fileData);
+    void display(const BsaFile &file, const QVector<char> &fileData, const ArchiveConfiguration &configuration);
 
 private:
     //**************************************************************************

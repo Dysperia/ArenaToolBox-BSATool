@@ -10,6 +10,12 @@
 class MenuBar : public QMenuBar
 {
     Q_OBJECT
+signals:
+    /**
+     * @brief signal sent when a configuration is selected
+     * @param name name of the selected configuration;
+     */
+    void configurationChange(QString name);
 public:
     //**************************************************************************
     // Constructors
@@ -72,6 +78,19 @@ public slots:
      */
     void updateActionsFromBsaArchiveState(bool archiveOpened);
 
+    /**
+     * @brief update the configuration action list according to the given list
+     * @param names list of configuration
+     * @param current currently loaded configuration
+     */
+    void updateConfigurationActions(const QStringList &names, const QString &current);
+
+    /**
+     * @brief emit a signal to notify a change in the currently selected configuration
+     * @param selected the selected action in the configuration group
+     */
+    void emitSelectedConfigurationChanged(QAction *selected);
+
 private:
     //**************************************************************************
     // Attributes
@@ -80,6 +99,7 @@ private:
     QMenu *mFileMenu;
 //    QMenu *mCancelDeleteUpdateMenu;
     QMenu *mViewMenu;
+    QMenu *mConfigurationMenu;
 //    QMenu *mExtractMenu;
 //    QMenu *mExtractAsRawMenu;
 //    QMenu *mExtractImageMenu;

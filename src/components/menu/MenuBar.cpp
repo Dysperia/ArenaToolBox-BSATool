@@ -19,6 +19,7 @@ MenuBar::MenuBar(QWidget *parent): QMenuBar(parent)
     mCloseBSAFileAction = new QAction("Close BSA file", this);
     mFileMenu->addAction(mCloseBSAFileAction);
     mCloseBSAFileAction->setIcon(QIcon("icon/close_bsa.png"));
+
 //    mAddFileAction = new QAction("Add file", this);
 //    mFileMenu->addAction(mAddFileAction);
 //    mAddFileAction->setIcon(QIcon("icon/add_file.png"));
@@ -42,6 +43,8 @@ MenuBar::MenuBar(QWidget *parent): QMenuBar(parent)
 //    mViewMenu->addAction(mExtendedPreviewAction);
 //    mUpdatePreviewOverDefaultAction = mViewMenu->addAction("Use update file over default for image preview");
 //    mUpdatePreviewOverDefaultAction->setCheckable(true);
+
+    mConfigurationMenu = addMenu("Configuration");
 
 //    mExtractMenu = addMenu("Extract");
 //    mExtractAsRawMenu = mExtractMenu->addMenu("Extract as raw");
@@ -203,4 +206,23 @@ void MenuBar::updateActionsFromBsaArchiveState(bool archiveOpened) {
         mSaveBSAFileAction->setDisabled(true);
         mCloseBSAFileAction->setDisabled(true);
     }
+}
+
+void MenuBar::updateConfigurationActions(const QStringList &names, const QString &current) {
+    mConfigurationMenu->clear();
+    auto actionGroup = new QActionGroup(this);
+    for (auto &name : names) {
+        auto action = new QAction(name, actionGroup);
+        action->setCheckable(true);
+        if (name == current) {
+            action->setChecked(true);
+        }
+        actionGroup->addAction(action);
+        mConfigurationMenu->addAction(action);
+    }
+    connect(actionGroup, SIGNAL(triggered(QAction*)), SLOT(emitSelectedConfigurationChanged(QAction*)));
+}
+
+void MenuBar::emitSelectedConfigurationChanged(QAction *selected) {
+    emit configurationChange(selected->text());
 }

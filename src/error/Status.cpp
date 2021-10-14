@@ -6,7 +6,7 @@
 // Constructors
 //**************************************************************************
 Status::Status(const int &status, QString message):
-    mStatus(status), mMessage(move(message))
+    mStatus(status), mMessage(move(message)), mMessageStdString(mMessage.toStdString())
 {
 
 }
@@ -26,5 +26,5 @@ QString Status::message() const
 
 const char* Status::what() const noexcept
 {
-    return mMessage.toStdString().data();
+    return mMessageStdString.data();
 }

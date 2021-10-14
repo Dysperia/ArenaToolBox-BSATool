@@ -39,7 +39,7 @@ public:
      * @brief constructor of Dfa
      * @param data data of the file
      */
-    explicit Dfa(const QVector<char> &data, const Palette &palette = Palette());
+    explicit Dfa(const QVector<char> &data, Palette palette = Palette());
 
     //**************************************************************************
     // Getters/setters
@@ -100,9 +100,8 @@ private:
     /**
      * Init animation from the given stream and palette
      * @param stream containing animation data
-     * @param palette color table to use
      */
-    void initFromStreamAndPalette(QDataStream &dataStream, const Palette &palette);
+    void initFromStreamAndPalette(QDataStream &dataStream);
 };
 
 

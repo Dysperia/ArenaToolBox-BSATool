@@ -8,9 +8,9 @@ using namespace std;
 //******************************************************************************
 // Constructors
 //******************************************************************************
-Dfa::Dfa(const QVector<char> &data, const Palette &palette) {
+Dfa::Dfa(const QVector<char> &data, Palette palette) : mPalette(std::move(palette)) {
     QDataStream stream = QDataStream(QByteArray((data.constData()), data.size()));
-    initFromStreamAndPalette(stream, palette);
+    initFromStreamAndPalette(stream);
 }
 
 //******************************************************************************
@@ -63,7 +63,7 @@ QVector<QImage> Dfa::qImages() const {
 //******************************************************************************
 // Methods
 //******************************************************************************
-void Dfa::initFromStreamAndPalette(QDataStream &dataStream, const Palette &palette) {
+void Dfa::initFromStreamAndPalette(QDataStream &dataStream) {
     try {
         // reading header
         Img::verifyStream(dataStream, 12);

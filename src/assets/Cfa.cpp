@@ -8,9 +8,9 @@
 //******************************************************************************
 // Constructors
 //******************************************************************************
-Cfa::Cfa(const QVector<char> &data, const Palette &palette) {
+Cfa::Cfa(const QVector<char> &data, Palette palette) : mPalette(std::move(palette)) {
     QDataStream stream = QDataStream(QByteArray((data.constData()), data.size()));
-    initFromStreamAndPalette(stream, palette, data.size());
+    initFromStreamAndPalette(stream, data.size());
 }
 
 //******************************************************************************
@@ -63,7 +63,7 @@ QVector<QImage> Cfa::qImages() const {
 //******************************************************************************
 // Methods
 //******************************************************************************
-void Cfa::initFromStreamAndPalette(QDataStream &dataStream, const Palette &palette, const quint16 &dataSize) {
+void Cfa::initFromStreamAndPalette(QDataStream &dataStream, const quint16 &dataSize) {
     try {
         // reading header
         Img::verifyStream(dataStream, 14);
@@ -117,7 +117,7 @@ void Cfa::initFromStreamAndPalette(QDataStream &dataStream, const Palette &palet
                     bitsReader.removeBits(bitsPerPixel);
                     // if no color table (8 bits per pixel for example -> direct original pixel value)
                     if (colorTableSize == 0) {
-                        frame.push_back(pixel);
+                        frame.push_back(char(pixel));
                     }
                     else {
                         if (pixel >= colorTableRealIndexes.size()) {

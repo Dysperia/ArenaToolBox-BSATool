@@ -2,11 +2,11 @@ find_package(Qt5Test CONFIG REQUIRED)
 
 # Populate a CMake variable with the sources
 set(BSAToolTest_SRCS
-        "bsa/BsaFileTest.cpp"
-        "bsa/BsaFileTest.h"
-        "utils/CompressionTest.cpp"
-        "utils/CompressionTest.h"
-        "main/main.cpp")
+        bsa/BsaFileTest.cpp
+        bsa/BsaFileTest.h
+        utils/CompressionTest.cpp
+        utils/CompressionTest.h
+        main/main.cpp)
 # Tell CMake to create the executable
 add_executable(BSAToolTest ${BSAToolTest_SRCS})
 # Use the modules from Qt 5

@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QtWidgets/QListWidgetItem>
 #include <configuration/ApplicationConfiguration.h>
+#include <configuration/ArchiveConfigurationLoader.h>
 
 /**
  * @brief the main window of the application, used to explore and edit the bsa
@@ -40,6 +41,11 @@ private:
      * @brief bsa archive manager
      */
     BsaArchive mBsaArchive;
+
+    /**
+     * @brief archive configuration loader
+     */
+    ArchiveConfigurationLoader mArchiveConfigurationLoader;
 
     /**
      * @brief file displayer

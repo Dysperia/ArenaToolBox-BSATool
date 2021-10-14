@@ -22,12 +22,12 @@ public:
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
-    int status() const;
-    QString message() const;
+    [[nodiscard]]int status() const;
+    [[nodiscard]]QString message() const;
     //**************************************************************************
     // Methods
     //**************************************************************************
-    const char* what() const noexcept override;
+    [[nodiscard]]const char* what() const noexcept override;
 
 private:
     //**************************************************************************
@@ -38,9 +38,13 @@ private:
      */
     int mStatus;
     /**
-     * @brief message detailling the error if any happened
+     * @brief message detailing the error if any happened
      */
     QString mMessage;
+    /**
+     * @brief std::string version of the message detailing the error if any happened
+     */
+    std::string mMessageStdString;
 };
 
 #endif // BSATOOL_STATUS_H

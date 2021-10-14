@@ -36,7 +36,7 @@ public:
      * @brief constructor of Cfa
      * @param data data of the file
      */
-    explicit Cfa(const QVector<char> &data, const Palette &palette = Palette());
+    explicit Cfa(const QVector<char> &data, Palette palette = Palette());
 
     //**************************************************************************
     // Getters/setters
@@ -97,9 +97,8 @@ private:
     /**
      * Init animation from the given stream and palette
      * @param stream containing animation data
-     * @param palette color table to use
      */
-    void initFromStreamAndPalette(QDataStream &dataStream, const Palette &palette, const quint16 &dataSize);
+    void initFromStreamAndPalette(QDataStream &dataStream, const quint16 &dataSize);
 };
 
 

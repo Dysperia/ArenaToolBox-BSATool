@@ -19,10 +19,15 @@ Img::Img(QDataStream &imgData, const Palette &palette) {
     initFromStreamAndPalette(imgData, palette);
 }
 
-Img::Img(QVector<char> imgData, quint16 width, quint16 height, Palette palette) :
-        mImageData(std::move(imgData)), mWidth(width), mHeight(height), mPalette(std::move(palette)) {
-    mQImage = QImage(reinterpret_cast<uchar *>(mImageData.data()), mWidth, mHeight, mWidth, QImage::Format_Indexed8);
-    mQImage.setColorTable(mPalette.getColorTable());
+Img::Img(const QVector<char> &imgData, quint16 width, quint16 height, const Palette &palette) :
+        mWidth(width), mHeight(height), mRawDataSize(width * height) {
+    QDataStream stream = QDataStream(QByteArray((imgData.constData()), imgData.size()));
+    initFromStreamAndPalette(stream, palette, true);
+}
+
+Img::Img(QDataStream &imgData, quint16 width, quint16 height, const Palette &palette) :
+        mWidth(width), mHeight(height), mRawDataSize(width * height) {
+    initFromStreamAndPalette(imgData, palette, true);
 }
 
 //******************************************************************************
@@ -119,36 +124,46 @@ void Img::verifyStream(QDataStream &dataStream, const int &size) {
     }
 }
 
-void Img::initFromStreamAndPalette(QDataStream &imgDataStream, const Palette &palette) {
+bool Img::readDataFromStream(QDataStream &imgDataStream, QVector<char> &rawData,
+                             quint16 size) {
+    if (imgDataStream.readRawData(rawData.data(), size) < 0) {
+        Logger::getInstance().log(Logger::MessageType::ERROR, QStringLiteral("Error while reading image data"));
+        return false;
+    }
+    return true;
+}
+
+void Img::initFromStreamAndPalette(QDataStream &imgDataStream, const Palette &palette, bool noHeader) {
     try {
-        verifyStream(imgDataStream, 12);
-        quint16 dataSize;
-        imgDataStream.setByteOrder(QDataStream::LittleEndian);
-        imgDataStream >> mOffsetX;
-        imgDataStream >> mOffsetY;
-        imgDataStream >> mWidth;
-        imgDataStream >> mHeight;
-        imgDataStream >> mCompressionFlag;
-        imgDataStream >> mPaletteFlag;
-        imgDataStream >> dataSize;
-        verifyStream(imgDataStream, dataSize);
-        QVector<char> rawData(mCompressionFlag == 0x08 ? dataSize - 2 : dataSize);
+        if (!noHeader) {
+            verifyStream(imgDataStream, 12);
+            imgDataStream.setByteOrder(QDataStream::LittleEndian);
+            imgDataStream >> mOffsetX;
+            imgDataStream >> mOffsetY;
+            imgDataStream >> mWidth;
+            imgDataStream >> mHeight;
+            imgDataStream >> mCompressionFlag;
+            imgDataStream >> mPaletteFlag;
+            imgDataStream >> mRawDataSize;
+        }
+        verifyStream(imgDataStream, mRawDataSize);
+        QVector<char> rawData(mCompressionFlag == 0x08 ? mRawDataSize - 2 : mRawDataSize);
         if (mCompressionFlag == 0x00) {
-            readDataFromStream(imgDataStream, rawData, dataSize);
+            readDataFromStream(imgDataStream, rawData, mRawDataSize);
             mImageData = rawData;
             validatePixelDataAndCreateImage();
         } else if (mCompressionFlag == 0x02) {
-            readDataFromStream(imgDataStream, rawData, dataSize);
+            readDataFromStream(imgDataStream, rawData, mRawDataSize);
             mImageData = Compression::uncompressRLEByLine(rawData, mWidth, mHeight);
             validatePixelDataAndCreateImage();
         } else if (mCompressionFlag == 0x04) {
-            readDataFromStream(imgDataStream, rawData, dataSize);
+            readDataFromStream(imgDataStream, rawData, mRawDataSize);
             mImageData = Compression::uncompressLZSS(rawData);
             validatePixelDataAndCreateImage();
         } else if (mCompressionFlag == 0x08) {
             quint16 uncompressedSize = 0;
             imgDataStream >> uncompressedSize;
-            readDataFromStream(imgDataStream, rawData, dataSize - 2);
+            readDataFromStream(imgDataStream, rawData, mRawDataSize - 2);
             mImageData = Compression::uncompressDeflate(rawData, uncompressedSize);
             validatePixelDataAndCreateImage();
         } else {
@@ -176,16 +191,8 @@ void Img::initFromStreamAndPalette(QDataStream &imgDataStream, const Palette &pa
                 mQImage.setColorTable(mPalette.getColorTable());
             }
         } else {
+            mPalette = palette;
             mQImage.setColorTable(mPalette.getColorTable());
         }
     }
-}
-
-bool Img::readDataFromStream(QDataStream &imgDataStream, QVector<char> &rawData,
-                             quint16 size) const {
-    if (imgDataStream.readRawData(rawData.data(), size) < 0) {
-        Logger::getInstance().log(Logger::MessageType::ERROR, QStringLiteral("Error while reading image data"));
-        return false;
-    }
-    return true;
 }

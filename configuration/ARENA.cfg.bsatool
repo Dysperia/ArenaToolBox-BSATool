@@ -1,0 +1,196 @@
+{
+  "defaultPalette": "PAL.COL",
+  "files": [
+    {
+      "customSize": true,
+      "filename": "ARENARW.IMG",
+      "height": 16,
+      "noHeader": true,
+      "customPalette": false,
+      "paletteFile": "PAL.COL",
+      "width": 16
+    },
+    {
+      "customSize": true,
+      "filename": "CITY.IMG",
+      "height": 11,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 16
+    },
+    {
+      "customSize": true,
+      "filename": "DITHER.IMG",
+      "height": 50,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 16
+    },
+    {
+      "customSize": true,
+      "filename": "DITHER2.IMG",
+      "height": 50,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 16
+    },
+    {
+      "customSize": true,
+      "filename": "DUNGEON.IMG",
+      "height": 8,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 14
+    },
+    {
+      "customSize": true,
+      "filename": "DZTTAV.IMG",
+      "height": 34,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 32
+    },
+    {
+      "customSize": true,
+      "filename": "NOCAMP.IMG",
+      "height": 19,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 25
+    },
+    {
+      "customSize": true,
+      "filename": "NOSPELL.IMG",
+      "height": 19,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 25
+    },
+    {
+      "customSize": true,
+      "filename": "P1.IMG",
+      "height": 53,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 320
+    },
+    {
+      "customSize": true,
+      "filename": "POPTALK.IMG",
+      "height": 77,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 320
+    },
+    {
+      "customSize": true,
+      "filename": "S2.IMG",
+      "height": 36,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 320
+    },
+    {
+      "customSize": true,
+      "filename": "SLIDER.IMG",
+      "height": 7,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 289
+    },
+    {
+      "customSize": true,
+      "filename": "TOWN.IMG",
+      "height": 10,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 9
+    },
+    {
+      "customSize": true,
+      "filename": "UPDOWN.IMG",
+      "height": 16,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 8
+    },
+    {
+      "customSize": true,
+      "filename": "VILLAGE.IMG",
+      "height": 8,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 8
+    },
+    {
+      "customSize": true,
+      "filename": "BRASS.CIF",
+      "height": 8,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 8
+    },
+    {
+      "customSize": true,
+      "filename": "BRASS2.CIF",
+      "height": 8,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 8
+    },
+    {
+      "customSize": true,
+      "filename": "MARBLE.CIF",
+      "height": 3,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 3
+    },
+    {
+      "customSize": true,
+      "filename": "MARBLE2.CIF",
+      "height": 3,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 3
+    },
+    {
+      "customSize": true,
+      "filename": "PARCH.CIF",
+      "height": 20,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 20
+    },
+    {
+      "customSize": true,
+      "filename": "SCROLL.CIF",
+      "height": 20,
+      "noHeader": true,
+      "customPalette":  false,
+      "paletteFile": "PAL.COL",
+      "width": 20
+    }
+  ],
+  "name": "ARENA",
+  "textureWidth": 64
+}
