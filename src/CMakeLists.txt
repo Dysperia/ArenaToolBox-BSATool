@@ -57,12 +57,12 @@ set(BSATool_SRCS
         utils/BitsStreams.cpp
         utils/BitsStreams.h
         utils/SlidingWindow.h)
-set(BSATool_MAIN main/main.cpp)
+set(BSAExplorer_MAIN main/main.cpp)
 
 # BSATool library
-add_library(BSATool_library ${BSATool_SRCS})
-target_link_libraries(BSATool_library Qt5::Widgets Qt5::Concurrent)
+add_library(BSATool ${BSATool_SRCS})
+target_link_libraries(BSATool Qt5::Widgets Qt5::Concurrent)
 
 # BSATool executable
-add_executable(BSATool ${BSATool_MAIN})
-target_link_libraries(BSATool BSATool_library)
+add_executable(BSAExplorer ${BSAExplorer})
+target_link_libraries(BSAExplorer BSATool)

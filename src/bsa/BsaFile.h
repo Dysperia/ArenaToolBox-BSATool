@@ -36,10 +36,10 @@ public:
      * in the archive
      * @param fileName the file name
      */
-    BsaFile(const quint32 &size,
-         const qint64 &startOffsetInArchive,
+    BsaFile(quint32 size,
+         qint64 startOffsetInArchive,
          QString fileName,
-         const quint16 &index);
+         quint16 index);
     /**
      * @brief copy constructor
      */
@@ -48,10 +48,6 @@ public:
     //**************************************************************************
     // Operators
     //**************************************************************************
-    /**
-     * @brief copy assigment operator
-     */
-    BsaFile &operator =(const BsaFile &bsaFile) = default;
     /**
      * @brief equal operator
      *
@@ -73,35 +69,35 @@ public:
      *
      * @return return this file name extension or an empty string if no '.' character is found in the file name
      */
-    QString getExtension() const;
+    [[nodiscard]]QString getExtension() const;
 
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
-    quint32 size() const;
+    [[nodiscard]]quint32 size() const;
 
-    qint64 startOffsetInArchive() const;
+    [[nodiscard]]qint64 startOffsetInArchive() const;
 
-    QString fileName() const;
+    [[nodiscard]]QString fileName() const;
 
-    quint16 index() const;
+    [[nodiscard]]quint16 index() const;
 
-    bool isNew() const;
+    [[nodiscard]]bool isNew() const;
     void setIsNew(bool isNew);
 
-    bool toDelete() const;
+    [[nodiscard]]bool toDelete() const;
     void setToDelete(bool toDelete);
 
-    bool updated() const;
+    [[nodiscard]]bool updated() const;
     void setUpdated(bool updated);
 
-    quint32 updateFileSize() const;
+    [[nodiscard]]quint32 updateFileSize() const;
     void setUpdateFileSize(quint32 updateFileSize);
 
-    QString updateFilePath() const;
+    [[nodiscard]]QString updateFilePath() const;
     void setUpdateFilePath(const QString &updateFilePath);
 
-    QString newFilePath() const;
+    [[nodiscard]]QString newFilePath() const;
     void setNewFilePath(const QString &newFilePath);
 
 private:
@@ -150,4 +146,4 @@ private:
     QString mNewFilePath{};
 };
 
-#endif // BSATOOL_ENTRY_H
+#endif // BSATOOL_FILE_H

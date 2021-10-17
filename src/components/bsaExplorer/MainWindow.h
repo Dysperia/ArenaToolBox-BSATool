@@ -17,16 +17,12 @@
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-signals:
-
 public:
     /**
      * @brief MainWindow
      * @param parent parent of this window
      */
     explicit MainWindow(QWidget *parent = nullptr);
-
-public slots:
 
 private:
     //**************************************************************************

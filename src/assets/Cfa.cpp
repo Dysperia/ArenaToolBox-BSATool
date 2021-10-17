@@ -104,7 +104,7 @@ void Cfa::initFromStreamAndPalette(QDataStream &dataStream, const quint16 &dataS
             QVector<char> compressedFrameData(compressedFrameDataSize);
             dataStream.readRawData(compressedFrameData.data(), compressedFrameDataSize);
             // RLE uncompression
-            const QVector<char> &frameData = Compression::uncompressRLE(compressedFrameData, compressedWidth * mHeight);
+            const QVector<char> frameData = Compression::uncompressRLE(compressedFrameData, compressedWidth * mHeight);
             QVector<char> frame;
             // Bits expansion for each line of pixels
             for (int lineIndex = 0; lineIndex < mHeight; ++lineIndex) {

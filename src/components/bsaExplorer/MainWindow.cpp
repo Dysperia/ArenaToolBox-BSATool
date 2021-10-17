@@ -140,7 +140,7 @@ void MainWindow::closeBsa() {
 
 void MainWindow::updateOnFileSelected(const BsaFile& currentItem) {
     if (currentItem != BsaFile::INVALID_BSAFILE) {
-        const QVector<char> &fileData = mBsaArchive.getFileData(currentItem);
+        const QVector<char> fileData = mBsaArchive.getFileData(currentItem);
         mFileDisplayer->display(currentItem, fileData, mArchiveConfigurationLoader.getCurrent());
     } else {
         mFileDisplayer->display(currentItem, QVector<char>(), mArchiveConfigurationLoader.getCurrent());

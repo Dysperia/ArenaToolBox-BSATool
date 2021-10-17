@@ -16,10 +16,10 @@ BsaFile::BsaFile():
         mFileName(BsaFile::INVALID_BSAFILE.fileName()), mIndex(BsaFile::INVALID_BSAFILE.index()) {
 };
 
-BsaFile::BsaFile(const quint32 &size,
-                 const qint64 &startOffsetInArchive,
+BsaFile::BsaFile(quint32 size,
+                 qint64 startOffsetInArchive,
                  QString fileName,
-                 const quint16 &index):
+                 quint16 index):
     mSize(size), mStartOffsetInArchive(startOffsetInArchive),
     mFileName(std::move(fileName)), mIndex(index)
 {
@@ -135,5 +135,3 @@ void BsaFile::setNewFilePath(const QString &newFilePath)
 {
     mNewFilePath = newFilePath;
 }
-
-#pragma clang diagnostic pop

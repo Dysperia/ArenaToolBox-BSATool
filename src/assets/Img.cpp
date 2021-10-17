@@ -10,24 +10,24 @@ using namespace std;
 //******************************************************************************
 // Constructors
 //******************************************************************************
-Img::Img(const QVector<char> &imgData, const Palette &palette) {
+Img::Img(const QVector<char> &imgData, Palette palette) {
     QDataStream stream = QDataStream(QByteArray((imgData.constData()), imgData.size()));
-    initFromStreamAndPalette(stream, palette);
+    initFromStreamAndPalette(stream, std::move(palette));
 }
 
-Img::Img(QDataStream &imgData, const Palette &palette) {
-    initFromStreamAndPalette(imgData, palette);
+Img::Img(QDataStream &imgData, Palette palette) {
+    initFromStreamAndPalette(imgData, std::move(palette));
 }
 
-Img::Img(const QVector<char> &imgData, quint16 width, quint16 height, const Palette &palette) :
+Img::Img(const QVector<char> &imgData, quint16 width, quint16 height, Palette palette) :
         mWidth(width), mHeight(height), mRawDataSize(width * height) {
     QDataStream stream = QDataStream(QByteArray((imgData.constData()), imgData.size()));
-    initFromStreamAndPalette(stream, palette, true);
+    initFromStreamAndPalette(stream, std::move(palette), true);
 }
 
-Img::Img(QDataStream &imgData, quint16 width, quint16 height, const Palette &palette) :
+Img::Img(QDataStream &imgData, quint16 width, quint16 height, Palette palette) :
         mWidth(width), mHeight(height), mRawDataSize(width * height) {
-    initFromStreamAndPalette(imgData, palette, true);
+    initFromStreamAndPalette(imgData, std::move(palette), true);
 }
 
 //******************************************************************************
@@ -107,7 +107,7 @@ void Img::validatePixelDataAndCreateImage() {
     }
 }
 
-bool Img::isStreamAtLeastThisSize(QDataStream &stream, const int &byteNumber) {
+bool Img::isStreamAtLeastThisSize(QDataStream &stream, int byteNumber) {
     if (stream.atEnd() || stream.status() != QDataStream::Status::Ok) {
         return false;
     }
@@ -118,7 +118,7 @@ bool Img::isStreamAtLeastThisSize(QDataStream &stream, const int &byteNumber) {
     return read == byteNumber;
 }
 
-void Img::verifyStream(QDataStream &dataStream, const int &size) {
+void Img::verifyStream(QDataStream &dataStream, int size) {
     if (!isStreamAtLeastThisSize(dataStream, size)) {
         throw Status(-1, QStringLiteral("Image data is too short"));
     }
@@ -133,7 +133,7 @@ bool Img::readDataFromStream(QDataStream &imgDataStream, QVector<char> &rawData,
     return true;
 }
 
-void Img::initFromStreamAndPalette(QDataStream &imgDataStream, const Palette &palette, bool noHeader) {
+void Img::initFromStreamAndPalette(QDataStream &imgDataStream, Palette palette, bool noHeader) {
     try {
         if (!noHeader) {
             verifyStream(imgDataStream, 12);
@@ -191,7 +191,7 @@ void Img::initFromStreamAndPalette(QDataStream &imgDataStream, const Palette &pa
                 mQImage.setColorTable(mPalette.getColorTable());
             }
         } else {
-            mPalette = palette;
+            mPalette = std::move(palette);
             mQImage.setColorTable(mPalette.getColorTable());
         }
     }

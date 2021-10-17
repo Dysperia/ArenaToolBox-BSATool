@@ -34,15 +34,15 @@ public:
      * @param imgData data of the IMG file
      * @param palette palette used to display the IMG
      */
-    explicit Img(const QVector<char> &imgData, const Palette &palette = Palette());
+    explicit Img(const QVector<char> &imgData, Palette palette = Palette());
     /**
      * @brief constructor of IMG with parsing of the header. The well
      * initialization can be checked with the potentially Null status of the
      * QImage
-     * @param imgData data of the IMG file
+     * @param imgData data of the IMG file. The stream will advance
      * @param palette palette used to display the IMG
      */
-    explicit Img(QDataStream &imgData, const Palette &palette = Palette());
+    explicit Img(QDataStream &imgData, Palette palette = Palette());
     /**
      * @brief constructor of IMG without parsing of the header. The well
      * initialization can be checked with the potentially Null status of the
@@ -52,17 +52,17 @@ public:
      * @param height of the IMG file
      * @param palette palette used to display the IMG
      */
-    Img(const QVector<char> &imgData, quint16 width, quint16 height, const Palette &palette = Palette());
+    Img(const QVector<char> &imgData, quint16 width, quint16 height, Palette palette = Palette());
     /**
      * @brief constructor of IMG without parsing of the header. The well
      * initialization can be checked with the potentially Null status of the
      * QImage
-     * @param imgData data of the IMG file
+     * @param imgData data of the IMG file. The stream will advance
      * @param width of the IMG file
      * @param height of the IMG file
      * @param palette palette used to display the IMG
      */
-    Img(QDataStream &imgData, quint16 width, quint16 height, const Palette &palette = Palette());
+    Img(QDataStream &imgData, quint16 width, quint16 height, Palette palette = Palette());
 
     //**************************************************************************
     // Static Methods
@@ -72,13 +72,13 @@ public:
      * @param stream to check
      * @return true if the stream is at least this size
      */
-    static bool isStreamAtLeastThisSize(QDataStream &stream, const int &byteNumber);
+    static bool isStreamAtLeastThisSize(QDataStream &stream, int byteNumber);
     /**
      * Validate the length of the stream and throw a Status instance if not long enough
      * @param stream to check
      * @throw Status if not long enough
      */
-    static void verifyStream(QDataStream &stream, const int &byteNumber);
+    static void verifyStream(QDataStream &stream, int byteNumber);
 
     /**
      * Read data from stream and log an error if the operation is not a success
@@ -122,31 +122,31 @@ private:
     /**
      * @brief offset X used to draw the image at the correct position on screen
      */
-    quint16 mOffsetX = 0;
+    quint16 mOffsetX{0};
     /**
      * @brief offset Y used to draw the image at the correct position on screen
      */
-    quint16 mOffsetY = 0;
+    quint16 mOffsetY{0};
     /**
      * @brief width of the image
      */
-    quint16 mWidth = 0;
+    quint16 mWidth{0};
     /**
      * @brief height of the image
      */
-    quint16 mHeight = 0;
+    quint16 mHeight{0};
     /**
      * @brief compression flag
      */
-    quint8 mCompressionFlag = 0;
+    quint8 mCompressionFlag{0};
     /**
      * @brief palette flag
      */
-    quint8 mPaletteFlag = 0;
+    quint8 mPaletteFlag{0};
     /**
      * @brief size of raw imgData (before uncompression)
      */
-    quint16 mRawDataSize = 0;
+    quint16 mRawDataSize{0};
     /**
      * @brief color palette
      */
@@ -154,7 +154,7 @@ private:
     /**
      * @brief image data
      */
-    QVector<char> mImageData;
+    QVector<char> mImageData{};
     /**
      * @brief QImage version of this img, mainly used for display
      */
@@ -173,11 +173,11 @@ private:
      * Init image from the given stream and palette. If no header,
      * mOffsetX, mOffsetY, mWidth, mHeight, mCompressionFlag, mPaletteFlag, mRawDataSize
      * should be set before calling this function
-     * @param stream containing image data
+     * @param stream containing image data. The stream will advance
      * @param palette color table to use
      * @param noHeader true if data has no header to read
      */
-    void initFromStreamAndPalette(QDataStream &imgDataStream, const Palette &palette, bool noHeader = false);
+    void initFromStreamAndPalette(QDataStream &imgDataStream, Palette palette, bool noHeader = false);
 };
 
 #endif // BSATOOL_IMG_H

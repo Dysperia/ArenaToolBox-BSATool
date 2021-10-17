@@ -1,9 +1,7 @@
 #include <error/Status.h>
 #include <deque>
 #include "Compression.h"
-#include "SlidingWindow.h"
 #include "HuffmanTree.h"
-#include "BitsStreams.h"
 
 // alias
 typedef SlidingWindow<char, 4096> SWChar4096;
@@ -57,7 +55,7 @@ QVector<char> Compression::uncompressLZSS(const QVector<char> &compressedData) {
             }
         }
     }
-    return uncompressedData;
+    return move(uncompressedData);
 }
 
 QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
@@ -88,7 +86,7 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
         // if flags full, need to write buffer
         if (flagsNumber == 8) {
             // Writing flags, then buffer
-            compressedData.push_back(flags);
+            compressedData.push_back(char(flags));
             flags = 0;
             flagsNumber = 0;
             for (char i : compressedBytesBuffer) {
@@ -136,7 +134,7 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
             compressedData.push_back(i);
         }
     }
-    return compressedData;
+    return move(compressedData);
 }
 
 QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData, const uint &uncompressedSize) {
@@ -163,10 +161,10 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
         // single byte copy
         if (colorOrNbToCopy < 256) {
             quint8 colorByte = colorOrNbToCopy & 0x00FFu;
-            uncompressedData.push_back(colorByte);
-            window.insert(colorByte);
+            uncompressedData.push_back(char(colorByte));
+            window.insert(char(colorByte));
         }
-            // copy string from window
+        // copy string from window
         else {
             // Reading index for offset tables
             quint8 offsetTableIdx = bitsReader.getBits();
@@ -192,12 +190,12 @@ QVector<char> Compression::uncompressDeflate(const QVector<char> &compressedData
             // string copy
             for (quint16 i(0); i < nbToCopy; i++) {
                 quint8 colorByte = window.readAtIndex(copyPosition + i);
-                uncompressedData.push_back(colorByte);
-                window.insert(colorByte);
+                uncompressedData.push_back(char(colorByte));
+                window.insert(char(colorByte));
             }
         }
     }
-    return uncompressedData;
+    return move(uncompressedData);
 }
 
 QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData) {
@@ -259,11 +257,11 @@ QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData
             quint8 colorByte = uncompressDataDeque.front();
             uncompressDataDeque.pop_front();
             huffmanTree.writePathForLeaf(bitsWriter, colorByte + 627);
-            window.insert(colorByte);
+            window.insert(char(colorByte));
         }
     }
     bitsWriter.flush();
-    return compressedData;
+    return move(compressedData);
 }
 
 QVector<char>
@@ -300,7 +298,7 @@ Compression::uncompressRLEByLine(const QVector<char> &compressedData, const uint
             bytesLeftToProduce -= counter;
         }
     }
-    return uncompressedData;
+    return move(uncompressedData);
 }
 
 QVector<char>
@@ -320,7 +318,7 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const uint
             // if only one byte remaining
             if (bytesLeftToConsume == 1) {
                 quint8 counterValueToWrite(0);
-                compressedData.push_back(counterValueToWrite);
+                compressedData.push_back(char(counterValueToWrite));
                 compressedData.push_back(BitsReader::getNextByte(uncompressDataDeque));
                 bytesLeftToConsume--;
             }
@@ -345,7 +343,7 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const uint
                         counter++;
                     }
                     // Writing compressed data and consuming uncompressed
-                    compressedData.push_back(counter - 1);
+                    compressedData.push_back(char(counter - 1));
                     for (int i(0); i < counter; i++) {
                         compressedData.push_back(BitsReader::getNextByte(uncompressDataDeque));
                     }
@@ -361,7 +359,7 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const uint
                         counter++;
                     }
                     // Writing compressed data and consuming uncompressed
-                    compressedData.push_back((counter - 1u) | 0x80u);
+                    compressedData.push_back(char((counter - 1u) | 0x80u));
                     compressedData.push_back(uncompressDataDeque[0]);
                     for (int i(0); i < counter; i++) {
                         uncompressDataDeque.pop_front();
@@ -371,7 +369,7 @@ Compression::compressRLEByLine(const QVector<char> &uncompressedData, const uint
             }
         }
     }
-    return compressedData;
+    return move(compressedData);
 }
 
 QVector<char> Compression::uncompressRLE(const QVector<char> &compressedData, const uint &uncompressedSize) {
@@ -394,16 +392,16 @@ QVector<char> Compression::encryptDecrypt(const QVector<char> &data, QVector<qui
     quint8 counter(0);
     // output
     QVector<char> cryptData;
-    cryptData.reserve(dataDeque.size());
+    cryptData.reserve(int(dataDeque.size()));
     // encryption / decryption process
     while (!dataDeque.empty()) {
         // real key to XOR against
         quint8 effectiveKey = counter + cryptKey[cryptKeyIndex];
         // pushing new encrypted / decrypted byte
-        cryptData.push_back(BitsReader::getNextUnsignedByte(dataDeque) ^ effectiveKey);
+        cryptData.push_back(char(BitsReader::getNextUnsignedByte(dataDeque) ^ effectiveKey));
         // preparing next step
         counter++;
         cryptKeyIndex = (cryptKeyIndex + 1) % cryptKey.size();
     }
-    return cryptData;
+    return move(cryptData);
 }

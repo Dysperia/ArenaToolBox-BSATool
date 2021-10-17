@@ -29,7 +29,7 @@ FileListViewer::FileListViewer(QWidget *parent) : QWidget(parent) {
 
     // Connecting
     connect(mFileExtensionFilter, SIGNAL(activated(QString)), SLOT(updateViewFromFilterChange(QString)));
-    connect(mFileList, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(emitCurrentItemChanged(QListWidgetItem *, QListWidgetItem *)));
+    connect(mFileList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(emitCurrentItemChanged(QListWidgetItem*,QListWidgetItem*)));
 }
 
 //**************************************************************************

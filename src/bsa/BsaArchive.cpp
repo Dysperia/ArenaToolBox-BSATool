@@ -168,13 +168,13 @@ QVector<char> BsaArchive::getFileData(const BsaFile &file)
     if (status.status() < 0) {
         return QVector<char>(0);
     }
-    BsaFile internFile = mFiles.at(file.index());
+    auto &internFile = mFiles.at(file.index());
     // seek error
     if (!mArchiveFile.seek(internFile.startOffsetInArchive())) {
         return QVector<char>(0);
     }
-    QVector<char> data(internFile.size());
-    int bytesRead = mReadingStream.readRawData(data.data(), internFile.size());
+    QVector<char> data(int(internFile.size()));
+    int bytesRead = mReadingStream.readRawData(data.data(), int(internFile.size()));
     return bytesRead == internFile.size() ? data : QVector<char>(0);
 }
 
@@ -224,7 +224,7 @@ BsaFile BsaArchive::updateFile(const QString &updateFilePath, const BsaFile &fil
     auto updateSize = static_cast<quint32>(updateFile.size());
     updateFile.close();
     // Updating file state
-    BsaFile internFile = mFiles[file.index()];
+    auto &internFile = mFiles[file.index()];
     internFile.setUpdated(true);
     internFile.setUpdateFilePath(updateFilePath);
     internFile.setUpdateFileSize(updateSize);
@@ -243,7 +243,7 @@ BsaFile BsaArchive::deleteFile(const BsaFile &file)
         return BsaFile::INVALID_BSAFILE;
     }
     // Updating file state
-    BsaFile internFile = mFiles[file.index()];
+    auto &internFile = mFiles[file.index()];
     internFile.setToDelete(true);
     // Updating archive state
     mModifiedSize -= (internFile.updated() ? internFile.updateFileSize() : internFile.size());
@@ -286,7 +286,7 @@ BsaFile BsaArchive::cancelDeleteFile(const BsaFile &file)
     if (status.status() < 0) {
         return BsaFile::INVALID_BSAFILE;
     }
-    BsaFile internFile = mFiles[file.index()];
+    auto &internFile = mFiles[file.index()];
     // Noting to be done if file not to delete
     if (!internFile.toDelete()) {
         return internFile;
@@ -307,7 +307,7 @@ BsaFile BsaArchive::cancelUpdateFile(const BsaFile &file)
     if (status.status() < 0) {
         return BsaFile::INVALID_BSAFILE;
     }
-    BsaFile internFile = mFiles[file.index()];
+    auto &internFile = mFiles[file.index()];
     // Noting to be done if file not updated
     if (!internFile.updated()) {
         return internFile;
@@ -371,11 +371,11 @@ Status BsaArchive::saveArchive(const QString &filePath)
         // To skip deleted file
         if (!mFiles.at(i).toDelete()) {
             const BsaFile &file = mFiles.at(i);
-            quint32 dataSize(0);
+            int dataSize(0);
             // Reading file data for updated or new
             if (file.updated() || file.isNew()) {
                 QFile externFile(file.updated() ? file.updateFilePath() : file.newFilePath());
-                dataSize = file.updated() ? file.updateFileSize() : file.size();
+                dataSize = int(file.updated() ? file.updateFileSize() : file.size());
                 // Error opening file
                 if (!externFile.open(QIODevice::ReadOnly)) {
                     saveFile.close();
@@ -406,7 +406,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
                     return Status(-1, QString("Error while reading archive data for file %1")
                                   .arg(file.fileName()));
                 }
-                dataSize = file.size();
+                dataSize = int(file.size());
                 fileData.resize(dataSize);
                 int bytesRead = mReadingStream.readRawData(fileData.data(), dataSize);
                 // Error reading data
@@ -473,13 +473,13 @@ Status BsaArchive::saveArchive(const QString &filePath)
     if (finalFile.exists()) {
         if (!finalFile.remove()) {
             return Status(-1, QString("Could not delete existing file %1. Saved archive can be found at %2")
-                          .arg(finalFile.fileName()).arg(saveFile.fileName()));
+                          .arg(finalFile.fileName(), saveFile.fileName()));
         }
     }
     // Renaming temporary to final file
     if (!saveFile.rename(finalFile.fileName())) {
         return Status(-1, QString("Could not rename temporary saved archive %1 to %2. Saved archive can be found at %1")
-                      .arg(saveFile.fileName()).arg(finalFile.fileName()));
+                      .arg(saveFile.fileName(), finalFile.fileName()));
     }
 
     // Reloading Archive

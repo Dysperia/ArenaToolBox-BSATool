@@ -10,4 +10,4 @@ set(BSAToolTest_SRCS
 # Tell CMake to create the executable
 add_executable(BSAToolTest ${BSAToolTest_SRCS})
 # Use the modules from Qt 5
-target_link_libraries(BSAToolTest BSATool_library Qt5::Test)
+target_link_libraries(BSAToolTest BSATool Qt5::Test)

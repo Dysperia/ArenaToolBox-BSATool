@@ -1,7 +1,6 @@
 #include <log/Logger.h>
 #include <utils/Compression.h>
 #include "Dfa.h"
-#include "Img.h"
 
 using namespace std;
 
@@ -79,7 +78,7 @@ void Dfa::initFromStreamAndPalette(QDataStream &dataStream) {
         QVector<char> firstFrameCompressedData(firstFrameDataSize);
         Img::verifyStream(dataStream, firstFrameDataSize);
         dataStream.readRawData(firstFrameCompressedData.data(), firstFrameDataSize);
-        const QVector<char> &firstFrameData = Compression::uncompressRLE(firstFrameCompressedData, mWidth * mHeight);
+        const QVector<char> firstFrameData = Compression::uncompressRLE(firstFrameCompressedData, mWidth * mHeight);
         mFramesData.push_back(firstFrameData);
         // reading other frame
         for (int frameIndex = 1; frameIndex < frameCount; ++frameIndex) {

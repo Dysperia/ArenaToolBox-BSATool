@@ -24,7 +24,7 @@ public:
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
-    BsaFile bsaFile() const;
+    [[nodiscard]]BsaFile bsaFile() const;
     void setBsaFile(const BsaFile &bsaFile);
 
 private:

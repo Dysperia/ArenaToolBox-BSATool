@@ -48,7 +48,7 @@ public:
      * @brief get the widget allowing to display the logs in the application
      * @return the logging widget
      */
-    QPlainTextEdit *textWidget() const;
+    [[nodiscard]]QPlainTextEdit *textWidget() const;
 
     //**************************************************************************
     // Methods

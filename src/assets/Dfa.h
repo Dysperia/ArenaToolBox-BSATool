@@ -68,19 +68,19 @@ private:
     /**
      * @brief offset X used to draw the image at the correct position on screen
      */
-    quint16 mOffsetX = 0;
+    quint16 mOffsetX{0};
     /**
      * @brief offset Y used to draw the image at the correct position on screen
      */
-    quint16 mOffsetY = 0;
+    quint16 mOffsetY{0};
     /**
      * @brief width of the image
      */
-    quint16 mWidth = 0;
+    quint16 mWidth{0};
     /**
      * @brief height of the image
      */
-    quint16 mHeight = 0;
+    quint16 mHeight{0};
     /**
      * @brief color palette
      */
@@ -88,11 +88,11 @@ private:
     /**
      * @brief frames data
      */
-    QVector<QVector<char>> mFramesData;
+    QVector<QVector<char>> mFramesData{};
     /**
      * @brief QImage versions of this animation's frames, mainly used for display
      */
-    QVector<QImage> mQImages;
+    QVector<QImage> mQImages{};
 
     //******************************************************************************
     // Methods
