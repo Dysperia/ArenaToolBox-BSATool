@@ -1,7 +1,7 @@
 #ifndef BSATOOL_MENUBAR_H
 #define BSATOOL_MENUBAR_H
 
-#include "bsa/BsaArchive.h"
+#include <bsa/BsaArchive.h>
 #include <QMenuBar>
 
 /**

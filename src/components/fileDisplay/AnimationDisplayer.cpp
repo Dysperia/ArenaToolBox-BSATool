@@ -1,4 +1,4 @@
-#include "AnimationDisplayer.h"
+#include <components/fileDisplay/AnimationDisplayer.h>
 #include <QVBoxLayout>
 #include <QDebug>
 

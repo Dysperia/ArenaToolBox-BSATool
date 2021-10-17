@@ -1,4 +1,4 @@
-#include "FileType.h"
+#include <assets/FileType.h>
 
 //**************************************************************************
 // Constructors

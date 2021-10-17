@@ -1,4 +1,4 @@
-find_package(Qt5Test CONFIG REQUIRED)
+find_package(Qt5 COMPONENTS Test REQUIRED)
 
 # Populate a CMake variable with the sources
 set(BSAToolTest_SRCS

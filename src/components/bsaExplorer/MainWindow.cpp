@@ -1,9 +1,8 @@
-#include "MainWindow.h"
-#include "components/toolbar/ToolBar.h"
-#include "components/console/ConsoleDock.h"
-#include "components/fileList/FileListViewer.h"
-#include "log/Logger.h"
-
+#include <components/bsaExplorer/MainWindow.h>
+#include <components/toolbar/ToolBar.h>
+#include <components/console/ConsoleDock.h>
+#include <components/fileList/FileListViewer.h>
+#include <log/Logger.h>
 #include <QMessageBox>
 #include <QFileDialog>
 

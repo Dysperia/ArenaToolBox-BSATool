@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QTimer>
-#include "ImageDisplayer.h"
-#include "ImagesCollectionDisplayer.h"
+#include <components/fileDisplay/ImageDisplayer.h>
+#include <components/fileDisplay/ImagesCollectionDisplayer.h>
 
 /**
  * Displayer able to show an running animation

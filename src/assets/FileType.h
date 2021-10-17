@@ -2,7 +2,7 @@
 #define BSATOOL_FILETYPE_H
 
 #include <QHash>
-#include "../bsa/BsaFile.h"
+#include <bsa/BsaFile.h>
 
 /**
  * @brief class describing the file types commonly encountered in an archive

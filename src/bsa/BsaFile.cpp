@@ -1,6 +1,5 @@
 #include <utility>
-
-#include "BsaFile.h"
+#include <bsa/BsaFile.h>
 
 //******************************************************************************
 // Statics

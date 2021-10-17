@@ -49,7 +49,6 @@ set(BSATool_SRCS
         error/Status.h
         log/Logger.cpp
         log/Logger.h
-        main/main.cpp
         utils/Compression.cpp
         utils/Compression.h
         utils/HuffmanTree.cpp
@@ -57,6 +56,7 @@ set(BSATool_SRCS
         utils/BitsStreams.cpp
         utils/BitsStreams.h
         utils/SlidingWindow.h)
+
 set(BSAExplorer_MAIN main/main.cpp)
 
 # BSATool library
@@ -64,5 +64,5 @@ add_library(BSATool ${BSATool_SRCS})
 target_link_libraries(BSATool Qt5::Widgets Qt5::Concurrent)
 
 # BSATool executable
-add_executable(BSAExplorer ${BSAExplorer})
+add_executable(BSAExplorer ${BSAExplorer_MAIN})
 target_link_libraries(BSAExplorer BSATool)

@@ -1,4 +1,4 @@
-#include "ArchiveConfiguration.h"
+#include <configuration/ArchiveConfiguration.h>
 #include <QJsonArray>
 #include <QFile>
 #include <QJsonDocument>

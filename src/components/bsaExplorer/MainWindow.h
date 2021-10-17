@@ -1,9 +1,9 @@
 #ifndef BSATOOL_MAINWINDOW_H
 #define BSATOOL_MAINWINDOW_H
 
-#include "components/menu/MenuBar.h"
-#include "bsa/BsaArchive.h"
-#include "components/fileDisplay/FileDisplayer.h"
+#include <components/menu/MenuBar.h>
+#include <bsa/BsaArchive.h>
+#include <components/fileDisplay/FileDisplayer.h>
 
 #include <QMainWindow>
 #include <QtWidgets/QListWidgetItem>

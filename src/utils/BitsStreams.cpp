@@ -1,12 +1,11 @@
 #include <error/Status.h>
-#include "BitsStreams.h"
+#include <utils/BitsStreams.h>
 
 //**************************************************************************
 // Statics
 //**************************************************************************
 uchar BitsReader::getNextUnsignedByte(deque<char> &data) {
-    char nextByte = getNextByte(data);
-    return reinterpret_cast<uchar &>(nextByte);
+    return uchar(getNextByte(data));
 }
 
 char BitsReader::getNextByte(deque<char> &data) {

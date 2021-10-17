@@ -2,8 +2,8 @@
 #define BSATOOL_DFA_H
 
 #include <QImage>
-#include "Palette.h"
-#include "Img.h"
+#include <assets/Palette.h>
+#include <assets/Img.h>
 
 /**
  * @brief Describe the DFA image format

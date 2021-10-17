@@ -4,7 +4,7 @@
 #include <QWheelEvent>
 #include <QScrollArea>
 #include <QtWidgets/QLabel>
-#include "assets/Img.h"
+#include <assets/Img.h>
 
 /**
  * Single image displayer. It allows zooming and dragging of the image. The image is first displayed at native size if

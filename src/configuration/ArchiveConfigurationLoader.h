@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <error/Status.h>
-#include "ArchiveConfiguration.h"
+#include <configuration/ArchiveConfiguration.h>
 #include <QObject>
 
 class ArchiveConfigurationLoader : public QObject {

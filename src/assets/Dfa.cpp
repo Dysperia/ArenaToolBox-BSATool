@@ -1,6 +1,6 @@
 #include <log/Logger.h>
 #include <utils/Compression.h>
-#include "Dfa.h"
+#include <assets/Dfa.h>
 
 using namespace std;
 

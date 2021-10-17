@@ -2,7 +2,8 @@
 #define BSATOOL_CFA_H
 
 #include <QtGui/QImage>
-#include "Palette.h"
+#include <assets/Palette.h>
+
 
 /**
  * @brief Describe the CFA image format

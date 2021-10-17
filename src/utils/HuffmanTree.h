@@ -4,7 +4,7 @@
 
 #include <QtCore/QVector>
 #include <array>
-#include "BitsStreams.h"
+#include <utils/BitsStreams.h>
 
 using namespace std;
 

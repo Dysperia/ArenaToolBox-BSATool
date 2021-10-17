@@ -1,5 +1,4 @@
-#include "BsaArchive.h"
-
+#include <bsa/BsaArchive.h>
 #include <QtConcurrent/QtConcurrent>
 
 //******************************************************************************

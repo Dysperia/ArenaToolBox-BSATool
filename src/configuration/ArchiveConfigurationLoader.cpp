@@ -1,6 +1,6 @@
 #include <QDir>
-#include "ArchiveConfigurationLoader.h"
-#include "../log/Logger.h"
+#include <configuration/ArchiveConfigurationLoader.h>
+#include <log/Logger.h>
 
 
 //**************************************************************************

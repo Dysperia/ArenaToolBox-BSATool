@@ -1,5 +1,5 @@
 #include <QtTest/QtTest>
-#include "CompressionTest.h"
+#include <utils/CompressionTest.h>
 #include "../../src/utils/Compression.h"
 
 void CompressionTest::testLZSSUncompression() {

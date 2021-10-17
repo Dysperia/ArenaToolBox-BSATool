@@ -1,8 +1,8 @@
 #include <QtCore/QDataStream>
 #include <error/Status.h>
 #include <QFile>
-#include "Palette.h"
-#include "Img.h"
+#include <assets/Palette.h>
+#include <assets/Img.h>
 
 Palette::Palette()
 {

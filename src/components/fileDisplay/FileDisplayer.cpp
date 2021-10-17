@@ -2,7 +2,7 @@
 #include <utils/Compression.h>
 #include <assets/Dfa.h>
 #include <assets/Cfa.h>
-#include "FileDisplayer.h"
+#include <components/fileDisplay/FileDisplayer.h>
 
 //**************************************************************************
 // Constructors

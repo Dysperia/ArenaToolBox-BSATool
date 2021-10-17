@@ -2,7 +2,7 @@
 #define BSATOOL_IMG_H
 
 #include <QImage>
-#include "Palette.h"
+#include <assets/Palette.h>
 
 /**
  * @brief Describe the IMG image format

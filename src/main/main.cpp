@@ -1,6 +1,6 @@
-#include "components/bsaExplorer/MainWindow.h"
+#include <components/bsaExplorer/MainWindow.h>
 #include <QApplication>
-#include "../log/Logger.h"
+#include <log/Logger.h>
 
 int main(int argc, char *argv[])
 {

@@ -1,5 +1,5 @@
 #include <QtCore/QDir>
-#include "ApplicationConfiguration.h"
+#include <configuration/ApplicationConfiguration.h>
 
 //**************************************************************************
 // Constructor

@@ -111,6 +111,6 @@ private:
                                                                     size_t max_duplicate_length);
 };
 
-#include "SlidingWindow.cpp"
+#include <utils/SlidingWindow.cpp>
 
 #endif // BSATOOL_SLIDINGWINDOW_H

@@ -1,6 +1,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QHBoxLayout>
-#include "ImagesCollectionDisplayer.h"
+#include <components/fileDisplay/ImagesCollectionDisplayer.h>
 
 //**************************************************************************
 // Constructor

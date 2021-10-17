@@ -3,7 +3,7 @@
 
 #include <QtCore/QVector>
 #include <deque>
-#include "SlidingWindow.h"
+#include <utils/SlidingWindow.h>
 
 using namespace std;
 

@@ -2,8 +2,8 @@
 #include <error/Status.h>
 #include <log/Logger.h>
 #include <utils/BitsStreams.h>
-#include "Cfa.h"
-#include "Img.h"
+#include <assets/Cfa.h>
+#include <assets/Img.h>
 
 //******************************************************************************
 // Constructors

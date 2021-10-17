@@ -3,11 +3,11 @@
 
 #include <QString>
 #include <QVector>
-#include "FileConfiguration.h"
+#include <configuration/FileConfiguration.h>
 #include <QJsonObject>
 #include <error/Status.h>
 #include <assets/Palette.h>
-#include "bsa/BsaFile.h"
+#include <bsa/BsaFile.h>
 
 /**
  * @brief This class is used to describe and persist an archive configuration

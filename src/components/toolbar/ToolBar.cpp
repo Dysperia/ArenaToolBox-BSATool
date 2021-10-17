@@ -1,4 +1,4 @@
-#include "ToolBar.h"
+#include <components/toolbar/ToolBar.h>
 #include <QToolButton>
 
 //******************************************************************************

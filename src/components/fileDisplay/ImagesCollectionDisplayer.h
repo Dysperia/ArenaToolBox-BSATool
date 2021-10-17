@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QObject>
 #include <QPushButton>
-#include "ImageDisplayer.h"
+#include <components/fileDisplay/ImageDisplayer.h>
 
 /**
  * Display an image collection and allow the user to navigate the collection

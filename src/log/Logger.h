@@ -2,8 +2,8 @@
 #define BSATOOL_LOGGER_H
 
 #include <QPlainTextEdit>
-#include "../designpatterns/Singleton.h"
-#include "../error/Status.h"
+#include <designpatterns/Singleton.h>
+#include <error/Status.h>
 
 /**
  * @brief Implementation of a simple logger

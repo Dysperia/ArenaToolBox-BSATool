@@ -3,11 +3,11 @@
 
 #include <QVBoxLayout>
 #include <configuration/ArchiveConfiguration.h>
-#include "ImageDisplayer.h"
-#include "bsa/BsaFile.h"
-#include "TextDisplayer.h"
-#include "ImagesCollectionDisplayer.h"
-#include "AnimationDisplayer.h"
+#include <components/fileDisplay/ImageDisplayer.h>
+#include <bsa/BsaFile.h>
+#include <components/fileDisplay/TextDisplayer.h>
+#include <components/fileDisplay/ImagesCollectionDisplayer.h>
+#include <components/fileDisplay/AnimationDisplayer.h>
 
 /**
  * @brief Class used to display the various file types found in a bsa archive.

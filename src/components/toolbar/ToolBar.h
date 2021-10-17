@@ -2,7 +2,7 @@
 #define BSATOOL_TOOLBAR_H
 
 #include <QToolBar>
-#include "components/menu/MenuBar.h"
+#include <components/menu/MenuBar.h>
 
 /**
  * @brief The ToolBar class

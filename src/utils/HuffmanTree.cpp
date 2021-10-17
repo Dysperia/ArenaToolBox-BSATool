@@ -1,4 +1,4 @@
-#include "HuffmanTree.h"
+#include <utils/HuffmanTree.h>
 
 using namespace std;
 

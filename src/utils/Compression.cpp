@@ -1,7 +1,7 @@
 #include <error/Status.h>
 #include <deque>
-#include "Compression.h"
-#include "HuffmanTree.h"
+#include <utils/Compression.h>
+#include <utils/HuffmanTree.h>
 
 // alias
 typedef SlidingWindow<char, 4096> SWChar4096;

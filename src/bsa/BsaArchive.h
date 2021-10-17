@@ -1,8 +1,8 @@
 #ifndef BSATOOL_ARCHIVE_H
 #define BSATOOL_ARCHIVE_H
 
-#include "BsaFile.h"
-#include "../error/Status.h"
+#include <bsa/BsaFile.h>
+#include <error/Status.h>
 #include <QVector>
 #include <QDataStream>
 #include <QFile>

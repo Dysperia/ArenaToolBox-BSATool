@@ -1,7 +1,7 @@
 #ifndef BSATOOL_FILELISTVIEWERITEM_H
 #define BSATOOL_FILELISTVIEWERITEM_H
 
-#include "bsa/BsaFile.h"
+#include <bsa/BsaFile.h>
 
 #include <QListWidgetItem>
 

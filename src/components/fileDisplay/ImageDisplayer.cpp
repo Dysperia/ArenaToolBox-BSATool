@@ -1,4 +1,4 @@
-#include "ImageDisplayer.h"
+#include <components/fileDisplay/ImageDisplayer.h>
 #include <QScrollBar>
 
 //**************************************************************************

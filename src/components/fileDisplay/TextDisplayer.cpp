@@ -1,4 +1,4 @@
-#include "TextDisplayer.h"
+#include <components/fileDisplay/TextDisplayer.h>
 
 //**************************************************************************
 // Constructor
