@@ -73,8 +73,8 @@ template<typename _type, size_t _size>
 typename SlidingWindow<_type, _size>::DuplicateSearchResult SlidingWindow<_type, _size>::searchDuplicateInSlidingWindowNoLookAhead(
         const deque<_type> &uncompressDataDeque, const size_t max_duplicate_length) {
     DuplicateSearchResult result = {0, 0};
-    quint8 tempLength(0);
-    quint16 tempStartIndex(0);
+    quint8 tempLength;
+    quint16 tempStartIndex;
     // searching a first byte match until longest found or all window searched
     // starting at offset 1 from current position to avoid the window current index
     const char &nextUncompressedByte = uncompressDataDeque.front();
@@ -108,7 +108,7 @@ typename SlidingWindow<_type, _size>::DuplicateSearchResult SlidingWindow<_type,
     DuplicateSearchResult noLookAhead = {0, 0};
     // not longest found
     if (lookAhead.length < max_duplicate_length) {
-        // Search through buffer in case there is a longest duplicate to copy avoiding the possibly
+        // Search through buffer in case there is a longer duplicate to copy avoiding the possibly
         // rewritten section already search before
         noLookAhead = searchDuplicateInSlidingWindowNoLookAhead(uncompressDataDeque, max_duplicate_length);
     }

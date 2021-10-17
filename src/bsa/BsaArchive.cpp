@@ -371,7 +371,7 @@ Status BsaArchive::saveArchive(const QString &filePath)
         // To skip deleted file
         if (!mFiles.at(i).toDelete()) {
             const BsaFile &file = mFiles.at(i);
-            int dataSize(0);
+            int dataSize;
             // Reading file data for updated or new
             if (file.updated() || file.isNew()) {
                 QFile externFile(file.updated() ? file.updateFilePath() : file.newFilePath());

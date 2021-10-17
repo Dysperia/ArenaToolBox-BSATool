@@ -74,21 +74,21 @@ public:
     //**************************************************************************
     // Getters/setters
     //**************************************************************************
-    QString getArchiveFilePath() const;
+    [[nodiscard]]QString getArchiveFilePath() const;
 
-    QString getArchiveFileName() const;
+    [[nodiscard]]QString getArchiveFileName() const;
 
-    quint16 getFileNumber() const;
+    [[nodiscard]]quint16 getFileNumber() const;
 
-    qint64 getSize() const;
+    [[nodiscard]]qint64 getSize() const;
 
-    qint64 getModifiedSize() const;
+    [[nodiscard]]qint64 getModifiedSize() const;
 
-    QVector<BsaFile> getFiles() const;
+    [[nodiscard]]QVector<BsaFile> getFiles() const;
 
-    bool isOpened() const;
+    [[nodiscard]]bool isOpened() const;
 
-    bool isModified() const;
+    [[nodiscard]]bool isModified() const;
 
     //**************************************************************************
     // Methods
