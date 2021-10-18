@@ -103,7 +103,7 @@ template<typename _type, size_t _size>
 typename SlidingWindow<_type, _size>::DuplicateSearchResult SlidingWindow<_type, _size>::searchDuplicateInSlidingWindow(const deque<_type> &uncompressDataDeque,
                                                                                const size_t max_duplicate_length) {
     // searching for an ongoing duplicate using the possibly rewritten part of the window
-    const DuplicateSearchResult &lookAhead = searchDuplicateInSlidingWindowLookAheadOnly(uncompressDataDeque,
+    const DuplicateSearchResult lookAhead = searchDuplicateInSlidingWindowLookAheadOnly(uncompressDataDeque,
                                                                                          max_duplicate_length);
     DuplicateSearchResult noLookAhead = {0, 0};
     // not longest found

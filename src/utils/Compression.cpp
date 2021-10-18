@@ -95,7 +95,7 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
             compressedBytesBuffer.clear();
         }
         // search for a duplicate
-        const SWChar4096::DuplicateSearchResult &duplicate = window.searchDuplicateInSlidingWindow(uncompressDataDeque,
+        const SWChar4096::DuplicateSearchResult duplicate = window.searchDuplicateInSlidingWindow(uncompressDataDeque,
                                                                                                    max_duplicate_length);
         // Writing compressed data to buffer
         if (duplicate.length > 2) {
@@ -106,8 +106,8 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
             uint8_t byte1 = duplicate.startIndex & 0x00FFu;
             uint8_t byte2 = ((duplicate.startIndex & 0x0F00u) >> 4u) | (duplicate.length - 3u);
             // writing coordinates to copy
-            compressedBytesBuffer.push_back(reinterpret_cast<char &>(byte1));
-            compressedBytesBuffer.push_back(reinterpret_cast<char &>(byte2));
+            compressedBytesBuffer.push_back(char(byte1));
+            compressedBytesBuffer.push_back(char(byte2));
             // sliding window
             for (int i(0); i < duplicate.length; i++) {
                 window.insert(uncompressDataDeque.front());
@@ -120,16 +120,16 @@ QVector<char> Compression::compressLZSS(const QVector<char> &uncompressData) {
             flagsNumber++;
             // writing next byte to copy
             const char &nextUncompressByte = uncompressDataDeque.front();
-            uncompressDataDeque.pop_front();
             compressedBytesBuffer.push_back(nextUncompressByte);
             // sliding window
             window.insert(nextUncompressByte);
+            uncompressDataDeque.pop_front();
         }
     }
     // If less than 8 operations because end of file, need to flush the remaining buffer
     if (flagsNumber > 0) {
         flags = flags >> (8u - flagsNumber);
-        compressedData.push_back(reinterpret_cast<char &>(flags));
+        compressedData.push_back(char(flags));
         for (char i : compressedBytesBuffer) {
             compressedData.push_back(i);
         }
@@ -221,7 +221,7 @@ QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData
     // decompressing data from source
     while (!uncompressDataDeque.empty()) {
         // search for a duplicate
-        const SWChar4096::DuplicateSearchResult &duplicate = window.searchDuplicateInSlidingWindow(uncompressDataDeque,
+        const SWChar4096::DuplicateSearchResult duplicate = window.searchDuplicateInSlidingWindow(uncompressDataDeque,
                                                                                                    max_duplicate_length);
         // string copy
         if (duplicate.length > 2) {
@@ -255,9 +255,9 @@ QVector<char> Compression::compressDeflate(const QVector<char> &uncompressedData
             // single byte copy
         else {
             quint8 colorByte = uncompressDataDeque.front();
-            uncompressDataDeque.pop_front();
             huffmanTree.writePathForLeaf(bitsWriter, colorByte + 627);
             window.insert(char(colorByte));
+            uncompressDataDeque.pop_front();
         }
     }
     bitsWriter.flush();
@@ -268,7 +268,7 @@ QVector<char>
 Compression::uncompressRLEByLine(const QVector<char> &compressedData, const uint &width, const uint &height) {
     // deque to allow fast first element removal and random element access
     deque<char> compressDataDeque;
-    for (const auto &byte : compressedData) {
+    for (auto &byte : compressedData) {
         compressDataDeque.push_back(byte);
     }
     // uncompressed data

@@ -12,7 +12,8 @@ char BitsReader::getNextByte(deque<char> &data) {
     if (data.empty()) {
         throw Status(-1, QStringLiteral("Unexpected end of data"));
     }
-    const char &byte = data.front();
+    // copy value before freeing memory
+    char byte = data.front();
     data.pop_front();
     return byte;
 }
