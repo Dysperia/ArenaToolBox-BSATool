@@ -1,5 +1,7 @@
 find_package(Qt5 COMPONENTS Test REQUIRED)
 
+include_directories(../src)
+
 # Populate a CMake variable with the sources
 set(BSAToolTest_SRCS
         bsa/BsaFileTest.cpp

@@ -1,6 +1,6 @@
 #include <QtTest/QtTest>
 #include <utils/CompressionTest.h>
-#include "../../src/utils/Compression.h"
+#include <utils/Compression.h>
 
 void CompressionTest::testLZSSUncompression() {
     QWARN("Should uncompress the file and get the original data");
@@ -120,8 +120,8 @@ QVector<char> CompressionTest::readFile(const QString &fileName) const {
     file.open(QIODevice::ReadOnly);
     QDataStream stream(&file);
     stream.setByteOrder(QDataStream::LittleEndian);
-    QVector<char> data(file.size());
-    stream.readRawData(data.data(), file.size());
+    QVector<char> data(int(file.size()));
+    stream.readRawData(data.data(), int(file.size()));
     file.close();
     return data;
 }
