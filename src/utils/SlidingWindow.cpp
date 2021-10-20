@@ -1,38 +1,38 @@
 //**************************************************************************
 // Getters/setters
 //**************************************************************************
-template<typename _type, size_t _size>
-size_t SlidingWindow<_type, _size>::getMCurrentInsertPosition() const {
+template<typename sw_type, size_t sw_size>
+size_t SlidingWindow<sw_type, sw_size>::getMCurrentInsertPosition() const {
     return mCurrentInsertPosition;
 }
 
-template<typename _type, size_t _size>
-const array<_type, _size> &SlidingWindow<_type, _size>::getWindow() const {
+template<typename sw_type, size_t sw_size>
+const array<sw_type, sw_size> &SlidingWindow<sw_type, sw_size>::getWindow() const {
     return mWindow;
 }
 
 //**************************************************************************
 // Methods
 //**************************************************************************
-template<typename _type, size_t _size>
-const _type &SlidingWindow<_type, _size>::readAtIndex(const size_t &index) const {
+template<typename sw_type, size_t sw_size>
+const sw_type &SlidingWindow<sw_type, sw_size>::readAtIndex(const size_t &index) const {
     return mWindow[getStandardEquivalentIndex(index)];
 }
 
-template<typename _type, size_t _size>
-void SlidingWindow<_type, _size>::insert(const _type &newValue) {
+template<typename sw_type, size_t sw_size>
+void SlidingWindow<sw_type, sw_size>::insert(const sw_type &newValue) {
     mWindow[mCurrentInsertPosition] = newValue;
-    mCurrentInsertPosition = (mCurrentInsertPosition + 1) % _size;
+    mCurrentInsertPosition = (mCurrentInsertPosition + 1) % sw_size;
 }
 
-template<typename _type, size_t _size>
-size_t SlidingWindow<_type, _size>::getStandardEquivalentIndex(const size_t &index) const {
-    return index % _size;
+template<typename sw_type, size_t sw_size>
+size_t SlidingWindow<sw_type, sw_size>::getStandardEquivalentIndex(const size_t &index) const {
+    return index % sw_size;
 }
 
-template<typename _type, size_t _size>
-typename SlidingWindow<_type, _size>::DuplicateSearchResult SlidingWindow<_type, _size>::searchDuplicateInSlidingWindowLookAheadOnly(
-        const deque<_type> &uncompressDataDeque, const size_t max_duplicate_length) {
+template<typename sw_type, size_t sw_size>
+typename SlidingWindow<sw_type, sw_size>::DuplicateSearchResult SlidingWindow<sw_type, sw_size>::searchDuplicateInSlidingWindowLookAheadOnly(
+        const deque<sw_type> &uncompressDataDeque, const size_t max_duplicate_length) {
     // search longest possible considering max duplicate length and remaining uncompressed data
     quint8 max_possible_duplicate_length(
             uncompressDataDeque.size() < max_duplicate_length ? uncompressDataDeque.size() : max_duplicate_length);
@@ -69,9 +69,9 @@ typename SlidingWindow<_type, _size>::DuplicateSearchResult SlidingWindow<_type,
     return result;
 }
 
-template<typename _type, size_t _size>
-typename SlidingWindow<_type, _size>::DuplicateSearchResult SlidingWindow<_type, _size>::searchDuplicateInSlidingWindowNoLookAhead(
-        const deque<_type> &uncompressDataDeque, const size_t max_duplicate_length) {
+template<typename sw_type, size_t sw_size>
+typename SlidingWindow<sw_type, sw_size>::DuplicateSearchResult SlidingWindow<sw_type, sw_size>::searchDuplicateInSlidingWindowNoLookAhead(
+        const deque<sw_type> &uncompressDataDeque, const size_t max_duplicate_length) {
     DuplicateSearchResult result = {0, 0};
     quint8 tempLength;
     quint16 tempStartIndex;
@@ -99,8 +99,8 @@ typename SlidingWindow<_type, _size>::DuplicateSearchResult SlidingWindow<_type,
     return result;
 }
 
-template<typename _type, size_t _size>
-typename SlidingWindow<_type, _size>::DuplicateSearchResult SlidingWindow<_type, _size>::searchDuplicateInSlidingWindow(const deque<_type> &uncompressDataDeque,
+template<typename sw_type, size_t sw_size>
+typename SlidingWindow<sw_type, sw_size>::DuplicateSearchResult SlidingWindow<sw_type, sw_size>::searchDuplicateInSlidingWindow(const deque<sw_type> &uncompressDataDeque,
                                                                                const size_t max_duplicate_length) {
     // searching for an ongoing duplicate using the possibly rewritten part of the window
     const DuplicateSearchResult lookAhead = searchDuplicateInSlidingWindowLookAheadOnly(uncompressDataDeque,
