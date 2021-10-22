@@ -1,19 +1,4 @@
-# Populate a CMake variable with the sources
 set(BSATool_SRCS
-        assets/FileType.cpp
-        assets/FileType.h
-        assets/Cfa.cpp
-        assets/Cfa.h
-        assets/Dfa.cpp
-        assets/Dfa.h
-        assets/Img.cpp
-        assets/Img.h
-        assets/Palette.cpp
-        assets/Palette.h
-        bsa/BsaArchive.cpp
-        bsa/BsaArchive.h
-        bsa/BsaFile.cpp
-        bsa/BsaFile.h
         components/console/ConsoleDock.cpp
         components/console/ConsoleDock.h
         components/fileList/FileListViewer.cpp
@@ -36,33 +21,15 @@ set(BSATool_SRCS
         components/menu/MenuBar.h
         components/toolbar/ToolBar.cpp
         components/toolbar/ToolBar.h
-        configuration/ApplicationConfiguration.cpp
-        configuration/ApplicationConfiguration.h
-        configuration/ArchiveConfiguration.cpp
-        configuration/ArchiveConfiguration.h
-        configuration/ArchiveConfigurationLoader.cpp
-        configuration/ArchiveConfigurationLoader.h
-        configuration/FileConfiguration.cpp
-        configuration/FileConfiguration.h
-        designpatterns/Singleton.h
-        error/Status.cpp
-        error/Status.h
         log/Logger.cpp
         log/Logger.h
-        utils/Compression.cpp
-        utils/Compression.h
-        utils/HuffmanTree.cpp
-        utils/HuffmanTree.h
-        utils/BitsStreams.cpp
-        utils/BitsStreams.h
-        utils/SlidingWindow.h)
+        )
 
 set(BSAExplorer_MAIN main/main.cpp)
 
-# BSATool library
-add_library(BSATool ${BSATool_SRCS})
-target_link_libraries(BSATool Qt5::Widgets Qt5::Concurrent)
+# ARENATOOLBOX_LIB is an env variable set to the base path of the ArenaToolBox Library (direct subdirs are include/ and lib/)
 
-# BSATool executable
-add_executable(BSAExplorer ${BSAExplorer_MAIN})
-target_link_libraries(BSAExplorer BSATool)
+add_executable(BSAExplorer ${BSAExplorer_MAIN} ${BSATool_SRCS})
+target_include_directories(BSAExplorer PUBLIC $ENV{ARENATOOLBOX_LIB}/include)
+find_library(ArenaToolBoxLibrary NAMES ArenaToolBox PATHS $ENV{ARENATOOLBOX_LIB} REQUIRED)
+target_link_libraries(BSAExplorer ${ArenaToolBoxLibrary} Qt5::Widgets Qt5::Concurrent)
