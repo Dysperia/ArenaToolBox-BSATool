@@ -31,5 +31,5 @@ set(BSAExplorer_MAIN main/main.cpp)
 
 add_executable(BSAExplorer ${BSAExplorer_MAIN} ${BSATool_SRCS})
 target_include_directories(BSAExplorer PUBLIC $ENV{ARENATOOLBOX_LIB}/include)
-find_library(ArenaToolBoxLibrary NAMES ArenaToolBox PATHS $ENV{ARENATOOLBOX_LIB} REQUIRED)
+find_library(ArenaToolBoxLibrary NAMES ArenaToolBox PATHS ENV ARENATOOLBOX_LIB PATH_SUFFIXES /lib REQUIRED)
 target_link_libraries(BSAExplorer ${ArenaToolBoxLibrary} Qt5::Widgets Qt5::Concurrent)
