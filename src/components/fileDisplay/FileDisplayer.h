@@ -24,6 +24,22 @@ public:
      */
     explicit FileDisplayer(QWidget *parent = Q_NULLPTR);
 
+    //**************************************************************************
+    // Getters / Setters
+    //**************************************************************************
+    /**
+     * @brief Currently displayed file
+     */
+    [[nodiscard]] const BsaFile &getCurrentFile() const;
+    /**
+     * @brief Palette of the currently displayed file
+     */
+    [[nodiscard]] const Palette &getCurrentPalette() const;
+    /**
+     * @brief Palette name of the currently displayed file
+     */
+    [[nodiscard]] const QString &getCurrentPaletteName() const;
+
 public slots:
 
     //**************************************************************************
@@ -60,7 +76,19 @@ private:
     /**
      * @brief Default "no content" displayer
      */
-    QLabel defaultDisplayer;
+    QLabel mDefaultDisplayer;
+    /**
+     * @brief Currently displayed file
+     */
+    BsaFile mCurrentFile;
+    /**
+     * @brief Palette of the currently displayed file
+     */
+    Palette mCurrentPalette;
+    /**
+     * @brief Palette name of the currently displayed file
+     */
+    QString mCurrentPaletteName;
 };
 
 #endif // BSATOOL_FILEDISPLAYER_H

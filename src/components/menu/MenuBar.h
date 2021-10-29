@@ -37,7 +37,7 @@ public:
 //    QMenu *getExtractMenu();
 //    QMenu *getExtractAsRawMenu();
 //    QMenu *getExtractImageMenu();
-//    QMenu *getPaletteMenu();
+    QMenu *getPaletteMenu();
 //    QMenu *getToolMenu();
 //    QMenu *getAboutMenu();
     // Getters actions
@@ -59,7 +59,7 @@ public:
 //    QAction *getExtractUncompressAllImageAction();
 //    QAction *getExtractUncompressConvertImageAction();
 //    QAction *getExtractUncompressConvertAllImageAction();
-//    QAction *getViewPaletteAction();
+    QAction *getViewPaletteAction();
 //    QAction *getEncryptDecryptInfAction();
 //    QAction *getUncompressExternalIMGAction();
 //    QAction *getUncompressExternalIMGsToPNGsAction();
@@ -103,7 +103,7 @@ private:
 //    QMenu *mExtractMenu;
 //    QMenu *mExtractAsRawMenu;
 //    QMenu *mExtractImageMenu;
-//    QMenu *mPaletteMenu;
+    QMenu *mPaletteMenu;
 //    QMenu *mToolMenu;
 //    QMenu *mAboutMenu;
     // Actions
@@ -125,7 +125,7 @@ private:
 //    QAction *mExtractUncompressAllImageAction;
 //    QAction *mExtractUncompressConvertImageAction;
 //    QAction *mExtractUncompressConvertAllImageAction;
-//    QAction *mViewPaletteAction;
+    QAction *mViewPaletteAction;
 //    QAction *mEncryptDecryptInfAction;
 //    QAction *mUncompressExternalIMGAction;
 //    QAction *mUncompressExternalIMGsToPNGsAction;

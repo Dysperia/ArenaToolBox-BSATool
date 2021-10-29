@@ -62,10 +62,10 @@ MenuBar::MenuBar(QWidget *parent): QMenuBar(parent)
 //    mExtractUncompressConvertAllImageAction = new QAction("Extract, uncompress and convert all IMG/SET to PNG", this);
 //    mExtractImageMenu->addAction(mExtractUncompressConvertAllImageAction);
 
-//    mPaletteMenu = addMenu("Palette");
-//    mViewPaletteAction = new QAction("View palette", this);
-//    mPaletteMenu->addAction(mViewPaletteAction);
-//    mViewPaletteAction->setIcon(QIcon("icon/view_palette.png"));
+    mPaletteMenu = addMenu("Palette");
+    mViewPaletteAction = new QAction("View palette", this);
+    mPaletteMenu->addAction(mViewPaletteAction);
+    mViewPaletteAction->setIcon(QIcon("icon/view_palette.png"));
 
 //    mToolMenu = addMenu("Tool");
 //    mEncryptDecryptInfAction = new QAction("Encrypt/Decrypt INF file", this);
@@ -107,9 +107,9 @@ QMenu *MenuBar::getViewMenu() {
 //QMenu *MenuBar::getExtractImageMenu() {
 //    return mExtractImageMenu;
 //}
-//QMenu *MenuBar::getPaletteMenu() {
-//    return mPaletteMenu;
-//}
+QMenu *MenuBar::getPaletteMenu() {
+    return mPaletteMenu;
+}
 //QMenu *MenuBar::getToolMenu() {
 //    return mToolMenu;
 //}
@@ -172,9 +172,9 @@ QAction *MenuBar::getCloseBSAFileAction() {
 //QAction *MenuBar::getExtractUncompressConvertAllImageAction() {
 //    return mExtractUncompressConvertAllImageAction;
 //}
-//QAction *MenuBar::getViewPaletteAction() {
-//    return mViewPaletteAction;
-//}
+QAction *MenuBar::getViewPaletteAction() {
+    return mViewPaletteAction;
+}
 //QAction *MenuBar::getEncryptDecryptInfAction() {
 //    return mEncryptDecryptInfAction;
 //}

@@ -13,6 +13,8 @@ set(BSATool_SRCS
         components/fileDisplay/ImageDisplayer.h
         components/fileDisplay/ImagesCollectionDisplayer.cpp
         components/fileDisplay/ImagesCollectionDisplayer.h
+        components/fileDisplay/PaletteDisplayer.cpp
+        components/fileDisplay/PaletteDisplayer.h
         components/fileDisplay/TextDisplayer.cpp
         components/fileDisplay/TextDisplayer.h
         components/bsaExplorer/MainWindow.cpp

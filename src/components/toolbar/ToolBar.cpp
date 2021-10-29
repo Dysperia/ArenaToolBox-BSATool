@@ -22,8 +22,8 @@ ToolBar::ToolBar(MenuBar *menuBar)
 //    cancelDeleteUpdateButton->setIcon(QIcon("icon/cancel_deleteUpdate.png"));
 //    cancelDeleteUpdateButton->setMenu(menuBar->getCancelDeleteUpdateMenu());
 //    addWidget(cancelDeleteUpdateButton);
-//    addSeparator();
-//    addAction(menuBar->getViewPaletteAction());
+    addSeparator();
+    addAction(menuBar->getViewPaletteAction());
 //    addSeparator();
 //    QToolButton *rawToolButton = new QToolButton;
 //    rawToolButton->setPopupMode(QToolButton::InstantPopup);

@@ -87,6 +87,11 @@ private slots:
      * @param currentItem the current file selection
      */
     void updateOnFileSelected(const BsaFile& currentItem);
+
+    /**
+     * @brief show the palette used by the currently displayed file
+     */
+    void showPalette();
 };
 
 #endif // BSATOOL_MAINWINDOW_H
