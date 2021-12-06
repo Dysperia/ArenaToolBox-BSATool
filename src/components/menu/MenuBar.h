@@ -31,26 +31,27 @@ public:
     // Getters/setters
     //**************************************************************************
     // Getters menus
+    QMenu *getBsaMenu();
     QMenu *getFileMenu();
-//    QMenu *getCancelDeleteUpdateMenu();
     QMenu *getViewMenu();
+    QMenu *getConfigurationMenu();
 //    QMenu *getExtractMenu();
 //    QMenu *getExtractAsRawMenu();
 //    QMenu *getExtractImageMenu();
     QMenu *getPaletteMenu();
 //    QMenu *getToolMenu();
 //    QMenu *getAboutMenu();
+
     // Getters actions
     QAction *getNewBSAFileAction();
     QAction *getOpenBSAFileAction();
     QAction *getSaveBSAFileAction();
     QAction *getCloseBSAFileAction();
-//    QAction *getAddFileAction();
-//    QAction *getUpdateFileAction();
-//    QAction *getDeleteFileAction();
-//    QAction *getCancelDeleteFileAction();
-//    QAction *getCancelUpdateFileAction();
-//    QAction *getQuitAction();
+
+    QAction *getAddFileAction();
+    QAction *getDeleteFileAction();
+    QAction *getCancelChangesFileAction();
+
 //    QAction *getExtendedPreviewAction();
 //    QAction *getUpdatePreviewOverDefaultAction();
 //    QAction *getExtractRawFileAction();
@@ -96,8 +97,8 @@ private:
     // Attributes
     //**************************************************************************
     // Menus
+    QMenu *mBsaMenu;
     QMenu *mFileMenu;
-//    QMenu *mCancelDeleteUpdateMenu;
     QMenu *mViewMenu;
     QMenu *mConfigurationMenu;
 //    QMenu *mExtractMenu;
@@ -111,12 +112,11 @@ private:
     QAction *mOpenBSAFileAction;
     QAction *mSaveBSAFileAction;
     QAction *mCloseBSAFileAction;
-//    QAction *mAddFileAction;
-//    QAction *mUpdateFileAction;
-//    QAction *mDeleteFileAction;
-//    QAction *mCancelDeleteFileAction;
-//    QAction *mCancelUpdateFileAction;
-//    QAction *mQuitAction;
+
+    QAction *mAddFileAction;
+    QAction *mDeleteFileAction;
+    QAction *mCancelChangesFileAction;
+
 //    QAction *mExtendedPreviewAction;
 //    QAction *mUpdatePreviewOverDefaultAction;
 //    QAction *mExtractRawFileAction;

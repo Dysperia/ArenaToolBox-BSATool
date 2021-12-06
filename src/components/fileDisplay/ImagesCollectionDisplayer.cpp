@@ -8,16 +8,16 @@
 ImagesCollectionDisplayer::ImagesCollectionDisplayer(QWidget *parent) : QWidget(parent) {
     auto buttonsLayout = new QHBoxLayout();
     auto firstButton = createButton(QString("<<"));
-    connect(firstButton, SIGNAL(clicked(bool)), this, SLOT(goFirst()));
+    connect(firstButton, &QAbstractButton::clicked, this, &ImagesCollectionDisplayer::goFirst);
     mLeftButtons.push_back(firstButton);
     auto previousButton = createButton(QString("<"));
-    connect(previousButton, SIGNAL(clicked(bool)), this, SLOT(goPrevious()));
+    connect(previousButton, &QAbstractButton::clicked, this, &ImagesCollectionDisplayer::goPrevious);
     mLeftButtons.push_back(previousButton);
     auto nextButton = createButton(QString(">"));
-    connect(nextButton, SIGNAL(clicked(bool)), this, SLOT(goNext()));
+    connect(nextButton, &QAbstractButton::clicked, this, &ImagesCollectionDisplayer::goNext);
     mRightButtons.push_back(nextButton);
     auto lastButton = createButton(QString(">>"));
-    connect(lastButton, SIGNAL(clicked(bool)), this, SLOT(goLast()));
+    connect(lastButton, &QAbstractButton::clicked, this, &ImagesCollectionDisplayer::goLast);
     mRightButtons.push_back(lastButton);
     buttonsLayout->addStretch(1);
     buttonsLayout->addWidget(firstButton);
@@ -37,7 +37,7 @@ ImagesCollectionDisplayer::ImagesCollectionDisplayer(QWidget *parent) : QWidget(
     updateButtonBar();
 }
 
-QPushButton *ImagesCollectionDisplayer::createButton(const QString& text) const {
+QPushButton *ImagesCollectionDisplayer::createButton(const QString& text) {
     auto button = new QPushButton(text);
     button->setDisabled(true);
     button->setMinimumWidth(10);

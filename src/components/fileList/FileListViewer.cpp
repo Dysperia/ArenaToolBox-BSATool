@@ -28,8 +28,8 @@ FileListViewer::FileListViewer(QWidget *parent) : QWidget(parent) {
     this->setLayout(mainVLayout);
 
     // Connecting
-    connect(mFileExtensionFilter, SIGNAL(activated(QString)), SLOT(updateViewFromFilterChange(QString)));
-    connect(mFileList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(emitCurrentItemChanged(QListWidgetItem*,QListWidgetItem*)));
+    connect(mFileExtensionFilter, &QComboBox::currentTextChanged, this, &FileListViewer::updateViewFromFilterChange);
+    connect(mFileList, &QListWidget::currentItemChanged, this, &FileListViewer::emitCurrentItemChanged);
 }
 
 //**************************************************************************

@@ -14,8 +14,7 @@ Logger::~Logger() = default;
 //******************************************************************************
 // Getters/setters
 //******************************************************************************
-QPlainTextEdit *Logger::textWidget() const
-{
+QPlainTextEdit *Logger::textWidget() const {
     return mTextWidget;
 }
 
@@ -29,7 +28,7 @@ QPlainTextEdit *Logger::textWidget() const
  * @return the log line
  */
 QString buildLogLine(const Logger::MessageType &type,
-                          const QString &message) {
+                     const QString &message) {
     QString line = QDateTime::currentDateTime().toString("dd/MM/yyyy hh:mm:ss ");
     switch (type) {
         case Logger::MessageType::INFO:
@@ -49,25 +48,33 @@ QString buildLogLine(const Logger::MessageType &type,
 }
 
 void Logger::log(const Logger::MessageType &type,
-                 const QString &message)
-{
+                 const QString &message) {
     QString line = buildLogLine(type, message);
     mTextWidget->appendPlainText(line);
 }
 
-void Logger::logError(const Status &status)
-{
-    if (status.status() < 0) {
-        this->log(MessageType::ERROR, status.message());
+void Logger::logError(const QString &message) {
+    if (!message.isEmpty()) {
+        this->log(MessageType::ERROR, message);
     }
 }
 
-void Logger::logErrorOrInfo(const Status &status, const QString &infoMessage)
-{
-    if (status.status() < 0) {
-        this->log(MessageType::ERROR, status.message());
+void Logger::logWarning(const QString &message) {
+    if (!message.isEmpty()) {
+        this->log(MessageType::WARNING, message);
     }
-    else {
-        this->log(MessageType::INFO, infoMessage);
+}
+
+void Logger::logInfo(const QString &message) {
+    if (!message.isEmpty()) {
+        this->log(MessageType::INFO, message);
+    }
+}
+
+void Logger::logErrorOrInfo(const Status &status, const QString &infoMessage) {
+    if (status.code() < 0) {
+        logError(status.message());
+    } else {
+        logInfo(infoMessage);
     }
 }

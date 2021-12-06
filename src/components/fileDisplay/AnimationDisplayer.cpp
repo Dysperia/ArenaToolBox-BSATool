@@ -8,10 +8,10 @@
 AnimationDisplayer::AnimationDisplayer(QWidget *parent) : ImagesCollectionDisplayer(parent) {
     auto *layout = (QVBoxLayout *)this->layout();
     mPlayAnimationButton = new QPushButton("Start animation");
-    connect(mPlayAnimationButton, SIGNAL(clicked(bool)), SLOT(toggleAnimation()));
+    connect(mPlayAnimationButton, &QPushButton::clicked, this, &AnimationDisplayer::toggleAnimation);
     layout->addWidget(mPlayAnimationButton);
     mTimer.setInterval(1000 / 6);
-    connect(&mTimer, SIGNAL(timeout()), SLOT(goNextForAnimation()));
+    connect(&mTimer, &QTimer::timeout, this, &AnimationDisplayer::goNextForAnimation);
 }
 
 //**************************************************************************

@@ -57,9 +57,12 @@ private:
     // Methods
     //**************************************************************************
     /**
-     * @brief start a dialog to ask the user confirmation for opening a archive
+     * @brief start a dialog to ask the user confirmation for closing a modified archive and close it if the user
+     * agrees. If the archive is opened but not modified, juste close it without dialog
+     * @param title title of the dialog
+     * @param content content of the dialog
      */
-    void askUserToConfirmClosingOfOpenedBsa();
+    void askUserToConfirmClosingOfModifiedBsaAndClose(const QString &title, const QString &content);
 
 private slots:
     /**

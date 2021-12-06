@@ -6,37 +6,30 @@
 MenuBar::MenuBar(QWidget *parent): QMenuBar(parent)
 {
     // Building menus
-    mFileMenu = addMenu("File");
+    mBsaMenu = addMenu("Bsa");
     mNewBSAFileAction = new QAction("New BSA file", this);
-    mFileMenu->addAction(mNewBSAFileAction);
+    mBsaMenu->addAction(mNewBSAFileAction);
     mNewBSAFileAction->setIcon(QIcon("icon/new_bsa.png"));
     mOpenBSAFileAction = new QAction("Open BSA file", this);
-    mFileMenu->addAction(mOpenBSAFileAction);
+    mBsaMenu->addAction(mOpenBSAFileAction);
     mOpenBSAFileAction->setIcon(QIcon("icon/open_bsa.png"));
     mSaveBSAFileAction = new QAction("Save BSA file", this);
-    mFileMenu->addAction(mSaveBSAFileAction);
+    mBsaMenu->addAction(mSaveBSAFileAction);
     mSaveBSAFileAction->setIcon(QIcon("icon/save_bsa.png"));
     mCloseBSAFileAction = new QAction("Close BSA file", this);
-    mFileMenu->addAction(mCloseBSAFileAction);
+    mBsaMenu->addAction(mCloseBSAFileAction);
     mCloseBSAFileAction->setIcon(QIcon("icon/close_bsa.png"));
 
-//    mAddFileAction = new QAction("Add file", this);
-//    mFileMenu->addAction(mAddFileAction);
-//    mAddFileAction->setIcon(QIcon("icon/add_file.png"));
-//    mUpdateFileAction = new QAction("Update file(s)", this);
-//    mFileMenu->addAction(mUpdateFileAction);
-//    mUpdateFileAction->setIcon(QIcon("icon/update_file.png"));
-//    mDeleteFileAction = new QAction("Delete file", this);
-//    mFileMenu->addAction(mDeleteFileAction);
-//    mDeleteFileAction->setIcon(QIcon("icon/delete_file.png"));
-//    mCancelDeleteUpdateMenu = mFileMenu->addMenu("Cancel delete/update file");
-//    mCancelDeleteFileAction = new QAction("Cancel delete file", this);
-//    mCancelUpdateFileAction = new QAction("Cancel update file", this);
-//    mCancelDeleteUpdateMenu->addAction(mCancelUpdateFileAction);
-//    mCancelDeleteUpdateMenu->addAction(mCancelDeleteFileAction);
-//    mQuitAction = new QAction("Quit", this);
-//    mFileMenu->addAction(mQuitAction);
-//    mQuitAction->setIcon(QIcon("icon/exit.png"));
+    mFileMenu = addMenu("File");
+    mAddFileAction = new QAction("Add file", this);
+    mFileMenu->addAction(mAddFileAction);
+    mAddFileAction->setIcon(QIcon("icon/add_file.png"));
+    mDeleteFileAction = new QAction("Delete file", this);
+    mFileMenu->addAction(mDeleteFileAction);
+    mDeleteFileAction->setIcon(QIcon("icon/delete_file.png"));
+    mCancelChangesFileAction = new QAction("Cancel changes", this);
+    mFileMenu->addAction(mCancelChangesFileAction);
+    mCancelChangesFileAction->setIcon(QIcon("icon/cancel_deleteUpdate.png"));
 
     mViewMenu = addMenu("View");
 //    mExtendedPreviewAction = new QAction("Extended preview", this);
@@ -89,14 +82,17 @@ MenuBar::MenuBar(QWidget *parent): QMenuBar(parent)
 // Getters/setters
 //******************************************************************************
 // Getters menus
+QMenu *MenuBar::getBsaMenu() {
+    return mBsaMenu;
+}
 QMenu *MenuBar::getFileMenu() {
     return mFileMenu;
 }
-//QMenu *MenuBar::getCancelDeleteUpdateMenu() {
-//    return mCancelDeleteUpdateMenu;
-//}
 QMenu *MenuBar::getViewMenu() {
     return mViewMenu;
+}
+QMenu *MenuBar::getConfigurationMenu() {
+    return mConfigurationMenu;
 }
 //QMenu *MenuBar::getExtractMenu() {
 //    return mExtractMenu;
@@ -130,24 +126,17 @@ QAction *MenuBar::getSaveBSAFileAction() {
 QAction *MenuBar::getCloseBSAFileAction() {
     return mCloseBSAFileAction;
 }
-//QAction *MenuBar::getAddFileAction() {
-//    return mAddFileAction;
-//}
-//QAction *MenuBar::getUpdateFileAction() {
-//    return mUpdateFileAction;
-//}
-//QAction *MenuBar::getDeleteFileAction() {
-//    return mDeleteFileAction;
-//}
-//QAction *MenuBar::getCancelDeleteFileAction() {
-//    return mCancelDeleteFileAction;
-//}
-//QAction *MenuBar::getCancelUpdateFileAction() {
-//    return mCancelUpdateFileAction;
-//}
-//QAction *MenuBar::getQuitAction() {
-//    return mQuitAction;
-//}
+
+QAction *MenuBar::getAddFileAction() {
+    return mAddFileAction;
+}
+QAction *MenuBar::getDeleteFileAction() {
+    return mDeleteFileAction;
+}
+QAction *MenuBar::getCancelChangesFileAction() {
+    return mCancelChangesFileAction;
+}
+
 //QAction *MenuBar::getExtendedPreviewAction() {
 //    return mExtendedPreviewAction;
 //}
@@ -220,7 +209,7 @@ void MenuBar::updateConfigurationActions(const QStringList &names, const QString
         actionGroup->addAction(action);
         mConfigurationMenu->addAction(action);
     }
-    connect(actionGroup, SIGNAL(triggered(QAction*)), SLOT(emitSelectedConfigurationChanged(QAction*)));
+    connect(actionGroup, &QActionGroup::triggered, this, &MenuBar::emitSelectedConfigurationChanged);
 }
 
 void MenuBar::emitSelectedConfigurationChanged(QAction *selected) {

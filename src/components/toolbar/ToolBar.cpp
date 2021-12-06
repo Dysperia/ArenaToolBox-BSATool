@@ -13,15 +13,11 @@ ToolBar::ToolBar(MenuBar *menuBar)
     addAction(menuBar->getOpenBSAFileAction());
     addAction(menuBar->getSaveBSAFileAction());
     addAction(menuBar->getCloseBSAFileAction());
-//    addSeparator();
-//    addAction(menuBar->getAddFileAction());
-//    addAction(menuBar->getDeleteFileAction());
-//    addAction(menuBar->getUpdateFileAction());
-//    QToolButton *cancelDeleteUpdateButton = new QToolButton;
-//    cancelDeleteUpdateButton->setPopupMode(QToolButton::InstantPopup);
-//    cancelDeleteUpdateButton->setIcon(QIcon("icon/cancel_deleteUpdate.png"));
-//    cancelDeleteUpdateButton->setMenu(menuBar->getCancelDeleteUpdateMenu());
-//    addWidget(cancelDeleteUpdateButton);
+    addSeparator();
+    addAction(menuBar->getAddFileAction());
+    addAction(menuBar->getDeleteFileAction());
+    addAction(menuBar->getCancelChangesFileAction());
+
     addSeparator();
     addAction(menuBar->getViewPaletteAction());
 //    addSeparator();
@@ -40,7 +36,7 @@ ToolBar::ToolBar(MenuBar *menuBar)
 //    toolToolButton->setIcon(QIcon("icon/tool.png"));
 //    toolToolButton->setMenu(menuBar->getToolMenu());
 //    addWidget(toolToolButton);
-    setIconSize(QSize(36, 36));
+    setIconSize(QSize(24, 24));
 
     menuBar->getViewMenu()->addAction(toggleViewAction());
 }

@@ -98,7 +98,7 @@ protected:
      * @param text to display on the button
      * @return the created button
      */
-    [[nodiscard]] QPushButton *createButton(const QString& text) const;
+    [[nodiscard]] static QPushButton *createButton(const QString& text) ;
 
     /**
      * display the image corresponding to the current index if it exists and update the buttons state
